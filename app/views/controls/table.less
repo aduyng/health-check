@@ -1,0 +1,37 @@
+table{
+    &>thead{
+        &>tr{
+            &>th{
+                 &.sortable{
+                     cursor: pointer;
+                     &>i.indicator{
+                        display: block;
+                     }
+                 }
+                 
+                 &>i.indicator{
+                    margin-top: 4px;
+                    display: none;
+                    width: 12px;
+                 }
+            }      
+        }
+         
+    }
+    
+    &>tbody{
+        &>tr{
+            &>td{
+                &.text{
+                    text-align: left;
+                }
+                &.number{
+                    text-align: right;
+                }
+                &.datetime{
+                    text-align: right;
+                }
+            }       
+        }
+    }
+}

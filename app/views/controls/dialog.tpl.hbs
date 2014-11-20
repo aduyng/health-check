@@ -1,0 +1,23 @@
+<div class="modal-dialog {{sizeClass}}">
+    <div class="modal-content">
+        <div class="modal-header {{headerClass}}">
+            <h4 class="modal-title">{{{title}}}</h4>
+        </div>
+        <div id="{{id}}-body" class="modal-body">
+
+        </div>
+        <div id="{{id}}-footer" class="modal-footer clearfix">
+            <div class="pull-right right-buttons">
+                {{#each rightButtons}}
+                    <button id="{{../id}}-button-{{this.id}}" data-id="{{this.id}}" type="button" class="btn {{../id}}-button {{this.buttonClass}}"><i class="{{this.iconClass}}"></i> {{this.label}}</button>
+                {{/each}}
+            </div>
+            <div class="pull-left left-buttons">
+                {{#each leftButtons}}
+                    <button id="{{../id}}-button-{{this.id}}" data-id="{{this.id}}" type="button" class="btn {{../id}}-button  {{this.buttonClass}}"><i class="{{this.iconClass}}"></i> {{this.label}}</button>
+                {{/each}}
+            </div>
+            
+        </div>
+    </div>
+</div>

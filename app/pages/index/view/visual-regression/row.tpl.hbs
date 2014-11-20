@@ -1,0 +1,38 @@
+<tr class="active" data-index="{{index}}" id="{{id}}-head-row-{{index}}">
+    <td colspan="2">
+        <strong>{{data.caption}}</strong> <span class="diff-caption hidden" id="{{id}}-diff-caption-{{index}}"></span>
+    </td>
+    <td class="text-right"><button class="btn btn-default btn-xs {{id}}-download" disabled data-index="{{index}}" id="{{id}}-download-{{index}}"><i class="fa fa-download"></i> Download</button></td>
+</tr>
+<tr id="{{id}}-row-{{index}}" data-index="{{index}}">
+    <td class="old">
+        <div class="thumbnail" id="{{id}}-old-thumbnail-{{index}}" >
+            <img class="screenshot old {{id}}-screenshot" id="{{id}}-old-img-{{index}}" width="{{device.width}}" data-index="{{index}}" data-loaded="false" src="//placehold.it/{{device.width}}x{{device.height}}&text=Screenshot+coming+soon..." alt="Old Screenshot {{index}}" />
+        </div>
+    </td>
+    
+    <td class="new">
+        <div class="thumbnail" id="{{id}}-new-thumbnail-{{index}}">
+            <img class="screenshot new {{id}}-screenshot" id="{{id}}-new-img-{{index}}" width="{{device.width}}" data-index="{{index}}"  data-loaded="false"  src="//placehold.it/{{device.width}}x{{device.height}}&text=Screenshot+coming+soon..." alt="New Screenshot {{index}}" />
+        </div>
+        
+    </td>
+    <td>
+        <div class="thumbnail" id="{{id}}-diff-thumbnail-{{index}}">
+            <img class="screenshot diff {{id}}-screenshot" id="{{id}}-diff-img-{{index}}" width="{{device.width}}" data-index="{{index}}"  data-loaded="false"  src="//placehold.it/{{device.width}}x{{device.height}}&text=Result+coming+soon..." alt="Result" />
+        </div>
+      <!--  <div id="{{id}}-toolbox-{{index}}" class="form-inline text-center hidden">-->
+      <!--      <div class="btn-group">-->
+    		<!--	<button class="btn btn-default btn-xs {{id}}-raw"  data-index="{{index}}" id="{{id}}-raw-{{index}}" title="Ignore Nothing">Nothing</button>-->
+    		<!--	<button class="btn btn-default btn-xs {{id}}-ignore-colors" data-index="{{index}}" id="{{id}}-ignore-colors-{{index}}" title="Ignore Colors">Colors</button>-->
+    		<!--	<button class="btn btn-default btn-xs {{id}}-ignore-antialising" data-index="{{index}}" id="{{id}}-ignore-antialising-{{index}}"  title="Ignore Antialiasing">Antialiasing</button>-->
+    		<!--</div>-->
+
+    		<!--<div class="btn-group">-->
+      <!--          <button class="btn btn-default btn-xs {{id}}-error-type-flat" data-index="{{index}}" id="{{id}}-error-type-flat-{{index}}">Flat</button>-->
+      <!--          <button class="btn btn-default btn-xs {{id}}-error-type-movement" data-index="{{index}}" id="{{id}}-error-type-movement-{{index}}">Movement</button>-->
+      <!--      </div>-->
+
+      <!--  </div>-->
+    </td>
+</tr>

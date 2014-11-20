@@ -1,0 +1,40 @@
+<div class="form-group">
+    <label for="{{id}}-type-id" class="col-sm-2 control-label">Type</label>
+    <div class="col-sm-10">
+        <p class="form-control-static" id="{{id}}-type-id">{{data.type.name}}</p>
+    </div>
+</div>
+{{#if data.newBox}}
+<div class="form-group">
+    <label for="{{id}}-old-box-id" class="col-sm-2 control-label">Old Box</label>
+    <div class="col-sm-10">
+        <p class="form-control-static" id="{{id}}-old-box-id">{{data.oldBox.name}} - <a href="{{data.oldBox.url}}" target="_blank">{{data.oldBox.url}}</a></p>
+    </div>
+</div>
+<div class="form-group">
+    <label for="{{id}}-new-box-id" class="col-sm-2 control-label">New Box</label>
+    <div class="col-sm-10">
+        <p class="form-control-static" id="{{id}}-new-box-id">{{data.newBox.name}} - <a href="{{data.newBox.url}}" target="_blank">{{data.newBox.url}}</a></p>
+    </div>
+</div>
+<div class="form-group">
+    <label for="{{id}}-device-id" class="col-sm-2 control-label">Device</label>
+    <div class="col-sm-10">
+        <p class="form-control-static" id="{{id}}-device-id">{{data.device.name}} ({{data.device.width}}x{{data.device.height}})</p>
+    </div>
+</div>
+{{else}}
+<div class="form-group">
+    <label for="{{id}}-old-box-id" class="col-sm-2 control-label">Box</label>
+    <div class="col-sm-10">
+        <p class="form-control-static" id="{{id}}-old-box-id">{{data.oldBox.name}} - <a href="{{data.oldBox.url}}" target="_blank">{{data.oldBox.url}}</a></p>
+    </div>
+</div>
+{{/if}}
+
+<div class="form-group">
+    <label for="{{id}}-script-id" class="col-sm-2 control-label">Script</label>
+    <div class="col-sm-10">
+        <p class="form-control-static" id="{{id}}-script-id">{{data.script.name}}</p>
+    </div>
+</div>

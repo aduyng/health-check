@@ -1,0 +1,5 @@
+<tr>
+    {{#each columns}}
+    <th data-id="{{this.id}}" data-index="{{@index}}" class="{{this.className}} {{#if this.sortable}}sortable{{/if}} {{this.type}}">{{#if this.name}}{{{this.name}}}{{else}}&nbsp;{{/if}}{{#if this.sortable}}<i class="indicator fa {{this.sortIcon}} pull-right"></i>{{/if}}</th>
+    {{/each}}
+</tr>

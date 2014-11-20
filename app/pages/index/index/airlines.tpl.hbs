@@ -1,0 +1,25 @@
+{{#each airlines}}
+  <div class=" col-sm-3 col-md-3 col-lg-3">
+    <div class="panel panel-default airline">
+      <div class="panel-heading">
+        <div class="pull-right">
+          <button class="btn btn-sm" id="{{../id}}-edit-airline" data-id="{{this.id}}"><i class="fa fa-pencil"></i>
+          </button>
+        </div><img class="" src="{{this.url}}/favicon.ico"> {{this.name}}</div>
+      <div class="panel-body">
+        <ul class="list-group modules">
+          {{#each this.modules}}
+            <li class="list-group-item module">
+              <span class="badge">14</span> {{this.name}}
+            </li>
+            {{else}}
+              <div class="alert alert-warning"><i class="fa fa-exclamation-circle"></i> There is no modules added!</div>
+          {{/each}}
+        </ul>
+      </div>
+      <div class="panel-footer">
+        <button class="btn btn-success btn-block"><i class="fa fa-play"></i> Run</button>
+      </div>
+    </div>
+  </div>
+{{/each}}

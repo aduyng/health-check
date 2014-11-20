@@ -1,0 +1,52 @@
+{
+  "name": "visual-regression-tool-web",
+  "version": "0.1",
+  "private": true,
+  "engines": {
+    "node": "0.10.x"
+  },
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "accounting": "~0.3.2",
+    "bluebird": "~1.2.4",
+    "bookshelf": "latest",
+    "checkit": "^0.2.0-pre",
+    "colors": "~0.6.2",
+    "connect": "^2.14.3",
+    "connect-redis": "1.4.7",
+    "express": "3.5.1",
+    "express-handlebars": "^1.0.1",
+    "express-load": "^1.1.9",
+    "glob": "^4.0.6",
+    "handlebars": "~2.0.0-alpha.2",
+    "knex": "^0.7.3",
+    "minimist": "^1.1.0",
+    "moment": "^2.5.1",
+    "mysql": "^2.5.1",
+    "nexpect": "^0.4.2",
+    "underscore": "^1.6.0",
+    "underscore.string": "^2.3.3",
+    "winston": "~0.7.3"
+  },
+  "devDependencies": {
+    "grunt": "^0.4.4",
+    "grunt-contrib-requirejs": "^0.4.3",
+    "grunt-express": "^1.2.1",
+    "grunt-contrib-watch": "^0.6.1",
+    "matchdep": "^0.3.0",
+    "grunt-concurrent": "^0.5.0",
+    "grunt-external-daemon": "^1.1.0",
+    "grunt-contrib-copy": "^0.5.0",
+    "grunt-contrib-clean": "^0.5.0",
+    "grunt-contrib-less": "^0.11.0",
+    "grunt-contrib-htmlmin": "^0.2.0",
+    "grunt-contrib-uglify": "^0.4.0",
+    "grunt-cdnify": "0.0.2",
+    "grunt-devtools": "^0.2.1",
+    "grunt-shell-spawn": "^0.3.0",
+    "uglifyjs": "^2.3.6",
+    "grunt-file-creator": "~0.1.1"
+  }
+}

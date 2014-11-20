@@ -1,0 +1,7 @@
+{{#each rows}}
+    {{{this}}}
+{{else}}
+    <tr class="warning">
+        <td colspan="{{columns.length}}" class="text-center">{{emptyMessage}}</td>
+    </tr>
+{{/each}}

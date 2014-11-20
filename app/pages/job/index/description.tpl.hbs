@@ -1,0 +1,16 @@
+<dl>
+  {{#if newBox}}
+    <dt>Old Box</dt>
+    <dd>{{oldBox.url}}</dd>
+    <dt>New Box</dt>
+    <dd>{{newBox.url}}</dd>
+    <dt>Device</dt>
+  <dd>{{device.name}}</dd>
+  {{else}}
+    <dt>Box</dt>
+    <dd>{{oldBox.url}}</dd>
+  {{/if}}
+  
+  <dt>Script</dt>
+  <dd>{{script.name}}</dd>
+</dl>

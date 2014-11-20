@@ -1,0 +1,65 @@
+<div class="page-header">
+    <div class="pull-right">
+        <button type="button" id="{{id}}-back" class="btn btn-default"><i class="fa fa-angle-double-left"></i> Back</button>
+    </div>
+  <h1 class="first">Job #{{data.id}}</h1>
+</div>
+
+<div class="well">
+    <dl class="dl-horizontal">
+        <dt>Old Version URL</dt>
+        <dd>{{oldBox.name}} - <a href="{{oldBox.url}}" target="_blank">{{oldBox.url}}</a></dd>
+        
+        <dt>New Version URL</dt>
+        <dd>{{newBox.name}} - <a href="{{newBox.url}}" target="_blank">{{newBox.url}}</a></dd>
+        
+        <dt>Script to run</dt>
+        <dd>{{script.name}} - {{script.path}}</dd>
+        
+        <dt>Device</dt>
+        <dd>{{device.name}} - {{device.width}}x{{device.height}}</dd>
+        
+        <dt>Status</dt>
+        <dd id="{{id}}-status">{{#if data.isRunning}}<i class="fa fa-spinner fa-spin"></i>{{/if}} {{data.statusName}}</dd>
+        
+        <dt>Created</dt>
+        <dd >{{formatDateTime data.createdAt}} <small>({{fromNow data.createdAt}})</small></dd>
+        
+        <dt>Last Updated</dt>
+        <dd >{{formatDateTime data.updatedAt}} <small>({{fromNow data.updatedAt}})</small></dd>
+        
+    </dl>
+    
+    <div class="pull-right">
+        <button type="button" id="{{id}}-delete" class="btn btn-danger {{#if data.isRunning}}hidden{{/if}}"><i class="fa fa-trash-o"></i> Delete</button>
+    </div>
+    
+    <button type="button" id="{{id}}-run" class="btn btn-success btn-lg ladda-button {{#if data.isRunning}}hidden{{/if}}" data-style="zoom-in"><span class="ladda-label"><i class="fa fa-play"></i> Run!</span></button>
+    
+</div>
+<div id="{{id}}-result" class="hidden">
+    <div class="pull-right form-inline hidden" id="{{id}}-result-toolbar">
+        <label class="different-only">
+        Different Only: 
+        <input type="checkbox" 
+            id="{{id}}-different-only" 
+            data-on-color="info">
+        </label>
+        
+        <button type="button" id="{{id}}-download-all" class="btn btn-info"><i class="fa fa-download"></i> Download All</button>
+    </div>
+
+    <h3>Results <small id="{{id}}-result-subtitle"></small></h3>
+    <table class="table table-hover">
+    <thead>
+        <tr>
+            <th>Old</th>
+            <th>New</th>
+            <th>Diff</th>
+        </tr>
+        
+    </thead>
+    <tbody id="{{id}}-screenshots">
+    </tbody>
+    </table>
+</div>
