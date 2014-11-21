@@ -4,7 +4,8 @@ define(function(require) {
         Model = require('../models/module');
 
     var Collection = Super.extend({
-        model: Model
+        model: Model,
+        comparator: 'name'
     });
     
     

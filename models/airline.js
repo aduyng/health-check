@@ -10,4 +10,25 @@ var Super = require('./base'),
         tableName: 'Airline'
     });
 
+
+Model.prototype.run = function() {
+    var that = this;
+    var ModuleCollection = require('../collections/module');
+    var modules;
+
+    return ModuleCollection.forge()
+        .query(function(qb) {
+            qb.where('airlineId', that.id);
+            qb.where('isEnabled', 1);
+            qb.whereNotNull('url');
+        })
+        .fetch()
+        .then(function(m){
+            modules = m;
+            return modules.map(function(module){
+                return module.run(that);
+            });
+        });
+};
+
 module.exports = Model;

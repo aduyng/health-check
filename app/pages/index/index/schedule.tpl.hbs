@@ -1,0 +1,44 @@
+<table class="table table-condensed table-hover">
+    <thead>
+        <tr>
+            <th>Minute</th>
+            <th>Hour</th>
+            <th>Date</th>
+            <th>Month</th>
+            <th title="Day of Week">DoW</th>
+            <th width="1%">
+                <button class="btn btn-sm btn-success btn-block" id="{{id}}-new"><i class="fa fa-plus"></i> New</button>
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        {{#each schedules}}
+        <tr>
+            <td>
+                <input type="text" value="{{this.minute}}" data-id="{{this.id}}" name="name" class="form-control input-sm {{../id}}-field" />
+            </td>
+            
+            <td>
+                <input type="text" value="{{this.hour}}" data-id="{{this.id}}" name="hour" class="form-control input-sm {{../id}}-field" />
+            </td>
+            
+            <td>
+                <input type="text" value="{{this.date}}" data-id="{{this.id}}" name="date" class="form-control input-sm {{../id}}-field" />
+            </td>
+            
+            <td>
+                <input type="text" value="{{this.month}}" data-id="{{this.id}}" name="month" class="form-control input-sm {{../id}}-field" />
+            </td>
+            
+            <td>
+                <input type="text" value="{{this.dateOfWeek}}" data-id="{{this.id}}" name="dateOfWeek" class="form-control input-sm {{../id}}-field" />
+            </td>
+            
+            <td class="text-nowrap">
+                <button class="btn btn-xs btn-danger {{../id}}-remove" data-id="{{this.id}}"><i class="fa fa-trash-o"></i>
+                </button>
+            </td>
+        </tr>
+        {{/each}}
+    </tbody>
+</table>

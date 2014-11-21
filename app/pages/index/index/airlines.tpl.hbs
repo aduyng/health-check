@@ -1,16 +1,31 @@
 {{#each airlines}}
-  <div class=" col-sm-3 col-md-3 col-lg-3">
+  <div class="col-sm-4 col-md-4 col-lg-3">
     <div class="panel panel-default airline">
       <div class="panel-heading">
-        <div class="pull-right">
-          <button class="btn btn-sm" id="{{../id}}-edit-airline" data-id="{{this.id}}"><i class="fa fa-pencil"></i>
-          </button>
-        </div><img class="" src="{{this.url}}/favicon.ico"> {{this.name}}</div>
+        <code class="">{{this.abbr}}</code> {{this.name}}</div>
       <div class="panel-body">
         <ul class="list-group modules">
           {{#each this.modules}}
             <li class="list-group-item module">
-              <span class="badge">14</span> {{this.name}}
+              <span class="pull-right">
+                {{#if this.isRunning}}
+                <i class="fa fa-spinner fa-spin text-warning"></i>
+                {{/if}}
+                
+                {{#if this.isError}}
+                <i class="fa fa-exclamation-circle text-danger"></i>
+                {{/if}}
+                
+                {{#if this.isOK}}
+                <i class="fa fa-check-circle text-success"></i>
+                {{/if}}
+                
+                {{#if this.isNotStarted}}
+                <i class="fa fa-certificate"></i>
+                {{/if}}
+              </span>
+              
+              {{this.name}}
             </li>
             {{else}}
               <div class="alert alert-warning"><i class="fa fa-exclamation-circle"></i> There is no modules added!</div>
@@ -18,7 +33,23 @@
         </ul>
       </div>
       <div class="panel-footer">
-        <button class="btn btn-success btn-block"><i class="fa fa-play"></i> Run</button>
+        <div class="btn-group btn-group-justified" role="group">
+          <div class="btn-group" role="group">
+            <button class="btn btn-xs btn-default {{../id}}-edit" data-id="{{this.id}}" title="Edit Airline Information"><i class="fa fa-pencil"></i>
+            </button>
+          </div>
+          <div class="btn-group" role="group">
+            <button class="btn btn-xs btn-default {{../id}}-schedule" data-id="{{this.id}}" title="Edit Execution Schedule"><i class="fa fa-calendar"></i>
+            </button>
+          </div>
+          <div class="btn-group" role="group">
+            <button class="btn btn-xs btn-default {{../id}}-modules" data-id="{{this.id}}" title="Edit Modules"><i class="fa fa-list-ul"></i>
+            </button>
+          </div>
+        </div>
+        <div>
+          <button class="btn btn-success btn-block {{../id}}-run" data-id="{{this.id}}"><i class="fa fa-play"></i> Run</button>
+        </div>
       </div>
     </div>
   </div>
