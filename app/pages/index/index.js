@@ -7,7 +7,7 @@ define(function(require) {
 
         Backbone = require('backbone'),
         EditView = require('./index/edit'),
-       
+
 
         Airline = require('models/airline'),
         Dialog = require('views/controls/dialog'),
@@ -15,8 +15,7 @@ define(function(require) {
         StatusCollection = require('collections/execution-status'),
         AirlineCollection = require('collections/airline'),
         ModuleCollection = require('collections/module');
-    // ,
-    // Select2 = require('select2');
+
 
 
     var Page = Super.extend({});
@@ -51,9 +50,13 @@ define(function(require) {
             .then(function() {
                 var events = {};
                 events['click ' + that.toId('new')] = 'onNewClick';
+                events['click ' + that.toId('run-all')] = 'onRunAllClick';
+                events['click ' + that.toId('stop')] = 'onStopClick';
                 that.delegateEvents(events);
 
-                // that.airlineCollection.on('reset add remove sort', that.renderAirlines.bind(that));
+                that.on('run-all-terminated', that.onRunAllTerminated.bind(that));
+                that.on('run-all-started', that.onRunAllStarted.bind(that));
+                that.on('run-all-completed', that.onRunAllStarted.bind(that));
 
                 //keep updating airlines
                 that.fetch();
@@ -63,14 +66,68 @@ define(function(require) {
             });
 
     };
+    
+    
+    Page.prototype.onRunAllCompleted = function(){
+        this.controls.runAll.removeClass('hidden');
+        this.controls.new.removeClass('hidden');
+        this.controls.stop.addClass('hidden');
+    };
+    
+    Page.prototype.onRunAllTerminated = function(){
+        this.controls.runAll.removeClass('hidden');
+        this.controls.new.removeClass('hidden');
+        this.controls.stop.addClass('hidden');
+    };
+    
+    Page.prototype.onRunAllStarted = function(){
+        this.controls.runAll.addClass('hidden');
+        this.controls.new.addClass('hidden');
+        this.controls.stop.removeClass('hidden');
+    };
+
+    Page.prototype.onStopClick = function(event) {
+        var that = this;
+        that.runAllStopRequested = true;
+    };
 
 
+    Page.prototype.onRunAllClick = function(event) {
+        var that = this;
+        that.runningAirlineIndex = 0;
+        that.trigger('run-all-started');
+        that.run();
+    };
+
+    Page.prototype.run = function() {
+        var that = this;
+        var runningAirline = that.airlineCollection.at(that.runningAirlineIndex);
+
+        that.listenToOnce(runningAirline.view, 'completed', function() {
+            that.runningAirlineIndex++;
+            if (that.runAllStopRequested) {
+                that.runAllStopRequested = false;
+                that.trigger('run-all-terminated');
+            }
+            else {
+                if (that.runningAirlineIndex < that.airlineCollection.length) {
+                    that.run();
+                }
+                else {
+                    that.trigger('run-all-completed');
+                }
+            }
+        });
+
+        runningAirline.view.run();
+    };
 
     Page.prototype.onNewClick = function(event) {
         var that = this;
         event.preventDefault();
 
         var model = new Airline({
+            abbr: 'ZZ',
             name: 'New Airline'
         });
 
@@ -78,15 +135,13 @@ define(function(require) {
                 wait: true
             }))
             .then(function() {
-                that.airlineCollection.add(model);
-                that.showEditAirlineDialog(model);
+                that.refresh();
+                that.toast.success('A new airline has been added at the bottom.');
             });
-
-
     };
 
 
-    
+
 
 
 
@@ -117,6 +172,7 @@ define(function(require) {
     };
 
     Page.prototype.onAirlineDeleted = function(airline) {
+        this.airlineCollection.remove(airline);
         this.refresh();
         this.toast.success("Airline has been deleted!");
     };
@@ -147,31 +203,13 @@ define(function(require) {
             airline.view = view;
         });
 
-
-
-        // that.controls.airlines.html(AIRLINES({
-        //     id: that.id,
-        //     airlines: that.airlineCollection.map(function(airline) {
-        //         return _.extend(airline.toJSON(), {
-        //             modules: _.map(that.moduleCollection.filter(function(model) {
-        //                 return model.get('airlineId') == airline.id &&
-        //                     model.get('isEnabled');
-        //             }), function(module) {
-        //                 return _.extend(module.toJSON(), {
-        //                     isRunning: module.get('executionStatusId') == ExecutionStatus.ID_RUNNING,
-        //                     isError: module.get('executionStatusId') == ExecutionStatus.ID_ERROR,
-        //                     isOK: module.get('executionStatusId') == ExecutionStatus.ID_OK,
-        //                     isNotStarted: module.get('executionStatusId') == ExecutionStatus.ID_NOT_STARTED,
-        //                 });
-        //             })
-        //         });
-        //     })
-        // }));
     };
 
     Page.prototype.fetch = function() {
         var that = this;
-        return B.resolve(that.airlineCollection.fetch())
+        return B.resolve(that.airlineCollection.fetch(undefined, {
+                reset: true
+            }))
             .then(function() {
                 return that.moduleCollection.fetch({
                     data: {
@@ -184,6 +222,8 @@ define(function(require) {
                             value: 1
                     }]
                     }
+                }, {
+                    reset: true
                 });
             });
 

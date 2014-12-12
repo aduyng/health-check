@@ -1,7 +1,7 @@
 var utils = require('utils'),
 casper = require('casper').create({
 	logLevel: 'info',
-	waitTimeout: 30000,
+	waitTimeout: 18000,
 	pageSettings: {
 		webSecurityEnabled: false,
 		loadImages: true,

@@ -23,31 +23,52 @@ define(function(require) {
 
     View.prototype.render = function() {
         var that = this;
-
-
-        that.$el.html(TEMPLATE({
-            id: that.id,
-            airline: that.airline.toJSON()
-        }));
+        that.draw();
         that.mapControls();
-        that.renderModules();
-
 
         var events = {};
-        events['click ' + that.toClass('edit')] = 'onEditClick';
-        events['click ' + that.toClass('show-modules')] = 'onModulesClick';
-        events['click ' + that.toClass('show-schedule')] = 'onScheduleClick';
+        events['click ' + that.toId('edit')] = 'onEditClick';
+        events['click ' + that.toId('show-modules')] = 'onModulesClick';
+        events['click ' + that.toId('show-schedule')] = 'onScheduleClick';
         events['click ' + that.toId('run')] = 'onRunClick';
         that.delegateEvents(events);
 
-        that.updateStatus();
-
     };
 
-    View.prototype.renderModules = function() {
+    View.prototype.draw = function(isRunning) {
         var that = this;
+        var modules = that.modules.map(function(module) {
+            return _.extend(module.toJSON(), {
+                isRunning: module.get('executionStatusId') == ExecutionStatus.ID_RUNNING,
+                isError: module.get('executionStatusId') == ExecutionStatus.ID_ERROR,
+                isOK: module.get('executionStatusId') == ExecutionStatus.ID_OK,
+                isNotStarted: module.get('executionStatusId') == ExecutionStatus.ID_NOT_STARTED,
+            });
+        });
+        var panelClass = 'panel-default';
+        isRunning = isRunning || _.find(modules, function(module) {
+            return module.isRunning;
+        }) || false;
 
-        that.controls.modules.html(MODULES({
+        if (isRunning) {
+            panelClass = 'panel-warning';
+        }
+        else if (_.find(modules, function(module) {
+                return module.isError;
+            })) {
+            panelClass = 'panel-danger';
+        }
+        else if (_.find(modules, function(module) {
+                return module.isOK;
+            })) {
+            panelClass = 'panel-success';
+        }
+
+        that.$el.html(TEMPLATE({
+            id: that.id,
+            airline: that.airline.toJSON(),
+            panelClass: panelClass,
+            isRunning: isRunning,
             modules: that.modules.map(function(module) {
                 return _.extend(module.toJSON(), {
                     isRunning: module.get('executionStatusId') == ExecutionStatus.ID_RUNNING,
@@ -63,54 +84,48 @@ define(function(require) {
     View.prototype.onRunClick = function(event) {
         var that = this;
         event.preventDefault();
-
-        that.airline.run()
+        that.run();
+    };
+    
+    View.prototype.run = function(){
+        var that = this;
+        that.draw(true);
+        
+        return that.airline.run()
             .then(function() {
-                that.updateStatus();
+                that.trigger('started');
                 that.startUpdateStatusProcess();
             });
     };
 
     View.prototype.startUpdateStatusProcess = function() {
         var that = this;
-
+        return B.all([that.airline.fetch(),
         that.modules.fetch({
-                data: {
-                    selection: [{
-                        field: 'airlineId',
-                        value: that.airline.id
+                    data: {
+                        selection: [{
+                            field: 'airlineId',
+                            value: that.airline.id
                 }, {
-                        field: 'isEnabled',
-                        value: 1
+                            field: 'isEnabled',
+                            value: 1
                     }]
-                }
-            }, {
-                reset: true
-            })
+                    }
+                }, {
+                    reset: true
+                })])
             .then(function() {
-                that.updateStatus();
-                that.renderModules();
+                that.draw();
 
                 if (that.modules.find(function(module) {
                         return module.get('executionStatusId') === ExecutionStatus.ID_RUNNING
                     }) !== undefined) {
                     _.delay(that.startUpdateStatusProcess.bind(that), 5000);
+                }else{
+                    that.trigger('completed');
                 }
             });
     };
-
-    View.prototype.updateStatus = function() {
-        var that = this;
-        var isRunning = that.modules.find(function(module) {
-            return module.get('executionStatusId') === ExecutionStatus.ID_RUNNING
-        }) !== undefined;
-
-        that.controls.run.prop('disabled', isRunning);
-        that.controls.showModules.prop('disabled', isRunning);
-        that.controls.edit.prop('disabled', isRunning);
-        that.controls.showSchedule.prop('disabled', isRunning);
-    };
-
 
 
     View.prototype.onEditClick = function(event) {
@@ -208,9 +223,12 @@ define(function(require) {
                         wait: true
                     }))
                     .then(function() {
-                        that.trigger('deleted', that.airline);
-                        confirmDlg.close();
-                        dlg.close();
+                        _.delay(function() {
+                            that.trigger('deleted', that.airline);
+                            confirmDlg.close();
+                            dlg.close();
+                        }, 1000);
+
                     });
             });
         });

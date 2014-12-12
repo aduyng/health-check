@@ -4,7 +4,8 @@ define(function(require) {
         Model = require('../models/airline');
 
     var Collection = Super.extend({
-        model: Model
+        model: Model,
+        comparator: 'abbr'
     });
 
     // Collection.prototype.toDropdown = function(target, options) {

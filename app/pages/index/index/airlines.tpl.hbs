@@ -2,14 +2,15 @@
   <div class="col-sm-4 col-md-4 col-lg-3">
     <div class="panel panel-default airline">
       <div class="panel-heading">
-        <code class="">{{this.abbr}}</code> {{this.name}}</div>
-      <div class="panel-body">
+        <code class="">{{this.abbr}}</code> {{this.name}}
         {{#if this.executedAt}}
-        <div class="alert alert-info">
-          <small>Last Execution: {{formatDateTime this.executedAt}}</small>
-        </div>
-        
+          <div class="pull-right last-executed-at">
+            Last Execution: {{formatDateTime this.executedAt}}
+          </div>
         {{/if}}
+      </div>
+      <div class="panel-body">
+
         <ul class="list-group modules">
           {{#each this.modules}}
             <li class="list-group-item module">
@@ -29,9 +30,7 @@
                 {{#if this.isNotStarted}}
                 <i class="fa fa-certificate"></i>
                 {{/if}}
-              </span>
-              
-              {{this.name}}
+              </span> {{this.name}}
             </li>
             {{else}}
               <div class="alert alert-warning"><i class="fa fa-exclamation-circle"></i> There is no modules added!</div>

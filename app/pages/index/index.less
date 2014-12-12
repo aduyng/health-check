@@ -1,11 +1,28 @@
-#controller-index{
-    #action-index{
-        .airlines{
-            .airline{
-                .panel-body{
-                    height: 22em;
+#controller-index {
+    #action-index {
+        .airlines {
+            .airline {
+                border-color: #888;
+                &>.panel-heading {
+                    font-weight: bold;
+                    &>.last-executed-at {
+                        font-size: .7em;
+                        font-weight: 400;
+                    }
+                    .abbr {
+                        font-weight: bolder;
+                        font-size: 1.5em;
+                    }
+                }
+                &>.panel-body {
+                    height: 14em;
                     overflow-y: auto;
                     overflow-x: hidden;
+                    padding-top: 10px;
+                    padding-bottom: 0px;
+                    &>.modules{
+                        margin-bottom: 0px;
+                    }
                 }
             }
         }

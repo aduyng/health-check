@@ -14,7 +14,7 @@ casper.waitFor(function() {
 	return casper.evaluate(function() {
 		return !$('#loading').is(':visible') 
     && !$('#overlay').is(':visible') 
-    && $('#search').size() > 0  ;
+    && $('#search').size() > 0    ;
 	});
 }, undefined, function(){
 	casper.exit(9);});casper.waitFor(function() {
