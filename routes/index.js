@@ -7,5 +7,6 @@ module.exports = function (app) {
 
     app.get('/index/config', controller.config);
     app.post('/index/run/:id', controller.run);
+    app.post('/index/clone/:id', controller.clone);
 
 };

@@ -1,0 +1,27 @@
+<ul class="list-group modules">
+  {{#each modules}}
+    <li class="list-group-item module">
+      <span class="pull-right">
+        {{#if this.isRunning}}
+        <i class="fa fa-spinner fa-spin text-warning"></i>
+        {{/if}}
+        
+        {{#if this.isError}}
+        <i class="fa fa-exclamation-circle text-danger"></i>
+        {{/if}}
+        
+        {{#if this.isOK}}
+        <i class="fa fa-check-circle text-success"></i>
+        {{/if}}
+        
+        {{#if this.isNotStarted}}
+        <i class="fa fa-certificate"></i>
+        {{/if}}
+      </span>
+      
+      {{this.name}}
+    </li>
+    {{else}}
+      <div class="alert alert-warning"><i class="fa fa-exclamation-circle"></i> There is no modules added!</div>
+  {{/each}}
+</ul>

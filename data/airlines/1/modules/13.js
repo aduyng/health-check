@@ -1,7 +1,7 @@
 var utils = require('utils'),
 casper = require('casper').create({
 	logLevel: 'info',
-	waitTimeout: 30000,
+	waitTimeout: 18000,
 	pageSettings: {
 		webSecurityEnabled: false,
 		loadImages: true,
@@ -15,7 +15,7 @@ casper.waitFor(function() {
 		return !$('#loading').is(':visible') 
     && !$('#overlay').is(':visible') 
     && $('#search-flights').is(':visible') 
-    && $('#departure-airport>option').size() > 0; 
+    && $('#departure-airport>option').size() > 0;
 	});
 }, undefined, function(){
 	casper.exit(3);});casper.waitFor(function() {
@@ -29,6 +29,24 @@ casper.waitFor(function() {
 && $('#flight-type-one-way-trip').val() === 'ONE_WAY' &&  $('#flight-type-one-way-trip').is(':not(:checked)');
 	});
 }, undefined, function(){
-	casper.exit(8);});casper.run(function() {
+	casper.exit(8);});casper.waitFor(function() {
+	return casper.evaluate(function() {
+		return $('#departure-date').size() > 0 && $('#return-date').size() > 0 ;
+	});
+}, undefined, function(){
+	casper.exit(22);});casper.waitFor(function() {
+	return casper.evaluate(function() {
+		return $("#ADT_passengers").val() == 1 && 
+		$("#CHD_passengers").val() == 0  &&
+		($('#INF_passengers').length ?  ($('#INF_passengers').val() == 0) :  true);
+	});
+}, undefined, function(){
+	casper.exit(23);});casper.waitFor(function() {
+	return casper.evaluate(function() {
+		return ($('#promo-code').length ?  ($('#promo-code').size() > 0) :  true);
+
+	});
+}, undefined, function(){
+	casper.exit(24);});casper.run(function() {
 	casper.exit(0);
 });

@@ -1,7 +1,7 @@
 var utils = require('utils'),
 casper = require('casper').create({
 	logLevel: 'info',
-	waitTimeout: 30000,
+	waitTimeout: 18000,
 	pageSettings: {
 		webSecurityEnabled: false,
 		loadImages: true,
@@ -19,26 +19,17 @@ casper.waitFor(function() {
 }, undefined, function(){
 	casper.exit(11);});casper.waitFor(function() {
 	return casper.evaluate(function() {
-		return $('#departure-airport').size()>0
-    && $('#arrival-airport').size()>0
-    && $('#departure-airport>option').size()>0
-    && $('#arrival-airport>option').size()>0;
-    
+		return $('#departure-airport>option').size()>0
+&& $('#arrival-airport>option').size()>0;
 	});
 }, undefined, function(){
-	casper.exit(12);});casper.waitFor(function() {
-	return casper.evaluate(function() {
-		$('#departure-airport').val('AUH');
-return $('#departure-airport').val() === 'AUH';
-	});
-}, undefined, function(){
-	casper.exit(13);});casper.waitFor(function() {
+	casper.exit(32);});casper.waitFor(function() {
 	return casper.evaluate(function() {
 		var d = new Date();
-var str = [d.getDate(), d.getMonth()+1, d.getFullYear()].join('/');
-return $('#date-Today').val() == str;
+var str = ((d.getDate()+'').length == 1 ? '0'+d.getDate() : d.getDate())  +'/'+(d.getMonth()+1)+'/'+d.getFullYear() ;
+return $('#date').val() == str;
 	});
 }, undefined, function(){
-	casper.exit(14);});casper.run(function() {
+	casper.exit(33);});casper.run(function() {
 	casper.exit(0);
 });

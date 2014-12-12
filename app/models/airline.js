@@ -7,9 +7,17 @@ define(function(require) {
 
     Model.prototype.run = function() {
         var that = this;
-        B.resolve(window.app.socket.request({
+        return B.resolve(window.app.socket.request({
                 type: 'POST',
                 url: '/index/run/' + that.id
+            }));
+    };
+    
+    Model.prototype.duplicate = function() {
+        var that = this;
+        return B.resolve(window.app.socket.request({
+                type: 'POST',
+                url: '/index/clone/' + that.id
             }));
     };
 

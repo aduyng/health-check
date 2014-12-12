@@ -1,7 +1,12 @@
 <div class="clearfix">
     <div class="pull-right">
+        <button class="btn btn-info" id="{{id}}-run-all"><i class="fa fa-play"></i> Run All</button>
         <button class="btn btn-success" id="{{id}}-new"><i class="fa fa-plus"></i> New Airline</button>
     </div>
 </div>
 <div id="{{id}}-airlines" class="airlines">
+    {{#each airlines}}
+    <div id="{{../id}}-airline-{{id}}" class="col-sm-4 col-md-4 col-lg-3">
+    </div>
+    {{/each}}
 </div>

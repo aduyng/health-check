@@ -4,6 +4,12 @@
       <div class="panel-heading">
         <code class="">{{this.abbr}}</code> {{this.name}}</div>
       <div class="panel-body">
+        {{#if this.executedAt}}
+        <div class="alert alert-info">
+          <small>Last Execution: {{formatDateTime this.executedAt}}</small>
+        </div>
+        
+        {{/if}}
         <ul class="list-group modules">
           {{#each this.modules}}
             <li class="list-group-item module">

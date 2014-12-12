@@ -28,7 +28,7 @@ Model.prototype.run = function(airline) {
         "var utils = require('utils'),\n" +
         "casper = require('casper').create({\n" +
         "\tlogLevel: 'info',\n" +
-        "\twaitTimeout: 30000,\n" +
+        "\twaitTimeout: 18000,\n" +
         "\tpageSettings: {\n" +
         "\t\twebSecurityEnabled: false,\n" +
         "\t\tloadImages: true,\n" +

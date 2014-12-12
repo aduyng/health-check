@@ -1,0 +1,32 @@
+<div class="panel panel-default airline">
+  <div class="panel-heading">
+    <code class="">{{airline.abbr}}</code> {{airline.name}}</div>
+  <div class="panel-body">
+    {{#if airline.executedAt}}
+    <div class="alert alert-info">
+      <small>Last Execution: {{formatDateTime airline.executedAt}}</small>
+    </div>
+    {{/if}}
+    <div id="{{id}}-modules"></div>
+    
+  </div>
+  <div class="panel-footer">
+    <div class="btn-group btn-group-justified" role="group">
+      <div class="btn-group" role="group">
+        <button class="btn btn-xs btn-default" id="{{id}}-edit" data-id="{{airline.id}}" title="Edit Airline Information"><i class="fa fa-pencil"></i>
+        </button>
+      </div>
+      <div class="btn-group" role="group">
+        <button class="btn btn-xs btn-default" id="{{id}}-show-schedule" data-id="{{airline.id}}" title="Edit Execution Schedule"><i class="fa fa-calendar"></i>
+        </button>
+      </div>
+      <div class="btn-group" role="group">
+        <button class="btn btn-xs btn-default" id="{{id}}-show-modules" data-id="{{airline.id}}" title="Edit Modules"><i class="fa fa-list-ul"></i>
+        </button>
+      </div>
+    </div>
+    <div>
+      <button class="btn btn-success btn-block" id="{{id}}-run" data-id="{{airline.id}}"><i class="fa fa-play"></i> Run</button>
+    </div>
+  </div>
+</div>

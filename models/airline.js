@@ -28,6 +28,11 @@ Model.prototype.run = function() {
             return modules.map(function(module){
                 return module.run(that);
             });
+        })
+        .then(function(){
+            return that.save({
+                executedAt: _.now()
+            });
         });
 };
 
