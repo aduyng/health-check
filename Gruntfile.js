@@ -276,8 +276,8 @@ module.exports = function (grunt) {
                     //in the minified files.
                     //- "none": no minification will be done.
 //                    optimize                  : "uglify2",
-                    // optimize: "uglify2",
-                    optimize: 'none',
+                    optimize: "uglify2",
+                    // optimize: 'none',
 
                     //Introduced in 2.1.2: If using "dir" for an output directory, normally the
                     //optimize setting is used to optimize the build bundles (the "modules"

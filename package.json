@@ -1,6 +1,6 @@
 {
   "name": "visual-regression-tool-web",
-  "version": "1.0",
+  "version": "1.0.0",
   "private": true,
   "engines": {
     "node": "0.10.x"
@@ -32,21 +32,21 @@
   },
   "devDependencies": {
     "grunt": "^0.4.4",
-    "grunt-contrib-requirejs": "^0.4.3",
-    "grunt-express": "^1.2.1",
-    "grunt-contrib-watch": "^0.6.1",
-    "matchdep": "^0.3.0",
-    "grunt-concurrent": "^0.5.0",
-    "grunt-external-daemon": "^1.1.0",
-    "grunt-contrib-copy": "^0.5.0",
-    "grunt-contrib-clean": "^0.5.0",
-    "grunt-contrib-less": "^0.11.0",
-    "grunt-contrib-htmlmin": "^0.2.0",
-    "grunt-contrib-uglify": "^0.4.0",
     "grunt-cdnify": "0.0.2",
+    "grunt-concurrent": "^0.5.0",
+    "grunt-contrib-clean": "^0.5.0",
+    "grunt-contrib-copy": "^0.5.0",
+    "grunt-contrib-htmlmin": "^0.2.0",
+    "grunt-contrib-less": "^0.11.0",
+    "grunt-contrib-requirejs": "^0.4.3",
+    "grunt-contrib-uglify": "^0.6.0",
+    "grunt-contrib-watch": "^0.6.1",
     "grunt-devtools": "^0.2.1",
+    "grunt-express": "^1.2.1",
+    "grunt-external-daemon": "^1.1.0",
+    "grunt-file-creator": "~0.1.1",
     "grunt-shell-spawn": "^0.3.0",
-    "uglifyjs": "^2.3.6",
-    "grunt-file-creator": "~0.1.1"
+    "matchdep": "^0.3.0",
+    "uglifyjs": "^2.3.6"
   }
 }
