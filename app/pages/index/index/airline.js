@@ -33,6 +33,11 @@ define(function(require) {
         events['click ' + that.toId('run')] = 'onRunClick';
         that.delegateEvents(events);
 
+        if (that.modules.find(function(module) {
+                return module.get('executionStatusId') === ExecutionStatus.ID_RUNNING
+            }) !== undefined) {
+            that.startUpdateStatusProcess();
+        }
     };
 
     View.prototype.draw = function(isRunning) {
@@ -86,11 +91,11 @@ define(function(require) {
         event.preventDefault();
         that.run();
     };
-    
-    View.prototype.run = function(){
+
+    View.prototype.run = function() {
         var that = this;
         that.draw(true);
-        
+
         return that.airline.run()
             .then(function() {
                 that.trigger('started');
@@ -121,7 +126,8 @@ define(function(require) {
                         return module.get('executionStatusId') === ExecutionStatus.ID_RUNNING
                     }) !== undefined) {
                     _.delay(that.startUpdateStatusProcess.bind(that), 5000);
-                }else{
+                }
+                else {
                     that.trigger('completed');
                 }
             });
