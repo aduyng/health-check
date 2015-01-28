@@ -78,8 +78,7 @@ define(function(require) {
         var that = this;
         var model = new Setting({
             moduleId: that.model.id,
-            name: 'Setting ' + that.collection.getNextPriority(),
-            priority: that.collection.getNextPriority()
+            name: 'Setting '
         });
 
         B.resolve(model.save(null, {
