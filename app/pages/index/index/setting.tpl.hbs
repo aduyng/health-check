@@ -1,0 +1,26 @@
+<table class="table table-condensed table-hover">
+  <thead>
+    <tr>
+      <th>KEY</th>
+      <th>VALUE</th>
+      <th style="width: 100px">
+        <button class="btn btn-sm btn-success" id="{{id}}-new"><i class="fa fa-plus"></i> New Setting</button>
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    {{#each settings}}
+    <tr>
+      <td>
+        <input type="text" data-id="{{this.id}}" class="form-control {{../id}}-key" placeholder="Key" value="{{this.key}}"></td>
+      <td>
+        <input type="text" data-id="{{this.id}}" class="form-control {{../id}}-value" placeholder="Value" value="{{this.value}}" />
+      </td>
+      <td>
+        <button class="btn btn-xs btn-danger btn-block {{../id}}-remove" data-id="{{this.id}}"><i class="fa fa-trash-o"></i>
+        </button>
+      </td>
+    </tr>
+    {{/each}}
+  </tbody>
+</table>

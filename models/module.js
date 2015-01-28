@@ -18,8 +18,11 @@ Model.prototype.run = function(airline) {
         writeFile = B.promisify(fs.writeFile),
         mkdir = B.promisify(fs.mkdir),
         StepCollection = require('../collections/step'),
+        SettingCollection = require('../collections/setting'),
         ExecutionStatus = require('./execution-status'),
-        steps;
+        settingContent = '',
+        steps,
+        settings;
 
     //take all steps and generate scripts
     var absPath = [config.rootPath, 'data', 'airlines', airline.id, 'modules', that.id + '.js'].join('/');
@@ -57,6 +60,8 @@ Model.prototype.run = function(airline) {
                     patch: true
                 });
             }));
+            logger.info('steps');
+            logger.info(steps);
         })
         .then(function() {
             return mkdir([config.rootPath, 'data', 'airlines', airline.id].join('/'))
@@ -67,8 +72,37 @@ Model.prototype.run = function(airline) {
                 .catch(function(e) {
                 })
         })
+        .then(function(){
+            return SettingCollection.forge()
+            .query(function(qb) {
+                qb.where('moduleId', that.id);
+                qb.whereNotNull('key');
+                qb.whereNotNull('value');
+            })
+            .fetch();
+            
+        })
+        .then(function(s) {
+            settings = s;
+            logger.info(JSON.stringify(s));
+            settingContent = settings.reduce(function(memo, setting) {
+                settingContent += "window."+ setting.get('key') + "='" + setting.get('value') + "';\n";
+                return settingContent;
+            }, settingContent);
+            logger.info(settingContent);
+        })
         .then(function() {
             logger.info('about to save content');
+            
+            content += "casper.waitFor(function() {\n" +
+                    "\treturn casper.evaluate(function() {\n" +
+                    "\t\t" + settingContent + "\n" +
+                    "\t\treturn true;\n" + 
+                    "\t});\n" +
+                    "}, undefined, function(){\n" +
+                    "\tcasper.exit(" + 0 + ");" +
+                    "});";
+            
             content = steps.reduce(function(memo, step) {
                 content += "casper.waitFor(function() {\n" +
                     "\treturn casper.evaluate(function() {\n" +
@@ -82,7 +116,7 @@ Model.prototype.run = function(airline) {
             content += "casper.run(function() {\n" +
                 "\tcasper.exit(0);\n" +
                 "});";
-            logger.info('write to file ', absPath, content);
+            // logger.info('write to file ', absPath, content);
             //write content to a file
             return writeFile(absPath, content, {
                 flags: 'w'

@@ -5,6 +5,7 @@ define(function(require) {
         Module = require('models/module'),
         ModuleCollection = require('collections/module'),
         CodeView = require('./code'),
+        SettingView = require('./setting'),
         Dialog = require('views/controls/dialog'),
         TEMPLATE = require('hbs!./modules.tpl');
 
@@ -31,6 +32,7 @@ define(function(require) {
                 var events = {};
                 events['click ' + that.toId('new')] = 'newButtonClickHandler';
                 events['click ' + that.toClass('remove')] = 'removeButtonClickHandler';
+                events['click ' + that.toClass('settings')] = 'settingsButtonClickHandler';
                 events['click ' + that.toClass('code')] = 'codeButtonClickHandler';
                 events['click ' + that.toId('all-modules-checkbox')] = 'allModulesCheckboxClickHandler';
                 events['click ' + that.toClass('module-checkbox')] = 'moduleCheckboxClickHandler';
@@ -79,6 +81,40 @@ define(function(require) {
         B.resolve(module.destroy({
                 wait: true
             }));
+    };
+    
+    View.prototype.settingsButtonClickHandler = function(event) {
+        var that = this,
+            dlg;
+        var e = $(event.currentTarget);
+        var model = that.collection.get(e.data('id'));
+
+        console.log(model);
+        var view = new SettingView({
+            model: model
+        });
+
+        var buttons = [{
+            id: 'done',
+            label: 'Done',
+            iconClass: 'fa fa-check',
+            buttonClass: 'btn-primary',
+            align: 'left',
+            autoClose: true
+                    }];
+
+
+        dlg = new Dialog({
+            sizeClass: 'modal-lg',
+            body: view,
+            title: 'Settings for ' + model.get('name'),
+            buttons: buttons
+        });
+
+        dlg.on('save', function(event) {
+            model.set(view.serialize());
+            dlg.close();
+        });
     };
 
     View.prototype.codeButtonClickHandler = function(event) {

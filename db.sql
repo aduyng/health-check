@@ -172,6 +172,28 @@ INSERT INTO `Step` VALUES (3,13,'return !$(\'#loading\').is(\':visible\') \n    
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
+--
+-- Table structure for table `Setting`
+--
+
+DROP TABLE IF EXISTS `Setting`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `Setting` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `moduleId` int(10) unsigned NOT NULL,
+  `key` text,
+  `value` text,
+  `createdAt` bigint(20) unsigned NOT NULL DEFAULT '0',
+  `updatedAt` bigint(20) unsigned NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `FK_Setting_moduleId` (`moduleId`),
+  CONSTRAINT `Setting_ibfk_1` FOREIGN KEY (`moduleId`) REFERENCES `Module` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=414 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+
+
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
 /*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
