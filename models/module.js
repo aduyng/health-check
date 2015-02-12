@@ -7,6 +7,7 @@ var Super = require('./base'),
     logger = require('../logger'),
     nexpect = require('nexpect'),
     fs = require('fs'),
+    najax = require('najax'),
     path = require('path'),
     Model = Super.extend({
         tableName: 'Module'
@@ -22,7 +23,9 @@ Model.prototype.run = function(airline) {
         ExecutionStatus = require('./execution-status'),
         settingContent = '',
         steps,
-        settings;
+        settings,
+        settingVar = {},
+        pnr;
 
     //take all steps and generate scripts
     var absPath = [config.rootPath, 'data', 'airlines', airline.id, 'modules', that.id + '.js'].join('/');
@@ -39,7 +42,8 @@ Model.prototype.run = function(airline) {
         "\t}\n" +
         "}),\n" +
         "startUrl = casper.cli.options.url;\n" +
-        "casper.start(startUrl);\n";
+        "casper.start(startUrl);\n" +
+        "var pnr = casper.cli.options.pnr;\n";
 
 
     //read all steps
@@ -87,6 +91,7 @@ Model.prototype.run = function(airline) {
             logger.info(JSON.stringify(s));
             settingContent = settings.reduce(function(memo, setting) {
                 settingContent += "window."+ setting.get('key') + "='" + setting.get('value') + "';\n";
+                settingVar[setting.get('key')] = ''+ setting.get('value');
                 return settingContent;
             }, settingContent);
             logger.info(settingContent);
@@ -95,10 +100,11 @@ Model.prototype.run = function(airline) {
             logger.info('about to save content');
             
             content += "casper.waitFor(function() {\n" +
-                    "\treturn casper.evaluate(function() {\n" +
+                    "\treturn casper.evaluate(function(pnr) {\n" +
+                    "\t\twindow.pnr = pnr\n" +
                     "\t\t" + settingContent + "\n" +
                     "\t\treturn true;\n" + 
-                    "\t});\n" +
+                    "\t}, pnr);\n" +
                     "}, undefined, function(){\n" +
                     "\tcasper.exit(" + 0 + ");" +
                     "});";
@@ -131,9 +137,20 @@ Model.prototype.run = function(airline) {
                 patch: true
             });
         })
-        .then(function() {
+        .then(function(){
+            logger.info('pnrEnabled', settingVar.pnrEnabled === "true" );
+            if(settingVar.pnrEnabled === "true"){
+                var data = {airlines: settingVar.airlines, from: settingVar.departurePort, to: settingVar.arrivalPort, todayPlus: 1, flightNumber: settingVar.flightNumber , flightClass: "Y", isTsts: "false"};
+                return najax({url: 'https://wl11-int.sabresonicweb.com/pnrgen/pnr', type: 'POST', data: data, contentType: 'json'});
+            }else{
+                return false;
+            }
+        })
+        .then(function(pnr) {
             //execute the script
-            var cmd = [config.casper.absolutePath, absPath, '--url=' + that.get('url')].join(' ');
+            pnr = JSON.parse(pnr);
+            pnr = pnr.pnr || '';
+            var cmd = [config.casper.absolutePath, absPath, '--url=' + that.get('url'), '--pnr='+ pnr].join(' ');
             logger.info('command to execute: ' + cmd);
             return new B(function(resolve, reject) {
                 nexpect.spawn(cmd)
