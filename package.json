@@ -47,7 +47,6 @@
     "grunt-external-daemon": "^1.1.0",
     "grunt-file-creator": "~0.1.1",
     "grunt-shell-spawn": "^0.3.0",
-    "matchdep": "^0.3.0",
-    "uglifyjs": "^2.3.6"
+    "matchdep": "^0.3.0"
   }
 }
