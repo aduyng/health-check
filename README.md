@@ -6,44 +6,43 @@ Most of the web applications today use are single page applications. Most of the
 
 # Installation Steps
 * Spin up an Ubuntu instance and access to its console as root
-* Install required software
- * Update apt package registry
+* Update apt package registry
 ```sh
 $ apt-get update
 ```
- * Install mysql-server and specify root password
+* Install mysql-server and specify root password
 ```sh
 $ apt-get install mysql-server
 ```
- * Install nodejs
+* Install nodejs
 ```sh
 $ apt-get install nodejs
 ```
-  * Create alias for nodejs as node
+* Create alias for nodejs as node
 ```sh
 $ ln -s /usr/bin/nodejs /usr/bin/node
 ```
- * Install node package manager (NPM)
+* Install node package manager (NPM)
 ```sh
 $ apt-get install npm
 ```
- * Install git client
+* Install git client
 ```sh
 $ apt-get install git
 ```
- * Install libfontconfig (phantomjs secret dependency)
+* Install libfontconfig (phantomjs secret dependency)
 ```sh
 $ apt-get install libfontconfig
 ```
- * Install forever globally for executing node as daemon
+* Install forever globally for executing node as daemon
 ```sh
 $ npm install -g forever
 ```
- * Install phantomjs globally
+* Install phantomjs globally
 ```sh
 $ npm install -g phantomjs
 ```
- * Install casperjs globally and record the executable location
+* Install casperjs globally and record the executable location
 ```sh
 $ npm install -g casperjs
 $ whereis casperjs
@@ -57,19 +56,18 @@ $ git clone https://github.com/aduyng/health-check.git /var/www/node/health-chec
 ```sh
 cd /var/www/node/health-check
 ```
-* Setting up the database
- * Connecting to database server
+* Connecting to database server and set up database
 ```sh
 mysql -u root -p<root password>
 ```
- * Create a new database & user
+* Create a new database & user
 ```sql
 create database healthcheck;
 create user healthcheck;
 grant all on healthcheck.* to healthcheck@localhost identified by '<database password>';
 exit;
 ```
- * Log in as the newly created user and import data
+* Log in as the newly created user and import data
 ```sh
 mysql -u healthcheck -p<database password>
 ```
@@ -121,5 +119,8 @@ PORT=80 NODE_ENV=production forever start server.js
 ```
 * Access to your server via http and voila!
 
-# Notes
+# NOTES
 The application still buggy, please folk and contribute!
+
+# LICENSE
+All rights reserved (for now)
