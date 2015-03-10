@@ -1,5 +1,4 @@
 # What is it?
----- 
 Doing more than just a 200 and regex check, HealthCheck loads the application in phantomjs and use casperjs to navigate and verify elements on the page. 
 
 # Why? 
