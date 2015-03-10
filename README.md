@@ -120,7 +120,7 @@ PORT=80 NODE_ENV=production forever start server.js
 * Access to your server via http with username=cssmobile, password=mobile10 and VOILA!
 
 # NOTES
-The application still buggy, please folk and contribute!
+The application still buggy.
 
 # LICENSE
 All rights reserved (for now)
