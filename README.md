@@ -9,7 +9,7 @@ Primary technologies used:
 * Backend: NodeJS, ExpressJs, PhantomJs, CasperJS, KnexJS, BookshelfJS
 * Frontend: BackboneJS, RequireJS, UnderscoreJS, JQuery, and Handlebars
 
-https://www.lucidchart.com/documents/view/023edafd-1317-45c5-85fb-79d59235130f
+![Overview](https://www.lucidchart.com/publicSegments/view/54ff22f1-ac18-4a37-b665-234c0a00494a/image.jpeg)
 
 # Installation Steps
 * Spin up an Ubuntu instance and access to its console as root
