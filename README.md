@@ -49,7 +49,7 @@ $ npm install -g casperjs
 $ whereis casperjs
 # casperjs: /usr/local/bin/casperjs
 ```
-3. Check out code from repository
+* Check out code from repository
 ```sh
 $ git clone https://github.com/aduyng/health-check.git /var/www/node/health-check
 ```
