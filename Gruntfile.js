@@ -6,19 +6,18 @@ module.exports = function (grunt) {
     require('matchdep').filterDev('grunt-*').forEach(grunt.loadNpmTasks);
     var pkg = grunt.file.readJSON('package.json');
     var config = require('./config')['development'];
-    var Handlebars = require('handlebars');
+    
     var opts = {
         pkg: pkg,
-        coffee: {
-            frontend: {
-                expand: true,
-                cwd: './app',
-                src: ['**/*.coffee'],
-                dest: "./app",
-                ext: '.js'
-            }
-        },
         watch: {
+            less: {
+                files: [
+                    './app/**/*.less',
+                ],  
+                 tasks: [
+                    'less'
+                ]
+            },
             frontend: {
                 files: [
                     //frontend
@@ -42,7 +41,6 @@ module.exports = function (grunt) {
                     './app/pages/*/*.less',
                 ],
                 tasks: [
-                    // 'clean:frontend',
                     'requirejs',
                     'less',
                     'copy:frontend',
@@ -60,12 +58,7 @@ module.exports = function (grunt) {
                     './package.json',
                     './server.js',
                     './error.js',
-                    './utils.js',
-                    'start-server.sh'
-                ],
-                tasks:[
-                    'shell:stop',
-                    'shell:start'
+                    './utils.js'
                 ]
             },
             build:{
@@ -85,17 +78,6 @@ module.exports = function (grunt) {
             }
         },
 
-//        htmlmin: {                                     // Task
-//            server: {                                      // Target
-//                options: {                                 // Target options
-//                    removeComments: true,
-//                    collapseWhitespace: true
-//                },
-//                files: {
-//                    './dist/app/index.html': './app/public/index.html'
-//                }
-//            }
-//        },
         requirejs: {
             compile: {
                 options: {
@@ -833,39 +815,6 @@ module.exports = function (grunt) {
                 }
             }
         },
-//        express: {
-//            options: {
-//                port: 9000,
-//                hostname: '*'
-//            },
-//            server: {
-//                options: {
-//                    server: path.resolve('./app.js'),
-//                    bases: [path.resolve('./public')]
-//                }
-//            },
-//
-//            livereload: {
-//                options: {
-//                    server: path.resolve('./app.js'),
-//                    livereload: true,
-//                    serverreload: true,
-//                    bases: [path.resolve('./public')]
-//                }
-//            },
-//            test: {
-//                options: {
-//                    server: path.resolve('./server'),
-//                    bases: [path.resolve('./.tmp'), path.resolve(__dirname, 'test')]
-//                }
-//            },
-//            dist: {
-//                options: {
-//                    server: path.resolve('./server'),
-//                    bases: path.resolve(__dirname, yeomanConfig.dist)
-//                }
-//            }
-//        },
         clean: {
             options: {
                 force: true
@@ -944,100 +893,28 @@ module.exports = function (grunt) {
                     cleancss: true
                 },
                 files: {
-                    
-                }
-            }
-        },
-        shell: {
-            start: {
-                command: './start.sh',
-                options: {
-                    stdout: true,
-                    async: true,
-                    failOnError: false,
-                    execOptions: {
-                        //client pg require SSL on Heroku
-                        PGSSLMODE: 'require'
-                    }
-                }
-            },
-            endClientBuild: {
-                command:[
-                    'echo ================ FRONTEND BUILD COMPLETED=============== >> server.log'
-                ]
-            },
-            stop: {
-                command: [
-                    'kill `pidof node` || true > /dev/null'
-                ],
-                options: {
-                    stderr: false,
-                    failOnError: false,
-                    async: false,
-                    execOptions: { }
-                }
-            }
-
-        },
-        "file-creator": {
-            "package.json": {
-                "dist/package.json": function (fs, fd, done) {
-                    var pkg = grunt.file.readJSON('package.json');
-                    delete pkg.devDependencies;
-                    fs.writeSync(fd, JSON.stringify(pkg));
-                    done();
-                }
-            },
-            "package.json.build": {
-                "dist/package.json": function (fs, fd, done) {
-                    var pkg = grunt.file.readJSON('package.json');
-                    delete pkg.devDependencies;
-                    pkg.clientPath = pkg.version;
-                    fs.writeSync(fd, JSON.stringify(pkg));
-                    done();
-                }
-            }
-        },
-        // Configure a mochaTest task
-        mochaTest: {
-            test: {
-                options: {
-                    reporter: 'spec'
-                },
-                src: ['test/**/*.js']
-            }
-        },
-        uglify: {
-            options: {
-                mangle: false
-            },
-            build: {
-                files: {
-                    'app/dist/<%=pkg.version%>/init.js': ['app/dist/<%=pkg.version%>/init.js']
+                    'app/style.css': 'app/style.less'
                 }
             }
         }
-
     };
     
-    opts.less.server.files['app/dist/' + pkg.version + '/style.css'] = "./app/style.less";
     
     grunt.initConfig(opts);
     
-    grunt.registerTask('default', function (target) {
+    grunt.registerTask('build', function (target) {
         grunt.task.run([
-            'clean:frontend',
+            'clean',
             'requirejs',
             'less',
-            'copy:frontend',
-            'shell:start',
-            'watch'
+            'copy'
         ]);
     });
-
-
-    grunt.registerTask('kill', [
-        'shell:stop'
-    ]);
-
+    
+    grunt.registerTask('default', function (target) {
+        grunt.task.run([
+            'less',
+            'watch:less'
+        ]);
+    });
 };

@@ -103,8 +103,12 @@ define(function(require) {
             that.$el.next().css('z-index', 1040 + that.instanceCount);
         }.bind(this));
         this.$el.on('hidden.bs.modal', function() {
+            if (msg instanceof Super) {
+                msg.remove();
+            }
             this.remove();
             View.instanceCount--;
+            this.trigger('closed');
         }.bind(this));
 
         var events = {};

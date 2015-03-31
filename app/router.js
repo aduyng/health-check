@@ -1,4 +1,4 @@
-define(function (require) {
+define(function(require) {
     var NProgress = require('nprogress'),
         Backbone = require('backbone'),
         _ = require('underscore'),
@@ -11,12 +11,12 @@ define(function (require) {
                 "*action": 'defaultAction'
             }
         });
-    Router.prototype.initialize = function (options) {
+    Router.prototype.initialize = function(options) {
         Backbone.Router.prototype.initialize.call(this, options);
         this.app = options.app || console.error("app must be passed!");
     };
 
-    Router.prototype.defaultAction = function (url) {
+    Router.prototype.defaultAction = function(url) {
         var that = this;
         if (!url) {
             url = 'index/index';
@@ -45,7 +45,7 @@ define(function (require) {
 
         var pagePath = 'pages/' + controller + '/' + action;
 
-        require([pagePath], function (Page) {
+        require([pagePath], function(Page) {
             NProgress.inc();
             that.app.page = new Page({
                 el: that.app.layout.controls.mainPanel,
@@ -61,7 +61,7 @@ define(function (require) {
             controllerContainer.attr('id', 'controller-' + controller);
 
             NProgress.inc();
-            Bluebird.resolve(that.app.page.render()).then(function () {
+            Bluebird.resolve(that.app.page.render()).then(function() {
                 NProgress.done();
                 that.app.trigger('page-rendered', that.app.page);
             });
@@ -69,7 +69,7 @@ define(function (require) {
         }.bind(this));
 
     };
-    Router.prototype.parseUrlParams = function (url) {
+    Router.prototype.parseUrlParams = function(url) {
         if (!url) {
             url = window.location.hash;
         }
@@ -85,7 +85,7 @@ define(function (require) {
         return params;
     };
 
-    Router.prototype.start = function () {
+    Router.prototype.start = function() {
         Backbone.history.start();
     };
 

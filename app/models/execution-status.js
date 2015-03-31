@@ -6,12 +6,12 @@ define(function(require) {
         name: 'execution-status'
     });
 
-
+    Model.ID_SCHEDULED = -1;
     Model.ID_NOT_STARTED = 1;
     Model.ID_RUNNING = 2;
     Model.ID_OK = 3;
     Model.ID_ERROR = 4;
-    
+
 
     // Model.prototype.toHTML = function() {
     //     var that = this;

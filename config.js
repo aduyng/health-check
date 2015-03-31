@@ -22,6 +22,12 @@ module.exports = {
             },
             debug: true
         },
+        mongo: {
+            url: 'mongodb://localhost/healthcheck',
+            options: {
+                debug: true
+            }
+        },
         casper: {
             absolutePath: '/usr/bin/casperjs'
         }

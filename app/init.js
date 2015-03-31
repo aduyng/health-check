@@ -2,14 +2,14 @@
 
 requirejs.config({
     //    urlArgs: 'v=' + [config.app.version.major, config.app.version.minor, config.app.version.patch].join('.'),
-    baseUrl: './',
+    baseUrl: './app',
     locale: "en-us",
     waitSeconds: 30,
     paths: {
         backbone: '//cdnjs.cloudflare.com/ajax/libs/backbone.js/1.1.2/backbone-min',
         bootstrap: '//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min',
         'bootstrap-switch': '//cdnjs.cloudflare.com/ajax/libs/bootstrap-switch/3.0.0/js/bootstrap-switch.min',
-        text: 'vendors/requirejs-text/text',
+        text: 'vendors/requirejs-plugins/lib/text',
         goog: 'vendors/requirejs-plugins/src/goog',
         async: 'vendors/requirejs-plugins/src/async',
         propertyParser: 'vendors/requirejs-plugins/src/propertyParser',
@@ -18,7 +18,7 @@ requirejs.config({
         hbs: 'vendors/require-handlebars-plugin/hbs',
         i18nprecompile: 'vendors/require-handlebars-plugin/hbs/i18nprecompile',
         json2: 'vendors/require-handlebars-plugin/hbs/json2',
-        jquery: 'vendors/jquery/dist/jquery',
+        jquery: '//ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min',
         bootstrapValidator: '//cdnjs.cloudflare.com/ajax/libs/jquery.bootstrapvalidator/0.5.0/js/bootstrapValidator.min',
         toastr: '//cdnjs.cloudflare.com/ajax/libs/toastr.js/2.0.0/js/toastr.min',
         ladda: '//cdnjs.cloudflare.com/ajax/libs/ladda-bootstrap/0.1.0/ladda.min',
@@ -35,7 +35,9 @@ requirejs.config({
         resemble: 'vendors/resemblejs/resemble',
         jszip: '//cdnjs.cloudflare.com/ajax/libs/jszip/2.4.0/jszip.min',
         FileSaver: '//cdnjs.cloudflare.com/ajax/libs/FileSaver.js/1.0.0/FileSaver.min',
-        ace: '//cdnjs.cloudflare.com/ajax/libs/ace/1.1.3/ace'
+        ace: '//cdnjs.cloudflare.com/ajax/libs/ace/1.1.3/ace',
+        'socket.io': '//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.5/socket.io.min',
+        'data.io': 'vendors/data.io/data.io'
     },
     hbs: {
         helpers: true,
@@ -67,6 +69,9 @@ requirejs.config({
         },
         toastr: {
             deps: ['jquery']
+        },
+        'data.io':{
+            deps: ['socket.io']  
         },
         scrollTo: {
             deps: ['jquery']
@@ -110,7 +115,8 @@ requirejs.config({
                 'moment',
                 'nprogress',
                 'scrollTo',
-                'select2'
+                'select2',
+                'data.io'
             ]
         }
     }
@@ -128,7 +134,7 @@ if (!Function.prototype.bind) {
 
 
 
-require(['app'], function(Application) {
+require(['application'], function(Application) {
     window.app = new Application({});
     window.app.run();
 });

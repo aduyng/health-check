@@ -1,38 +1,16 @@
 <table class="table table-condensed table-hover">
-
     <thead>
         <tr>
             <th width="1%">
-                <input type="checkbox" id="{{id}}-all-modules-checkbox" {{#if allModulesChecked}}checked{{/if}} />
+                    <input type="checkbox" id="{{id}}-all-modules-checkbox" {{#if allModulesChecked}}checked{{/if}} />
+                    <i class="fa fa-spin fa-spinner hidden" id="{{id}}-all-modules-checkbox-spinner"></i>
             </th>
-            <th width="35%">Name</th>
-            <th>URL</th>
+            <th width="99%">Name</th>
             <th width="1%">
                 <button class="btn btn-sm btn-success btn-block" id="{{id}}-new"><i class="fa fa-plus"></i> New Module</button>
             </th>
         </tr>
     </thead>
-    <tbody>
-        {{#each modules}}
-        <tr>
-            <td>
-                <input type="checkbox" data-id="{{this.id}}" class="{{../id}}-module-checkbox" {{#if this.isEnabled}}checked{{/if}}/>
-            </td>
-            <td>
-                <input type="text" value="{{this.name}}" data-id="{{this.id}}" class="form-control input-sm {{../id}}-name" />
-            </td>
-            <td>
-                <input type="text" value="{{this.url}}" data-id="{{this.id}}" class="form-control input-sm {{../id}}-url" />
-            </td>
-            <td class="text-nowrap">
-                <button class="btn btn-xs btn-secondary {{../id}}-settings" data-id="{{this.id}}"><i class="fa fa-gear"></i>
-                </button>
-                <button class="btn btn-xs btn-default {{../id}}-code" data-id="{{this.id}}"><i class="fa fa-code"></i>
-                </button>
-                <button class="btn btn-xs btn-danger {{../id}}-remove" data-id="{{this.id}}"><i class="fa fa-trash-o"></i>
-                </button>
-            </td>
-        </tr>
-        {{/each}}
+    <tbody id="{{id}}-modules">
     </tbody>
 </table>

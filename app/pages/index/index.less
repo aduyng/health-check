@@ -1,27 +1,49 @@
 #controller-index {
     #action-index {
-        .airlines {
-            .airline {
-                border-color: #888;
-                &>.panel-heading {
-                    font-weight: bold;
-                    &>.last-executed-at {
-                        font-size: .7em;
-                        font-weight: 400;
-                    }
-                    .abbr {
-                        font-weight: bolder;
-                        font-size: 1.5em;
-                    }
+        // .airlines {
+        //     .airline {
+        //         border-color: #888;
+        //         &>.panel-heading {
+        //             font-weight: bold;
+        //             &>.last-executed-at {
+        //                 font-size: .7em;
+        //                 font-weight: 400;
+        //             }
+        //             .abbr {
+        //                 font-weight: bolder;
+        //                 font-size: 1.5em;
+        //             }
+        //         }
+        //         &>.panel-body {
+        //             height: 14em;
+        //             overflow-y: auto;
+        //             overflow-x: hidden;
+        //             padding-top: 10px;
+        //             padding-bottom: 0px;
+        //             &>.modules{
+        //                 margin-bottom: 0px;
+        //             }
+        //         }
+        //     }
+        // }
+        .sites {
+            .site {
+                .panel-heading{
+                    cursor: pointer;
                 }
-                &>.panel-body {
-                    height: 14em;
-                    overflow-y: auto;
-                    overflow-x: hidden;
-                    padding-top: 10px;
-                    padding-bottom: 0px;
-                    &>.modules{
-                        margin-bottom: 0px;
+                .module-list {
+                    display: none;
+                }
+                .panel-footer {
+                    display: none;
+                }
+                
+                &.expanded {
+                    .module-list {
+                        display: block;
+                    }
+                    .panel-footer {
+                        display: block;
                     }
                 }
             }

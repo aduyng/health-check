@@ -3,18 +3,13 @@ define(function(require) {
     var Super = require('views/page'),
         B = require('bluebird'),
         MAIN = require('hbs!./index.tpl'),
-        AIRLINES = require('hbs!./index/airlines.tpl'),
-
         Backbone = require('backbone'),
-        EditView = require('./index/edit'),
-
-
-        Airline = require('models/airline'),
+        SiteEdit = require('./index/site-edit'),
+        SiteWidget = require('./index/site-widget'),
+        ExecutionStatus = require('models/execution-status'),
         Dialog = require('views/controls/dialog'),
-        AirlineView = require('./index/airline'),
-        StatusCollection = require('collections/execution-status'),
-        AirlineCollection = require('collections/airline'),
-        ModuleCollection = require('collections/module');
+        Sites = require('collections/site'),
+        Site = require('models/site');
 
 
 
@@ -26,61 +21,97 @@ define(function(require) {
         //super(options)
         Super.prototype.initialize.call(that, options);
 
-        that.statusCollection = new StatusCollection();
-        that.airlineCollection = new AirlineCollection();
-        that.moduleCollection = new ModuleCollection();
+        that.sites = new Sites();
     };
 
     Page.prototype.render = function() {
         var that = this;
-        return B.all([
-                that.statusCollection.fetch(),
-                that.fetch()
-            ])
-            .then(function() {
 
-                that.$el.html(MAIN({
-                    id: that.id,
-                    airlines: that.airlineCollection.toJSON()
-                }));
-                that.mapControls();
+        that.$el.html(MAIN({
+            id: that.id
+        }));
+        that.mapControls();
 
-                that.renderAirlines();
-            })
-            .then(function() {
-                var events = {};
-                events['click ' + that.toId('new')] = 'onNewClick';
-                events['click ' + that.toId('run-all')] = 'onRunAllClick';
-                events['click ' + that.toId('stop')] = 'onStopClick';
-                that.delegateEvents(events);
+        var events = {};
+        events['keyup ' + that.toId('query')] = 'onQueryKeyup';
+        events['click ' + that.toId('new')] = 'onNewClick';
+        events['click ' + that.toId('run-all')] = 'onRunAllClick';
+        events['click ' + that.toId('stop')] = 'onStopClick';
+        that.delegateEvents(events);
 
-                that.on('run-all-terminated', that.onRunAllTerminated.bind(that));
-                that.on('run-all-started', that.onRunAllStarted.bind(that));
-                that.on('run-all-completed', that.onRunAllStarted.bind(that));
 
-                //keep updating airlines
-                that.fetch();
-            })
-            .then(function() {
-                return Super.prototype.render.call(that);
+        that.sites.on('sync add', that.renderSites.bind(that));
+        that.sites.on('remove', that.onSiteRemove.bind(that));
+        that.sites.on('change', that.onSiteChange.bind(that));
+
+        //keep updating airlines
+        that.fetch();
+
+        return Super.prototype.render.call(that);
+    };
+
+    Page.prototype.onSiteChange = function() {
+        this.updateUI();
+    };
+    Page.prototype.updateUI = function() {
+        var that = this;
+        if (that.sites.every(function(site) {
+                if (_.contains([ExecutionStatus.ID_RUNNING, ExecutionStatus.ID_SCHEDULED], site.get('status'))) {
+                    return false;
+                }
+                return true;
+            })) {
+            that.controls.runAll.prop('disabled', false);
+        }
+    }
+
+    Page.prototype.onSiteRemove = function(removedSite) {
+        //TODO: why the heck I'm not getting this event
+        removedSite.view.remove();
+    };
+
+    Page.prototype.renderSites = function() {
+        var that = this;
+
+
+        B.all(_.map(that.sites.filter(function(site) {
+            return !site.isRendered;
+        }), function(site) {
+
+            site.view = new SiteWidget({
+                model: site
             });
+            site.isRendered = true;
+            return site.view.render()
+                .then(function() {
 
+                    that.controls.sites.append(site.view.$el);
+
+                    site.view.on('schedule', that.onSiteScheduled.bind(that));
+                });
+        }));
+
+        that.updateUI();
     };
-    
-    
-    Page.prototype.onRunAllCompleted = function(){
+
+    Page.prototype.onSiteScheduled = function() {
+        var that = this;
+        that.toast.success('Job has been scheduled to start in 10 seconds.');
+    };
+
+    Page.prototype.onRunAllCompleted = function() {
         this.controls.runAll.removeClass('hidden');
         this.controls.new.removeClass('hidden');
         this.controls.stop.addClass('hidden');
     };
-    
-    Page.prototype.onRunAllTerminated = function(){
+
+    Page.prototype.onRunAllTerminated = function() {
         this.controls.runAll.removeClass('hidden');
         this.controls.new.removeClass('hidden');
         this.controls.stop.addClass('hidden');
     };
-    
-    Page.prototype.onRunAllStarted = function(){
+
+    Page.prototype.onRunAllStarted = function() {
         this.controls.runAll.addClass('hidden');
         this.controls.new.addClass('hidden');
         this.controls.stop.removeClass('hidden');
@@ -91,12 +122,40 @@ define(function(require) {
         that.runAllStopRequested = true;
     };
 
+    Page.prototype.onQueryKeyup = _.debounce(function(event) {
+        var that = this;
+
+        var query = that.controls.query.val().trim();
+        if (!_.isEmpty(query)) {
+            var re = new RegExp(query, 'i');
+
+            that.sites.forEach(function(site) {
+                if (site.view) {
+                    site.view.$el.toggleClass('hidden', !re.test(site.get('tags') + ',' + site.get('name')));
+                }
+            });
+        }
+        else {
+            that.sites.forEach(function(site) {
+                if (site.view) {
+                    site.view.$el.removeClass('hidden');
+                }
+            });
+        }
+    }, 300);
+
 
     Page.prototype.onRunAllClick = function(event) {
         var that = this;
-        that.runningAirlineIndex = 0;
-        that.trigger('run-all-started');
-        that.run();
+        that.controls.runAll.prop('disabled', true);
+        B.all(_.map(that.sites.filter(function(site) {
+                return site.view && !site.view.$el.hasClass('hidden');
+            }), function(site) {
+                return site.run();
+            }))
+            .then(function() {
+                that.toast.success('All matched sites have been scheduled to run.');
+            });
     };
 
     Page.prototype.run = function() {
@@ -122,28 +181,55 @@ define(function(require) {
         runningAirline.view.run();
     };
 
-    Page.prototype.onNewClick = function(event) {
-        var that = this;
-        event.preventDefault();
+    Page.prototype.openSiteDialog = function(model) {
+        var that = this,
+            isNew = model.isNew();
 
-        var model = new Airline({
-            abbr: 'ZZ',
-            name: 'New Airline'
+        var view = new SiteEdit({
+            model: model
         });
 
-        B.resolve(model.save(null, {
-                wait: true
-            }))
-            .then(function() {
-                that.refresh();
-                that.toast.success('A new airline has been added at the bottom.');
-            });
+        var dlg = new Dialog({
+            title: isNew ? 'New Site' : 'Edit: ' + model.get('name'),
+            body: view,
+            buttons: [{
+                id: 'save',
+                label: 'Save',
+                iconClass: 'fa fa-save',
+                buttonClass: 'btn-primary',
+                align: 'left'
+            }, {
+                id: 'cancel',
+                label: 'Cancel',
+                iconClass: 'fa fa-times',
+                buttonClass: 'btn-default',
+                align: 'left',
+                autoClose: true
+            }]
+        })
+
+        dlg.on('save', function() {
+            B.resolve(model.save(view.val(), {
+                    wait: true
+                }))
+                .then(function() {
+                    if (isNew) {
+                        that.sites.add(model);
+                    }
+                    that.toast.success('New site has been added.');
+                    dlg.close();
+                });
+        });
     };
 
-
-
-
-
+    Page.prototype.onNewClick = function(event) {
+        event.preventDefault();
+        var that = this;
+        var model = new Site({
+            name: 'New Site'
+        });
+        that.openSiteDialog(model);
+    };
 
 
     Page.prototype.refresh = function() {
@@ -182,51 +268,12 @@ define(function(require) {
         this.toast.success("Airline has been cloned!");
     };
 
-    Page.prototype.renderAirlines = function() {
-        var that = this;
 
-        this.airlineCollection.forEach(function(airline) {
-            var view = new AirlineView({
-                airline: airline,
-                modules: new ModuleCollection(that.moduleCollection.where({
-                    airlineId: airline.id
-                }))
-            });
-            view.render();
-            that.find(that.toId('airline-' + airline.id)).append(view.$el);
-
-            view.on('new', that.onAirlineCreated.bind(that));
-            view.on('saved', that.onAirlineSaved.bind(that));
-            view.on('deleted', that.onAirlineDeleted.bind(that));
-            view.on('cloned', that.onAirlineCloned.bind(that));
-
-            airline.view = view;
-        });
-
-    };
 
     Page.prototype.fetch = function() {
         var that = this;
-        return B.resolve(that.airlineCollection.fetch(undefined, {
-                reset: true
-            }))
-            .then(function() {
-                return that.moduleCollection.fetch({
-                    data: {
-                        selection: [{
-                            field: 'airlineId',
-                            operand: 'in',
-                            value: that.airlineCollection.pluck('id')
-                    }, {
-                            field: 'isEnabled',
-                            value: 1
-                    }]
-                    }
-                }, {
-                    reset: true
-                });
-            });
 
+        return that.sites.fetch();
     };
 
 

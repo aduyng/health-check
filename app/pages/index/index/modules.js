@@ -3,11 +3,10 @@ define(function(require) {
     var Super = require('views/base'),
         B = require('bluebird'),
         Module = require('models/module'),
-        ModuleCollection = require('collections/module'),
         CodeView = require('./code'),
-        SettingView = require('./setting'),
         Dialog = require('views/controls/dialog'),
-        TEMPLATE = require('hbs!./modules.tpl');
+        TEMPLATE = require('hbs!./modules.tpl'),
+        LIST = require('hbs!./modules.list.tpl');
 
 
     var View = Super.extend({});
@@ -16,45 +15,41 @@ define(function(require) {
         var that = this;
         //super(options)
         Super.prototype.initialize.call(this, options);
-
-        that.collection = new ModuleCollection();
     };
 
 
     View.prototype.render = function() {
         var that = this;
-        return B.resolve(that.fetch())
-            .then(function() {
-                that.renderModules();
-                that.mapControls();
-            })
-            .then(function() {
-                var events = {};
-                events['click ' + that.toId('new')] = 'newButtonClickHandler';
-                events['click ' + that.toClass('remove')] = 'removeButtonClickHandler';
-                events['click ' + that.toClass('settings')] = 'settingsButtonClickHandler';
-                events['click ' + that.toClass('code')] = 'codeButtonClickHandler';
-                events['click ' + that.toId('all-modules-checkbox')] = 'allModulesCheckboxClickHandler';
-                events['click ' + that.toClass('module-checkbox')] = 'moduleCheckboxClickHandler';
-                events['input ' + that.toClass('name')] = 'onNameInput';
-                events['input ' + that.toClass('url')] = 'onUrlInput';
-                
-                that.delegateEvents(events);
-                
-                that.collection.on('add remove reset sort', that.renderModules.bind(that));
-            });
+
+        that.$el.html(TEMPLATE({
+            id: that.id
+        }));
+        that.mapControls();
+
+        var events = {};
+        events['click ' + that.toId('new')] = 'newButtonClickHandler';
+        events['click ' + that.toClass('remove')] = 'removeButtonClickHandler';
+        events['click ' + that.toClass('code')] = 'codeButtonClickHandler';
+        events['click ' + that.toId('all-modules-checkbox')] = 'allModulesCheckboxClickHandler';
+        events['click ' + that.toClass('module-checkbox')] = 'moduleCheckboxClickHandler';
+        events['change ' + that.toClass('name')] = 'onNameChange';
+
+        that.collection.on('all', that.renderModules.bind(that));
+
+        that.delegateEvents(events);
+
+        that.renderModules();
+
     };
 
     View.prototype.save = _.debounce(function(model, params) {
         return model.save(params, {
-            patch: true,
             wait: true
         });
     }, 300);
 
-    View.prototype.onNameInput = function(event) {
+    View.prototype.onNameChange = function(event) {
         var that = this;
-        
 
         var e = $(event.currentTarget);
         var model = that.collection.get(e.data('id'));
@@ -63,58 +58,13 @@ define(function(require) {
         });
     };
 
-    View.prototype.onUrlInput = function(event) {
-        var that = this;
-
-        var e = $(event.currentTarget);
-        var model = that.collection.get(e.data('id'));
-        that.save(model, {
-            url: e.val().trim()
-        });
-    };
-
-
     View.prototype.removeButtonClickHandler = function(event) {
         var that = this;
         var e = $(event.currentTarget);
         var module = that.collection.get(e.data('id'));
         B.resolve(module.destroy({
-                wait: true
-            }));
-    };
-    
-    View.prototype.settingsButtonClickHandler = function(event) {
-        var that = this,
-            dlg;
-        var e = $(event.currentTarget);
-        var model = that.collection.get(e.data('id'));
-
-        console.log(model);
-        var view = new SettingView({
-            model: model
-        });
-
-        var buttons = [{
-            id: 'done',
-            label: 'Done',
-            iconClass: 'fa fa-check',
-            buttonClass: 'btn-primary',
-            align: 'left',
-            autoClose: true
-                    }];
-
-
-        dlg = new Dialog({
-            sizeClass: 'modal-lg',
-            body: view,
-            title: 'Settings for ' + model.get('name'),
-            buttons: buttons
-        });
-
-        dlg.on('save', function(event) {
-            model.set(view.serialize());
-            dlg.close();
-        });
+            wait: true
+        }));
     };
 
     View.prototype.codeButtonClickHandler = function(event) {
@@ -123,7 +73,6 @@ define(function(require) {
         var e = $(event.currentTarget);
         var model = that.collection.get(e.data('id'));
 
-        // console.log(module);
         var view = new CodeView({
             model: model
         });
@@ -135,13 +84,13 @@ define(function(require) {
             buttonClass: 'btn-primary',
             align: 'left',
             autoClose: true
-                    }];
+        }];
 
 
         dlg = new Dialog({
             sizeClass: 'modal-lg',
             body: view,
-            title: 'Steps for ' + model.get('name'),
+            title: 'Script for ' + model.get('name'),
             buttons: buttons
         });
 
@@ -154,37 +103,38 @@ define(function(require) {
     View.prototype.newButtonClickHandler = function() {
         var that = this;
         var model = new Module({
-            airlineId: that.model.id,
-            name: 'New Module',
-            url: that.model.get('url')
+            siteId: that.model.id,
+            name: 'New Module'
+        });
+        model.once('sync', function() {
+            that.collection.add(model);
+            that.renderModules();
         });
 
-        B.resolve(model.save(null, {
-                wait: true
-            }))
-            .then(function() {
-                that.collection.add(model);
-            });
+        model.save(null, {
+            wait: true
+        });
     };
 
     View.prototype.allModulesCheckboxClickHandler = function() {
         var that = this;
-        var isEnabled = that.findById('all-modules-checkbox').is(':checked');
-        if (isEnabled) {
-            that.findByClass('module-checkbox').attr('checked', 'checked');
-        }
-        else {
-            that.findByClass('module-checkbox').removeAttr('checked');
-        }
+        var isEnabled = that.controls.allModulesCheckbox.prop('checked');
+        that.controls.allModulesCheckboxSpinner.removeClass('hidden');
+        that.controls.allModulesCheckbox.addClass('hidden');
 
-        that.collection.forEach(function(model) {
-            return model.save({
-                isEnabled: isEnabled
-            }, {
-                patch: true,
-                wait: true
+        return B.all(that.collection.map(function(model) {
+                that.findById('module-checkbox-' + model.id).prop('checked', isEnabled);
+                return model.save({
+                    isEnabled: isEnabled
+                }, {
+                    wait: true,
+                    silent: true
+                });
+            }))
+            .then(function() {
+                that.controls.allModulesCheckboxSpinner.addClass('hidden');
+                that.controls.allModulesCheckbox.removeClass('hidden');
             });
-        });
     };
 
     View.prototype.moduleCheckboxClickHandler = function(event) {
@@ -197,44 +147,27 @@ define(function(require) {
         }
         var e = $(event.currentTarget);
         var model = that.collection.get(e.data('id'));
-        return model.save({
-            isEnabled: e.is(':checked')
-        }, {
-            patch: true,
+        model.set('isEnabled', e.is(':checked'));
+        return model.save(null, {
             wait: true
         });
-
     };
 
     View.prototype.renderModules = function() {
         var that = this;
-        that.$el.html(TEMPLATE({
+
+        that.controls.modules.html(LIST({
             id: that.id,
-            modules: _.map(_.sortBy(that.collection.where({
-                airlineId: that.model.id
-            }), function(module) {
-                return module.get('name');
-            }), function(module) {
+            modules: that.collection.map(function(module) {
                 return module.toJSON();
-            }),
-            allModulesChecked: that.collection.every(function(model){
-                return model.get('isEnabled');
             })
+        }));
+
+        that.controls.allModulesCheckbox.prop('checked', that.collection.length > 0 && that.collection.every(function(model) {
+            return model.get('isEnabled');
         }));
     };
 
 
-    View.prototype.fetch = function() {
-        var that = this;
-        return that.collection.fetch({
-            data: {
-                selection: [{
-                    field: 'airlineId',
-                    value: that.model.id
-                }]
-            }
-        });
-    };
-    
     return View;
 });

@@ -2,50 +2,50 @@
 
 @font-face {
 	font-family: "Univers Basic Thin";
-	src: url("04b3c812-2234-45b5-af16-18a0f70cf1df.eot?#iefix");
-	src: url("04b3c812-2234-45b5-af16-18a0f70cf1df.eot?#iefix") format("eot"), url("bc35730a-e839-4dc2-b89f-92575ffec5c1.woff") format("woff"), url("20588565-aa56-46ce-8d7c-6b5f77df85f9.ttf") format("truetype"), url("06090cbd-08cf-40ac-bd19-62c4bc5ed718.svg#06090cbd-08cf-40ac-bd19-62c4bc5ed718") format("svg");
+	src: url("vendors/developer.sabre.com/04b3c812-2234-45b5-af16-18a0f70cf1df.eot?#iefix");
+	src: url("vendors/developer.sabre.com/04b3c812-2234-45b5-af16-18a0f70cf1df.eot?#iefix") format("eot"), url("vendors/developer.sabre.com/bc35730a-e839-4dc2-b89f-92575ffec5c1.woff") format("woff"), url("vendors/developer.sabre.com/20588565-aa56-46ce-8d7c-6b5f77df85f9.ttf") format("truetype"), url("vendors/developer.sabre.com/06090cbd-08cf-40ac-bd19-62c4bc5ed718.svg#06090cbd-08cf-40ac-bd19-62c4bc5ed718") format("svg");
 }
 
 @font-face {
 	font-family: "Univers Condensed Light";
-	src: url("e89379d2-2604-41ab-911f-cc89f3e4b49b.eot?#iefix");
-	src: url("e89379d2-2604-41ab-911f-cc89f3e4b49b.eot?#iefix") format("eot"), url("05281082-43bf-47ac-a97c-cc09f6ee97b7.woff") format("woff"), url("dd6ae40f-c627-430f-b5d0-bcdbf4a4d784.ttf") format("truetype"), url("0b859b66-b397-42f4-acab-f689f771ca1e.svg#0b859b66-b397-42f4-acab-f689f771ca1e") format("svg");
+	src: url("vendors/developer.sabre.com/e89379d2-2604-41ab-911f-cc89f3e4b49b.eot?#iefix");
+	src: url("vendors/developer.sabre.com/e89379d2-2604-41ab-911f-cc89f3e4b49b.eot?#iefix") format("eot"), url("vendors/developer.sabre.com/05281082-43bf-47ac-a97c-cc09f6ee97b7.woff") format("woff"), url("vendors/developer.sabre.com/dd6ae40f-c627-430f-b5d0-bcdbf4a4d784.ttf") format("truetype"), url("vendors/developer.sabre.com/0b859b66-b397-42f4-acab-f689f771ca1e.svg#0b859b66-b397-42f4-acab-f689f771ca1e") format("svg");
 }
 
 @font-face {
 	font-family: "Univers Typewriter";
-	src: url("81a5cf84-b08a-426d-9199-d6d11566e91a.eot?#iefix");
-	src: url("81a5cf84-b08a-426d-9199-d6d11566e91a.eot?#iefix") format("eot"), url("6fccb64e-5729-4cde-b423-423c6c9f75a6.woff") format("woff"), url("6c9f3ee6-4e83-4bb2-8ed5-98955e86fe11.ttf") format("truetype"), url("0917dba4-034a-4556-83a4-f589899b74c8.svg#0917dba4-034a-4556-83a4-f589899b74c8") format("svg");
+	src: url("vendors/developer.sabre.com/81a5cf84-b08a-426d-9199-d6d11566e91a.eot?#iefix");
+	src: url("vendors/developer.sabre.com/81a5cf84-b08a-426d-9199-d6d11566e91a.eot?#iefix") format("eot"), url("vendors/developer.sabre.com/6fccb64e-5729-4cde-b423-423c6c9f75a6.woff") format("woff"), url("vendors/developer.sabre.com/6c9f3ee6-4e83-4bb2-8ed5-98955e86fe11.ttf") format("truetype"), url("vendors/developer.sabre.com/0917dba4-034a-4556-83a4-f589899b74c8.svg#0917dba4-034a-4556-83a4-f589899b74c8") format("svg");
 }
 
 @font-face {
 	font-family: "Univers Basic Medium";
-	src: url("48a42ae4-2dae-4819-a76c-c4a39ba76875.eot?#iefix");
-	src: url("48a42ae4-2dae-4819-a76c-c4a39ba76875.eot?#iefix") format("eot"), url("d7cf6a30-fb6a-4725-9c93-2372d9f4bb8d.woff") format("woff"), url("fb6dd99b-78b9-4459-b787-00d3f0fc0c9f.ttf") format("truetype"), url("4bed78d0-7a4f-46bf-b802-29f04d1d2e11.svg#4bed78d0-7a4f-46bf-b802-29f04d1d2e11") format("svg");
+	src: url("vendors/developer.sabre.com/48a42ae4-2dae-4819-a76c-c4a39ba76875.eot?#iefix");
+	src: url("vendors/developer.sabre.com/48a42ae4-2dae-4819-a76c-c4a39ba76875.eot?#iefix") format("eot"), url("vendors/developer.sabre.com/d7cf6a30-fb6a-4725-9c93-2372d9f4bb8d.woff") format("woff"), url("vendors/developer.sabre.com/fb6dd99b-78b9-4459-b787-00d3f0fc0c9f.ttf") format("truetype"), url("vendors/developer.sabre.com/4bed78d0-7a4f-46bf-b802-29f04d1d2e11.svg#4bed78d0-7a4f-46bf-b802-29f04d1d2e11") format("svg");
 }
 
 @font-face {
 	font-family: "Univers Condensed Bold";
-	src: url("13e28cb2-c198-44e1-9948-b21eef388116.eot?#iefix");
-	src: url("13e28cb2-c198-44e1-9948-b21eef388116.eot?#iefix") format("eot"), url("5b53cfa1-c27d-4fa0-b526-1f8e6bc5ecad.woff") format("woff"), url("05767d79-31b0-4d7d-b473-0ba480c67a25.ttf") format("truetype"), url("f61ff7a7-3e99-4855-9a04-42987e9edad6.svg#f61ff7a7-3e99-4855-9a04-42987e9edad6") format("svg");
+	src: url("vendors/developer.sabre.com/13e28cb2-c198-44e1-9948-b21eef388116.eot?#iefix");
+	src: url("vendors/developer.sabre.com/13e28cb2-c198-44e1-9948-b21eef388116.eot?#iefix") format("eot"), url("vendors/developer.sabre.com/5b53cfa1-c27d-4fa0-b526-1f8e6bc5ecad.woff") format("woff"), url("vendors/developer.sabre.com/05767d79-31b0-4d7d-b473-0ba480c67a25.ttf") format("truetype"), url("vendors/developer.sabre.com/f61ff7a7-3e99-4855-9a04-42987e9edad6.svg#f61ff7a7-3e99-4855-9a04-42987e9edad6") format("svg");
 }
 
 @font-face {
 	font-family: "Univers Basic Bold";
-	src: url("82467ea2-e594-4e0f-870c-374e5f664454.eot?#iefix");
-	src: url("82467ea2-e594-4e0f-870c-374e5f664454.eot?#iefix") format("eot"), url("4f196f0d-462c-4cbc-ab22-113a2e7afe02.woff") format("woff"), url("8e774d13-c8ce-4383-9420-c3538c07629c.ttf") format("truetype"), url("8d85f88f-cb64-403e-baf3-0fa5b043f559.svg#8d85f88f-cb64-403e-baf3-0fa5b043f559") format("svg");
+	src: url("vendors/developer.sabre.com/82467ea2-e594-4e0f-870c-374e5f664454.eot?#iefix");
+	src: url("vendors/developer.sabre.com/82467ea2-e594-4e0f-870c-374e5f664454.eot?#iefix") format("eot"), url("vendors/developer.sabre.com/4f196f0d-462c-4cbc-ab22-113a2e7afe02.woff") format("woff"), url("vendors/developer.sabre.com/8e774d13-c8ce-4383-9420-c3538c07629c.ttf") format("truetype"), url("vendors/developer.sabre.com/8d85f88f-cb64-403e-baf3-0fa5b043f559.svg#8d85f88f-cb64-403e-baf3-0fa5b043f559") format("svg");
 }
 
 @font-face {
 	font-family: "Univers Basic Regular";
-	src: url("ec3e8d68-2ff1-4c33-ab73-e24f854b97bc.eot?#iefix");
-	src: url("ec3e8d68-2ff1-4c33-ab73-e24f854b97bc.eot?#iefix") format("eot"), url("131afccb-6196-44dd-9bad-6d2827250d32.woff") format("woff"), url("9e36bdaa-82dd-4f4f-8791-58e424c16aec.ttf") format("truetype"), url("d34e146c-f7b7-4348-b6f7-743650e5f02f.svg#d34e146c-f7b7-4348-b6f7-743650e5f02f") format("svg");
+	src: url("vendors/developer.sabre.com/ec3e8d68-2ff1-4c33-ab73-e24f854b97bc.eot?#iefix");
+	src: url("vendors/developer.sabre.com/ec3e8d68-2ff1-4c33-ab73-e24f854b97bc.eot?#iefix") format("eot"), url("vendors/developer.sabre.com/131afccb-6196-44dd-9bad-6d2827250d32.woff") format("woff"), url("vendors/developer.sabre.com/9e36bdaa-82dd-4f4f-8791-58e424c16aec.ttf") format("truetype"), url("vendors/developer.sabre.com/d34e146c-f7b7-4348-b6f7-743650e5f02f.svg#d34e146c-f7b7-4348-b6f7-743650e5f02f") format("svg");
 }
 
 @font-face {
 	font-family: "Georgia Pro Light Italic";
-	src: url("1628f776-e61b-4351-96ef-bac1e7a7c3f9.eot?#iefix");
-	src: url("1628f776-e61b-4351-96ef-bac1e7a7c3f9.eot?#iefix") format("eot"), url("b4771eb9-1153-4b3f-a0a7-d441636d8cab.woff") format("woff"), url("639ca559-9976-41d9-bf31-9b5a44acaa0b.ttf") format("truetype"), url("1033bb63-dffc-43b5-8e26-b363494ba7a3.svg#1033bb63-dffc-43b5-8e26-b363494ba7a3") format("svg");
+	src: url("vendors/developer.sabre.com/1628f776-e61b-4351-96ef-bac1e7a7c3f9.eot?#iefix");
+	src: url("vendors/developer.sabre.com/1628f776-e61b-4351-96ef-bac1e7a7c3f9.eot?#iefix") format("eot"), url("vendors/developer.sabre.com/b4771eb9-1153-4b3f-a0a7-d441636d8cab.woff") format("woff"), url("vendors/developer.sabre.com/639ca559-9976-41d9-bf31-9b5a44acaa0b.ttf") format("truetype"), url("vendors/developer.sabre.com/1033bb63-dffc-43b5-8e26-b363494ba7a3.svg#1033bb63-dffc-43b5-8e26-b363494ba7a3") format("svg");
 }
 
 /* Now that we're done with all that @font-face stuff, here's where the CSS really starts */
