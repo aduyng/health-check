@@ -1,0 +1,16 @@
+{{#each modules}}
+    <tr>
+        <td>
+            <input type="checkbox" data-id="{{this.id}}" id="{{../id}}-module-checkbox-{{id}}" class="{{../id}}-module-checkbox" {{#if this.isEnabled}} checked {{/if}} />
+        </td>
+        <td>
+            <input type="text" value="{{this.name}}" data-id="{{this.id}}" class="form-control input-sm {{../id}}-name" />
+        </td>
+        <td class="text-nowrap">
+            <button class="btn btn-xs btn-default {{../id}}-code" data-id="{{this.id}}"><i class="fa fa-code"></i>
+            </button>
+            <button class="btn btn-xs btn-danger {{../id}}-remove" data-id="{{this.id}}"><i class="fa fa-trash-o"></i>
+            </button>
+        </td>
+    </tr>
+{{/each}}

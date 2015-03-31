@@ -1,0 +1,1 @@
+PORT=18080 IP=0.0.0.0 node server.js

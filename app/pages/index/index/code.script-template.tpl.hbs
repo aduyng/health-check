@@ -1,0 +1,21 @@
+var casper = require('casper').create({
+        logLevel: 'info',
+        waitTimeout: 30000,
+        pageSettings: {
+            webSecurityEnabled: false,
+            loadImages: true,
+            loadPlugins: false
+        }
+    });
+
+/************************** TEST BEGIN **************************************/
+var startUrl = '<Enter your starting URL here>';
+casper.start(startUrl);
+
+
+
+/************************** TEST END **************************************/
+
+casper.run(function() {
+    casper.exit();
+});

@@ -1,0 +1,8 @@
+{{#each modules}}
+    <li class="list-group-item clearfix">
+        <i class="fa {{iconClass}} status pull-right"></i>
+        <div class="name">{{name}}</div>
+    </li>
+{{else}}
+    <li class="list-group-item list-group-item-warning"><i class="fa fa-exclamation-triangle"></i> There is no modules.</li>
+{{/each}}
