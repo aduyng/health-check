@@ -7,7 +7,6 @@ define(function(require) {
     var Model = Super.extend({
         name: 'module'
     });
-    
    
     
     return Model;

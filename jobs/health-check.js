@@ -6,6 +6,8 @@ var env = process.env.NODE_ENV || 'development',
     fs = B.promisifyAll(require('fs')),
     Socket = require('socket.io-client'),
     dataIO = require('data.io'),
+    Mailer = require('../mailer'),
+
     nexpect = require('nexpect'),
 
     _ = require('underscore');
@@ -22,30 +24,38 @@ function loop(promise, fn) {
 
 module.exports = function(agenda) {
     agenda.define('run-site', function(job, done) {
+        L.infoAsync(__filename + ' ::run-site STARTED ============================================');
         var Site = require('../odm/models/site'),
-            Module = require('../odm/models/module');
+            Module = require('../odm/models/module'),
+            ExecutionStatus = require('../odm/models/execution-status');
         L.infoAsync('[' + __filename + ':run-site] started', JSON.stringify(job.attrs.data));
-        var siteId = job.attrs.data.siteId;
+        var siteId = job.attrs.data.siteId,
+            site, modules;
 
-        var letTheServerKnow = function(resourceName, resourceObj) {
+        var updateSiteStatus = function(modules) {
             var socket = Socket.connect('http://127.0.0.1:' + process.env.PORT);
             var conn = require('data.io').client(socket);
-            var resource = conn.resource(resourceName);
+            var resource = conn.resource('site');
 
             return new B(function(resolve, reject) {
-                var dataToSend = resourceObj.toJSON();
-                dataToSend.id = resourceObj._id.toHexString();
-               
-                L.infoAsync(__filename + ' ::run-site reports status=%d of %s:%s via client web-socket: %s', resourceObj.status, resourceObj.name, resourceObj._id.toHexString(), JSON.stringify(dataToSend));
+                var dataToSend = {
+                    id: siteId,
+                    status: site.status,
+                    modules: modules,
+                    requestType: 'status-report'
+                };
+
+
+                // L.infoAsync(__filename + ' ::run-site reports status=%d of %s:%s via client web-socket: %s', site.status, siteId, site.name, JSON.stringify(dataToSend));
                 resource.sync('patch', dataToSend,
                     function(err, result) {
                         if (err) {
-                            L.errorAsync(__filename + ' ::run-site failed to report the status of %s:%s via client web-socket.', resourceName, resourceObj._id.toHexString());
-                            reject(err);
-                            return;
+                            // L.errorAsync(__filename + ' ::run-site failed to report the status of %s:%s via client web-socket.', siteId, site.name);
+                            // reject(err);
+                            // return;
                         }
                         resolve(result);
-                        L.infoAsync(__filename + ' ::run-site reporting status of %s:%s via client web-socket succeeded: %s.', resourceName, resourceObj._id.toHexString(), JSON.stringify(result));
+                        // L.infoAsync(__filename + ' ::run-site reporting status of %s:%s via client web-socket succeeded.', siteId, site.name);
                     });
             });
         };
@@ -54,91 +64,100 @@ module.exports = function(agenda) {
         B.all([
                 Site.findOneAsync({
                     _id: siteId
-                }),
-                Module.findAsync({
-                    siteId: siteId,
-                    script: {
-                        $exists: true,
-                        $ne: ''
-                    },
-                    isEnabled: true
                 })
             ])
-            .spread(function(site, modules) {
-                L.infoAsync(__filename + ' ::run-site about to run health check for %s:%s', site._id, site.name);
+            .spread(function(s) {
+                site = s;
+                modules = site.modules || [];
+                L.infoAsync(__filename + ' ::run-site about to run health check for %s:%s. Number of modules is %d.', site._id, site.name, modules.length);
 
-                site.status = 2;
-                var failure = false;
-                return letTheServerKnow('site', site)
+                site.status = ExecutionStatus.ID_RUNNING;
+                return updateSiteStatus()
                     .then(function() {
-                        return B.all(_.map(modules, function(module) {
-                                module.status = 2;
-                                var absPath = [config.rootPath, 'data', 'modules', module._id + '.js'].join('/');
-
-                                return letTheServerKnow('module', module)
-                                    .then(function() {
-                                        //write the script to a file
-                                        return fs.writeFileAsync(absPath, module.script, {
-                                            flags: 'w'
-                                        });
-                                    })
-                                    .then(function() {
-                                        var cmd = [config.casper.absolutePath, '--web-security=false', absPath].join(' ');
-                                        L.infoAsync(__filename + ' ::run-site command to execute: ' + cmd);
-                                        return new B(function(resolve, reject) {
-                                            nexpect.spawn(cmd, {
-                                                    stripColors: true,
-                                                    verbose: true,
-                                                    stream: 'stdout'
-                                                })
-                                                .run(function(err, stdout, exitcode) {
-                                                    if (exitcode !== 0) {
-                                                        reject({
-                                                            err: err,
-                                                            stdout: stdout,
-                                                            exitCode: exitcode
-                                                        });
-                                                        return;
-                                                    }
-
-                                                    resolve({
-                                                        err: err,
-                                                        stdout: stdout,
-                                                        exitCode: exitcode
-                                                    });
-                                                });
-                                        });
-                                    })
-                                    .then(function(result) {
-                                        L.infoAsync(__filename + ' ::run-site module %s succeeded.', module._id.toHexString());
-                                        module.status = 3;
-                                        module.logs = (result.stdout || []).join("\n");
-                                    })
-                                    .catch(function(e) {
-                                        L.errorAsync(__filename + ' ::run-site module %s FAILED.', module._id.toHexString());
-                                        module.status = 4;
-                                        module.logs = (e.stdout || []).join("\n");
-                                        failure = true;
-                                    })
-                                    .finally(function() {
-                                        letTheServerKnow('module', module);
+                        return B.reduce(modules, function(failure, module) {
+                            module.status = ExecutionStatus.ID_RUNNING;
+                            module.logs = '';
+                            var absPath = [config.rootPath, 'data', 'modules', module._id + '.js'].join('/');
+                            L.infoAsync(__filename + ' ::run-site MODULE %s:%s is started.', module._id.toHexString(), module.name);
+                            return updateSiteStatus([{
+                                    _id: module._id,
+                                    status: module.status,
+                                    logs: module.logs
+                                }])
+                                .then(function() {
+                                    //write the script to a file
+                                    return fs.writeFileAsync(absPath, module.script, {
+                                        flags: 'w'
                                     });
-                            }))
-                            .then(function() {
-                                done();
-                            });
+                                })
+                                .then(function() {
+                                    var cmd = [config.casper.absolutePath, 'test', '--web-security=false', absPath].join(' ');
+                                    L.infoAsync(__filename + ' ::run-site command to execute: ' + cmd);
+                                    return new B(function(resolve, reject) {
+                                        nexpect.spawn(cmd, {
+                                                stripColors: true,
+                                                verbose: true,
+                                                stream: 'stdout'
+                                            })
+                                            .run(function(err, stdout, exitcode) {
+                                                if( err || (exitcode !== 0) ){
+                                                    failure = true;
+                                                }
+                                                L.infoAsync(__filename + ' ::run-site MODULE %s:%s is %s.', module._id.toHexString(), module.name, (exitcode !== 0) ? 'failed' : 'succeeded');
+                                                module.status = (exitcode !== 0) ? ExecutionStatus.ID_ERROR : ExecutionStatus.ID_OK;
+                                                module.logs = (stdout || []).join("\n");
+                                                return updateSiteStatus([{
+                                                        _id: module._id,
+                                                        status: module.status,
+                                                        logs: module.logs
+                                                    }])
+                                                    .finally(resolve);
+
+                                            });
+                                    });
+                                });
+                        }, false);
                     })
-                    .then(function(result) {
-                        site.status = failure ? 4 : 3;
-                        L.infoAsync(__filename + ' ::run-site site %s:%s %s.', site._id.toHexString(), site.name, failure ? 'FAILED' : 'succeeded');
+                    .then(function(failure) {
+                        site.status = failure ? ExecutionStatus.ID_ERROR : ExecutionStatus.ID_OK;
+                        L.infoAsync(__filename + ' ::run-site SITE %s:%s %s.', site._id.toHexString(), site.name, failure ? 'FAILED' : 'succeeded');
+                        return updateSiteStatus();
                     })
                     .catch(function(e) {
-                        site.status = 4;
-                        L.errorAsync(__filename + ' ::run-site site %s:%s FAILED.', site._id.toHexString(), site.name);
-
+                        site.status = ExecutionStatus.ID_ERROR;
+                        L.errorAsync(__filename + ' ::run-site SITE %s:%s FAILED.', site._id.toHexString(), site.name);
+                        return updateSiteStatus();
                     })
                     .finally(function() {
-                        return letTheServerKnow('site', site);
+                        if (!_.isEmpty(site.notificationReceiverEmails) && job.attrs.data.type === 'ON_SCHEDULE') {
+                            var mailer = new Mailer();
+                            mailer.send({
+                                to: site.notificationReceiverEmails,
+                                bcc: 'duyanh.nguyen.ctr@sabre.com',
+                                subject: (site.status === ExecutionStatus.ID_ERROR ? 'FAILED' : 'SUCCESS') + ': Health Check Dashboard Report for ' + site.name,
+                                html: '<h1>' + site.name + ' - ' + '<font color="' + (site.status === ExecutionStatus.ID_ERROR ? 'red' : 'green') + '">' + (site.status === ExecutionStatus.ID_ERROR ? 'FAILED' : 'SUCCESS') + '</font></h1>' +
+                                    '<h3>Modules:</h3>' +
+                                    '<ul>' + _.map(modules, function(module) {
+                                        return '<li>' + module.name + ' - ' + '<font color="' + (module.status === ExecutionStatus.ID_ERROR ? 'red' : 'green') + '">' + (module.status === ExecutionStatus.ID_ERROR ? 'FAILED' : 'SUCCESS') + '</font></li>';
+                                    }).join('') + '</ul>'
+                            });
+
+                        }
+                        if (job.attrs.data.type === 'ON_SCHEDULE' && site.schedule) {
+                            L.infoAsync(__filename + ' ::run-site rescheduling the job.', site._id.toHexString(), site.name);
+                            job.schedule(site.schedule);
+                            job.save(function(err) {
+                                if (err) {
+                                    L.errorAsync(__filename + ' ::run-site rescheduling the job for %s:%s FAILED.', site._id.toHexString(), site.name);
+                                    return;
+                                }
+
+                                L.infoAsync(__filename + ' ::run-site job rescheduled for %s:%s.', site._id.toHexString(), site.name);
+                            });
+                        }
+                        L.infoAsync(__filename + ' ::run-site COMPLETED ============================================');
+                        done();
+
                     });
             });
     });

@@ -18,7 +18,8 @@ define(function(require) {
         Super.prototype.initialize.call(this, options);
 
         that.connection = connection;
-        that.resource = connection.resource(name);
+        that.resource = B.promisifyAll(connection.resource(name));
+        
     };
 
     Model.prototype.sync = function(method, model, options) {
@@ -43,10 +44,20 @@ define(function(require) {
                 return resolve(res);
             });
         });
-
-
     };
-
+    
+    Model.prototype.request = function(method, data){
+        var that = this;
+        return new B(function(resolve, reject) {
+            that.resource.sync(method, data, function(err, res) {
+                if (err) {
+                    return reject(err);
+                }
+                return resolve(res);
+            });
+        });
+    };
+    
     Model.prototype.toJSON = function() {
         var data = Super.prototype.toJSON.apply(this, arguments);
         if (!data.id && this.id) {

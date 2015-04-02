@@ -5,10 +5,9 @@ define(function(require) {
         EditView = require('./site-edit'),
         ModulesView = require('./modules'),
         Dialog = require('views/controls/dialog'),
-        Modules = require('collections/module'),
-        ModuleList = require('./module-list'),
         ExecutionStatus = require('models/execution-status'),
-        TEMPLATE = require('hbs!./site-widget.tpl');
+        TEMPLATE = require('hbs!./site-widget.tpl'),
+        MODULE_LIST = require('hbs!./module-list.tpl');
 
     var View = Super.extend({
         className: 'panel panel-default site'
@@ -22,35 +21,26 @@ define(function(require) {
     View.prototype.render = function() {
         var that = this;
 
-        that.draw();
+        that.$el.html(TEMPLATE({
+            id: that.id
+        }));
+
         that.mapControls();
-
-
-        that.model.modules = new Modules();
-        that.model.modules.on('all', that.output.bind(that));
-        that.children.moduleList = new ModuleList({
-            el: that.controls.moduleList,
-            collection: that.model.modules,
-            model: that.model
-        });
-        that.children.moduleList.render();
-
 
         var events = {};
         events['click ' + that.toId('header')] = 'onHeaderClick';
         events['click ' + that.toId('edit')] = 'onEditClick';
         events['click ' + that.toId('show-modules')] = 'onModulesClick';
         events['click ' + that.toId('run')] = 'onRunClick';
+        events['click ' + that.toId('stop')] = 'onStopClick';
+
         that.delegateEvents(events);
 
-        that.model.on('sync', that.output.bind(that));
+        that.model.on('sync change', that.draw.bind(that));
         that.model.on('destroy', that.remove.bind(that));
+        that.draw();
 
-        return B.resolve(that.model.modules.fetch({
-            data: {
-                siteId: that.model.id
-            }
-        }));
+        return B.resolve();
     };
 
     View.prototype.remove = function() {
@@ -58,36 +48,98 @@ define(function(require) {
         return Super.prototype.remove.apply(this, arguments);
     }
 
-    View.prototype.draw = function(isRunning) {
+
+
+
+
+    View.prototype.draw = function() {
         var that = this;
 
-        that.$el.html(TEMPLATE({
-            id: that.id,
-            data: that.model.toJSON()
-        }));
-    };
-
-    View.prototype.output = function() {
-        var that = this;
         that.controls.name.text(that.model.get('name'));
-        that.controls.run.prop('disabled', that.model.modules.length === 0 || _.contains([ExecutionStatus.ID_RUNNING, ExecutionStatus.ID_SCHEDULED], that.model.get('status')));
+
+        if (!_.isEmpty(that.model.get('modules')) && _.contains([
+                ExecutionStatus.ID_OK,
+                ExecutionStatus.ID_NOT_STARTED,
+                ExecutionStatus.ID_TERMINATED,
+                ExecutionStatus.ID_ERROR
+            ], that.model.get('status'))) {
+            that.controls.run.removeClass('hidden');
+        }
+        else {
+            that.controls.run.addClass('hidden');
+        }
+        if (!_.isEmpty(that.model.get('modules')) && _.contains([
+                ExecutionStatus.ID_RUNNING,
+                ExecutionStatus.ID_SCHEDULED
+            ], that.model.get('status'))) {
+            that.controls.stop.removeClass('hidden');
+        }
+        else {
+            that.controls.stop.addClass('hidden');
+        }
 
         var iconClass = 'fa-square-o',
             panelClass = 'panel-default';
-        if (that.model.get('status') === ExecutionStatus.ID_ERROR) {
-            iconClass = 'fa-exclamation-circle text-danger';
-            panelClass = 'panel-danger';
+        switch (that.model.get('status')) {
+
+            case ExecutionStatus.ID_SCHEDULED:
+                iconClass = 'fa-clock-o text-info';
+                panelClass = 'panel-info';
+                break;
+
+            case ExecutionStatus.ID_ERROR:
+                iconClass = 'fa-exclamation-circle text-danger';
+                panelClass = 'panel-danger';
+                break;
+
+            case ExecutionStatus.ID_RUNNING:
+                iconClass = 'fa-spinner fa-spin text-warning';
+                panelClass = 'panel-warning';
+                break;
+
+            case ExecutionStatus.ID_RUNNING:
+                iconClass = 'fa-check text-success';
+                panelClass = 'panel-success';
+                break;
+
+            case ExecutionStatus.ID_TERMINATED:
+                iconClass = 'fa-exclamation text-warning';
+                panelClass = 'panel-warning';
+                break;
+
+            case ExecutionStatus.ID_OK:
+                iconClass = 'fa-check-square text-success';
+                panelClass = 'panel-success';
+                break;
         }
-        else if (that.model.get('status') === ExecutionStatus.ID_RUNNING) {
-            iconClass = 'fa-spinner fa-spin text-warning';
-            panelClass = 'panel-warning';
-        }
-        else if (that.model.get('status') === ExecutionStatus.ID_OK) {
-            iconClass = 'fa-check text-success';
-            panelClass = 'panel-success';
-        }
+
+
         that.controls.icon.attr('class', 'fa ' + iconClass);
-        that.$el.removeClass('panel-default panel-danger panel-success panel-warning').addClass(panelClass);
+        that.$el.removeClass('panel-default panel-danger panel-success panel-warning panel-info').addClass(panelClass);
+
+        that.controls.modules.html(MODULE_LIST({
+            id: that.id,
+            modules: _.sortBy(_.map(_.filter(that.model.get('modules') || [], function(module) {
+                return module.isEnabled;
+            }), function(module) {
+                return _.extend(module, {
+                    iconClass: (function() {
+                        switch (module.status) {
+                            case ExecutionStatus.ID_RUNNING:
+                                return 'fa-spinner fa-spin text-warning';
+                            case ExecutionStatus.ID_OK:
+                                return 'fa-check text-success';
+                            case ExecutionStatus.ID_ERROR:
+                                return 'fa-exclamation-circle text-danger';
+                            default:
+                                return 'fa-square-o';
+                        }
+                    })()
+                });
+            }), function(module) {
+                return module.name;
+            })
+        }));
     };
 
     View.prototype.onHeaderClick = function(event) {
@@ -98,13 +150,21 @@ define(function(require) {
     View.prototype.onRunClick = function(event) {
         var that = this;
         event.preventDefault();
-        that.run();
+        return that.run();
+    };
+
+    View.prototype.onStopClick = function(event) {
+        var that = this;
+        event.preventDefault();
+        return that.model.stop();
     };
 
     View.prototype.run = function() {
         var that = this;
 
-        that.controls.run.prop('disabled', true);
+        that.controls.run.addClass('hidden');
+        that.controls.stop.removeClass('hidden');
+
         return that.model.run()
             .then(function() {
                 that.trigger('schedule');
@@ -196,6 +256,7 @@ define(function(require) {
                 });
         });
 
+
         dlg.on('delete', function(event) {
             var confirmDlg = new Dialog({
                 body: 'Are you sure you want to delete ' + that.model.get('name') + '?',
@@ -229,8 +290,8 @@ define(function(require) {
 
         dlg.on('clone', function(event) {
             B.resolve(that.model.duplicate())
-                .then(function() {
-                    that.trigger('cloned', that.model);
+                .then(function(result) {
+                    that.trigger('cloned', result);
                     dlg.close();
                 });
         });
@@ -242,8 +303,7 @@ define(function(require) {
         var that = this;
 
         var view = new ModulesView({
-            model: that.model,
-            collection: that.model.modules
+            model: that.model
         });
 
         var buttons = [{

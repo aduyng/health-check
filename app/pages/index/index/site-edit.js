@@ -27,7 +27,7 @@ define(function(require) {
             tags: [],
             tokenSeparators: [",", " "]
         });
-        
+
         var events = {};
         that.delegateEvents(events);
 

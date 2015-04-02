@@ -61,6 +61,6 @@ B.all([odm.initialize()])
             logger.info('Server is listening at %s, port: %d', server.address().address, server.address().port);
         });
         var connection = require('./connection')(server);
-        connection.createResource('site');
-        connection.createResource('module');
+        require('./resources/site')(connection);
+        // require('./resources/module')(connection);
     });

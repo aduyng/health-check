@@ -9,12 +9,10 @@ define(function(require) {
         ExecutionStatus = require('models/execution-status'),
         Dialog = require('views/controls/dialog'),
         Sites = require('collections/site'),
+        Modules = require('collections/module'),
         Site = require('models/site');
 
-
-
     var Page = Super.extend({});
-
 
     Page.prototype.initialize = function(options) {
         var that = this;
@@ -22,6 +20,7 @@ define(function(require) {
         Super.prototype.initialize.call(that, options);
 
         that.sites = new Sites();
+        that.modules = new Modules();
     };
 
     Page.prototype.render = function() {
@@ -69,6 +68,10 @@ define(function(require) {
         //TODO: why the heck I'm not getting this event
         removedSite.view.remove();
     };
+    
+    Page.prototype.addSiteToCollection = function(site){
+        this.sites.add(site);
+    }
 
     Page.prototype.renderSites = function() {
         var that = this;
@@ -77,16 +80,18 @@ define(function(require) {
         B.all(_.map(that.sites.filter(function(site) {
             return !site.isRendered;
         }), function(site) {
-
             site.view = new SiteWidget({
                 model: site
             });
             site.isRendered = true;
+            
+            site.view.on('cloned', function(clonedModel){
+                that.addSiteToCollection(clonedModel);
+            });
+            
             return site.view.render()
                 .then(function() {
-
                     that.controls.sites.append(site.view.$el);
-
                     site.view.on('schedule', that.onSiteScheduled.bind(that));
                 });
         }));
@@ -209,9 +214,7 @@ define(function(require) {
         })
 
         dlg.on('save', function() {
-            B.resolve(model.save(view.val(), {
-                    wait: true
-                }))
+            B.resolve(model.save(view.val()))
                 .then(function() {
                     if (isNew) {
                         that.sites.add(model);
@@ -272,8 +275,7 @@ define(function(require) {
 
     Page.prototype.fetch = function() {
         var that = this;
-
-        return that.sites.fetch();
+        return B.all([that.sites.fetch()]);
     };
 
 

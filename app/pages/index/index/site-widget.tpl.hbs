@@ -5,11 +5,12 @@
 
   <h3 class="panel-title" id="{{id}}-name">{{data.name}}</h3>
 </div>
-<ul class="list-group module-list" id="{{id}}-module-list">
-  <li class="list-group-item text-center"><i class="fa fa-spiner fa-spin"></i> Loading modules...</li>
+
+<ul class="list-group modules" id="{{id}}-modules">
+
 </ul>
 
-<div class="panel-footer">
+<div class="panel-footer clearfix">
   <div class="btn-group pull-right">
     <button class="btn btn-xs btn-default" id="{{id}}-edit"><i class="fa fa-edit"></i> <span class="hidden-xs">Edit</span>
     </button>
@@ -17,6 +18,7 @@
     </button>
   </div>
 
-  <button class="btn btn-xs btn-success" disabled id="{{id}}-run"><i class="fa fa-play"></i> <span class="hidden-xs">Run</span>
-  </button>
+  
+  <button class="btn btn-xs btn-success hidden" id="{{id}}-run"><i class="fa fa-play"></i> <span class="hidden-xs">Run</span></button>
+  <button class="btn btn-xs btn-warning hidden" id="{{id}}-stop"><i class="fa fa-stop"></i> <span class="hidden-xs">Stop</span></button>
 </div>

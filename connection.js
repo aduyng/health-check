@@ -77,12 +77,13 @@ module.exports = function(server) {
 
         resource.use('list', function(req, res) {
             L.infoAsync(__filename + ' ::list(%s)', name, req.data);
-            Model.findAsync()
+            Model.findAsync(req.data)
                 .then(function(docs) {
                     res.send(docs);
                 });
         });
-        data.resources[name] = resource;
+        
+        return resource;
     };
 
     return data;

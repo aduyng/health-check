@@ -4,9 +4,10 @@ var env = process.env.NODE_ENV || 'development',
     B = require('bluebird'),
     odm = require('../../odm'),
     L = require('./../../logger'),
-    Module = require('../models/module'),
     moment = require('moment'),
     agenda = require('../../agenda'),
+    ModuleSchema = require('./module'),
+    ExecutionStatus = require('../models/execution-status'),
     _ = require('underscore');
 
 
@@ -17,7 +18,7 @@ var Schema = new odm.Schema({
         required: true
     },
     notificationReceiverEmails: {
-        type: [String]
+        type: String
     },
     lastExecutedAt: {
         type: Number
@@ -34,196 +35,203 @@ var Schema = new odm.Schema({
     },
     tags: {
         type: String
+    },
+    modules: {
+        type: [ModuleSchema]
+    },
+    isEnabled: {
+        type: Boolean,
+        'default': false
     }
 });
 
-Schema.post('save', function(doc) {
+
+Schema.methods.stop = function() {
     var that = this;
-    L.infoAsync(__filename + ' ::post_save()');
-    agenda.jobs({
-        name: 'run-site',
-        'data.siteId': that._id
-    }, function(err, jobs) {
-        var job;
-        if (err) {
-            throw err;
-        }
-        jobs = jobs || [];
-
-
-        if (that.schedule) {
-            L.infoAsync(__filename + ' ::post_save() schedule is set');
-            if (!_.find(jobs, function(job) {
-                    return job.attrs.data.type === 'ON_SCHEDULE';
-                })) {
-                L.infoAsync(__filename + ' ::post_save() no ON_SCHEDULE job, creating one.');
-                //creating an on-demand job
-                job = agenda.create('run-site', {
-                    siteId: that._id,
-                    type: 'ON_SCHEDULE'
-                });
-                job.schedule(that.schedule);
-                job.save(function(err) {
-                    if (err) {
-                        L.errorAsync(__filename + ' ::post_save() creating ON_SCHEDULE failed: %s', err);
-                        return;
-                    }
-                    L.infoAsync(__filename + ' ::post_save() ON_SCHEDULE created');
-                });
-            }
-        }
-        else {
-            L.infoAsync(__filename + ' ::post_save() schedule is NOT set. Delete ON_SCHEDULE job if any.');
-            job = _.find(jobs, function(job) {
-                return job.attrs.data.type === 'ON_SCHEDULE';
-            });
-
-            if (job) {
-                job.remove(function(err) {
-                    if (err) {
-                        L.errorAsync(__filename + ' ::post_save() remove ON_SCHEDULE failed: %s', err);
-                        return;
-                    }
-                    L.infoAsync(__filename + ' ::post_save() ON_SCHEDULE removed');
-                });
-            }
-        }
-        //ID_SCHEDULED == -1
-        L.infoAsync(__filename + ' ::post_save() status = %d', that.status);
-        if (that.status === -1) {
-            var job = _.find(jobs, function(job) {
-                return job.attrs.data.type === 'ON_DEMAND';
-            });
-
-            if (job) {
-                
-                L.infoAsync(__filename + ' ::post_save() no ON_DEMAND job, creating one.');
-                
-                //creating an on-demand job
-                job = agenda.create('run-site', {
-                    siteId: that._id,
-                    type: 'ON_DEMAND'
-                });
-
-            }
-            L.infoAsync(__filename + ' ::post_save() schedule ON_DEMAND job to run in 10 seconds.');
-            job.schedule('in 10 seconds');
-
-            job.save(function(err) {
+    that.status = ExecutionStatus.ID_TERMINATED;
+    that.modules = _.map(that.modules || [], function(m){
+        m.status = ExecutionStatus.ID_SCHEDULED;
+        return m;
+    });
+    that.markModified('modules');
+    return B.all([that.saveAsync(),
+        new B(function(resolve, reject) {
+            agenda.jobs({
+                name: 'run-site',
+                'data.siteId': that._id,
+                'data.type': 'ON_DEMAND'
+            }, function(err, jobs) {
+                var job;
                 if (err) {
-                    L.errorAsync(__filename + ' ::post_save() saving ON_DEMAND failed: %s', err);
+                    reject(err);
                     return;
                 }
-                L.infoAsync(__filename + ' ::post_save() ON_DEMAND saved');
-            });
-        }
 
-    });
-
-
-});
-
-Schema.post('remove', function(doc) {
-    var that = this;
-    L.infoAsync(__filename + ' ::post_remove()');
-    agenda.jobs({
-        name: 'run-site',
-        'data.siteId': that._id
-    }, function(err, jobs) {
-        if (err) {
-            throw err;
-        }
-        jobs = jobs || [];
-        _.forEach(jobs, function(job) {
-            job.remove(function(err) {
-                if (err) {
-                    L.errorAsync(__filename + ' ::post_remove() removing job %s failed: %s', job._id, err);
-                    return;
+                if (jobs && jobs.length > 0) {
+                    job = jobs[0];
+                    return new B(function(res, rej) {
+                        job.remove(function(err) {
+                            if (err) {
+                                L.errorAsync(__filename + ' ::updateBackgroundJobs() removing job %s failed: %s', job._id, err);
+                                rej(err);
+                                return;
+                            }
+                            L.infoAsync(__filename + ' ::updateBackgroundJobs() job %s has been removed.', job._id);
+                            res();
+                        });
+                    })
+                    .then(resolve)
+                    .catch(reject);
                 }
-                L.infoAsync(__filename + ' ::post_remove() job %s has been removed.', job._id);
+                return resolve();
             });
-        });
-    });
-});
-
-
-
-Schema.virtual('basic').get(function() {
-    return _.pick(this, '_id', 'name', 'notificationReceiverEmails', 'lastExecutedAt', 'lastExecutionCompletedAt', 'status', 'schedule');
-});
-
-Schema.methods.run = function() {
-    var job = agenda.create('run-site', {
-        siteId: this._id
-    });
-    B.promisifyAll(job);
-    job.unique({
-        'data.siteId': this._id
-    });
-    job.schedule('in 5 seconds');
-    return job.saveAsync();
+        })
+    ]);
 };
 
-Schema.methods.updateJobScheduler = function() {
+Schema.methods.run = function() {
     var that = this;
-    return that.deleteJobScheduler()
-        .then(function() {
-            var job = agenda.create('run-site', {
-                siteId: that._id,
-                isSchedule: true
-            });
-            job.repeatAt(that.schedule);
-            job.schedule(that.schedule);
-            job.unique({
+    that.status = ExecutionStatus.ID_SCHEDULED;
+    return B.all([
+        that.saveAsync(), new B(function(resolve, reject) {
+            agenda.jobs({
+                name: 'run-site',
                 'data.siteId': that._id,
-                'data.isSchedule': true
-            });
-            return new B(function(resolve, reject) {
-                job.save(function(err, j) {
+                'data.type': 'ON_DEMAND'
+            }, function(err, jobs) {
+                var job;
+                if (err) {
+                    reject(err);
+                    return;
+                }
+
+                if (jobs && jobs.length > 0) {
+                    job = jobs[0];
+                }
+                else {
+                    job = agenda.create('run-site', {
+                        siteId: that._id,
+                        type: 'ON_DEMAND'
+                    });
+                }
+
+                job.schedule('in 1 second');
+                job.save(function(err) {
                     if (err) {
+                        L.errorAsync(__filename + ' ::runOnDemandJob() scheduling ON_DEMAND failed: %s', err);
                         reject(err);
                         return;
                     }
-                    resolve(j);
-                })
-            });
-        });
+                    L.infoAsync(__filename + ' ::runOnDemandJob() ON_DEMAND job scheduled');
+                    resolve(job);
+                });
+            })
+        })
+    ]);
 };
 
-Schema.methods.deleteJobScheduler = function() {
-    var that = this;
+Schema.methods.updateBackgroundJobs = function() {
+    var that = this,
+        job;
     return new B(function(resolve, reject) {
         agenda.jobs({
             name: 'run-site',
             'data.siteId': that._id,
-            'data.isSchedule': true
+            'data.type': 'ON_SCHEDULE'
         }, function(err, jobs) {
             if (err) {
                 reject(err);
                 return;
             }
+            L.infoAsync(__filename + ' ::updateBackgroundJobs() got ' + jobs.length + ' jobs to remove.');
+
+            var removeExistingJob = function(job) {
+                if (job) {
+                    return new B(function(res, rej) {
+                        job.remove(function(err) {
+                            if (err) {
+                                L.errorAsync(__filename + ' ::updateBackgroundJobs() removing job %s failed: %s', job._id, err);
+                                rej(err);
+                                return;
+                            }
+                            L.infoAsync(__filename + ' ::updateBackgroundJobs() job %s has been removed.', job._id);
+                            res();
+                        });
+                    });
+                }
+                return B.resolve();
+            }
 
             if (jobs && jobs.length > 0) {
-                return B.all(_.map(jobs, function(job) {
-                        return new B(function(res, rej) {
-                            job.remove(function(err) {
-                                if (err) {
-                                    reject(err);
-                                    return;
-                                }
-                                resolve();
-                            });
-                        });
-                    }))
-                    .then(function() {
-                        resolve();
-                    });
+                job = jobs[0];
             }
-            resolve();
+            return removeExistingJob(job)
+                .then(function() {
+                    L.infoAsync(__filename + ' ::updateBackgroundJobs() creating new ON_SCHEDULE job.');
+                    if (that.schedule) {
+                        //creating an on-demand job
+                        job = agenda.create('run-site', {
+                            siteId: that._id,
+                            type: 'ON_SCHEDULE'
+                        });
+
+                        job.schedule(that.schedule);
+
+                        return new B(function(res, rej) {
+                                job.save(function(err) {
+                                    if (err) {
+                                        L.errorAsync(__filename + ' ::updateBackgroundJobs() creating ON_SCHEDULE failed: %s', err);
+                                        rej(err);
+                                        return;
+                                    }
+                                    L.infoAsync(__filename + ' ::updateBackgroundJobs() ON_SCHEDULE created');
+                                    res(job);
+                                });
+                            })
+                            .then(resolve)
+                            .catch(reject);
+                    }
+                    L.infoAsync(__filename + ' ::updateBackgroundJobs() schedule is not set, ignore creating new ON_SCHEDULE job.');
+                    resolve();
+                });
         });
     });
-
-
 };
+
+Schema.methods.removeBackgroundJobs = function() {
+    var that = this;
+    return new B(function(resolve, reject) {
+        agenda.jobs({
+            name: 'run-site',
+            'data.siteId': that._id
+        }, function(err, jobs) {
+            if (err) {
+                reject(err);
+                return
+            }
+            jobs = jobs || [];
+            return B.all(_.map(jobs, function(job) {
+                    return new B(function(resolve, reject) {
+                        job.remove(function(err) {
+                            if (err) {
+                                L.errorAsync(__filename + ' ::post_remove() removing job %s failed: %s', job._id, err);
+                                reject(err);
+                                return;
+                            }
+                            L.infoAsync(__filename + ' ::post_remove() job %s has been removed.', job._id);
+                            resolve();
+                        });
+                    });
+                }))
+                .then(resolve)
+                .catch(reject);
+        });
+    });
+};
+
+
+Schema.virtual('basic').get(function() {
+    return _.pick(this, '_id', 'name', 'notificationReceiverEmails', 'lastExecutedAt', 'lastExecutionCompletedAt', 'status', 'schedule');
+});
 
 module.exports = Schema;

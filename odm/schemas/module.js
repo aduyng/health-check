@@ -5,19 +5,13 @@ var env = process.env.NODE_ENV || 'development',
     odm = require('../../odm'),
     L = require('./../../logger'),
     moment = require('moment'),
-    agenda = B.promisifyAll(require('../../agenda')),
     _ = require('underscore');
 
 
 var Schema = new odm.Schema({
-    siteId: {
-        type: odm.Schema.Types.ObjectId,
-        required: true
-    },
     name: {
         type: String,
-        trim: true,
-        required: true
+        trim: true
     },
     url: {
         type: String,
