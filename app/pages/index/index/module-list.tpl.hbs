@@ -1,5 +1,5 @@
 {{#each modules}}
-    <li class="list-group-item clearfix">
+    <li class="list-group-item clearfix {{../id}}-module" data-index="{{@index}}">
         <i class="fa {{iconClass}} status pull-right"></i>
         <div class="name">{{name}}</div>
     </li>

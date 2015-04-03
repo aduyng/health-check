@@ -1,0 +1,14 @@
+{
+  "name": "health-check",
+  "root": "app",
+  "clean_urls": false,
+  "error_page": "error.html",
+  "cache_control": {
+    "/**": 31536000
+  },
+  "headers": {
+    "/**": {
+      "Access-Control-Allow-Origin": "*"
+    }
+  }
+}

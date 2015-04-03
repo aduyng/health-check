@@ -635,7 +635,7 @@ module.exports = function (grunt) {
                         'dist'
                     ],
                     //    insertRequire: ['foo/bar/bop'],
-                    out: "./app/dist/<%=pkg.version%>/init.js",
+                    out: "./dist/app/init.js",
 
                     //An alternative to "include". Normally only used in a requirejs.config()
                     //call for a module used for mainConfigFile, since requirejs will read
@@ -794,7 +794,7 @@ module.exports = function (grunt) {
                     //http://en.wikipedia.org/wiki/Conditional_comment#Conditional_comments_in_JScript
                     //2) It is only useful in optimize: 'none' scenarios. The goal is to allow
                     //easier built bundle debugging, which goes against minification desires.
-                    useSourceUrl: true,
+                    useSourceUrl: false,
 
                     //Defines the loading time for modules. Depending on the complexity of the
                     //dependencies and the size of the involved libraries, increasing the wait
@@ -821,7 +821,12 @@ module.exports = function (grunt) {
             },
             frontend: {
                 src: [
-                    './app/dist/<%=pkg.version%>'
+                    './dist/frontend'
+                ]
+            },
+            backend: {
+                src: [
+                    './dist/backend'
                 ]
             }
         },
@@ -832,7 +837,7 @@ module.exports = function (grunt) {
                     {
                         expand: true,
                         cwd: './app',
-                        dest: './app/dist/<%=pkg.version%>',
+                        dest: './dist/app',
                         src: [
                             'style.css',
                             'images/icon/*',
@@ -840,26 +845,26 @@ module.exports = function (grunt) {
                         ]
                     },{
                         
-                        dest: './app/dist/<%=pkg.version%>/04b3c812-2234-45b5-af16-18a0f70cf1df.eot',
+                        dest: './dist/app/04b3c812-2234-45b5-af16-18a0f70cf1df.eot',
                         src: './app/vendors/developer.sabre.com/04b3c812-2234-45b5-af16-18a0f70cf1df.eot'
                     },{
                         
-                        dest: './app/dist/<%=pkg.version%>/131afccb-6196-44dd-9bad-6d2827250d32.woff',
+                        dest: './dist/app/131afccb-6196-44dd-9bad-6d2827250d32.woff',
                         src: './app/vendors/developer.sabre.com/131afccb-6196-44dd-9bad-6d2827250d32.woff'
                     },{
                         
-                        dest: './app/dist/<%=pkg.version%>/bc35730a-e839-4dc2-b89f-92575ffec5c1.woff',
+                        dest: './dist/app//bc35730a-e839-4dc2-b89f-92575ffec5c1.woff',
                         src: './app/vendors/developer.sabre.com/bc35730a-e839-4dc2-b89f-92575ffec5c1.woff '
                     },{
                         
-                        dest: './app/dist/<%=pkg.version%>/20588565-aa56-46ce-8d7c-6b5f77df85f9.ttf',
-                        src: './app/vendors/developer.sabre.com/20588565-aa56-46ce-8d7c-6b5f77df85f9.ttf'
+                        dest: './dist/app//20588565-aa56-46ce-8d7c-6b5f77df85f9.ttf',
+                        src: '../app/vendors/developer.sabre.com/20588565-aa56-46ce-8d7c-6b5f77df85f9.ttf'
                     },{
                         
-                        dest: './app/dist/<%=pkg.version%>/d7cf6a30-fb6a-4725-9c93-2372d9f4bb8d.woff',
+                        dest: './dist/app//d7cf6a30-fb6a-4725-9c93-2372d9f4bb8d.woff',
                         src: './app/vendors/developer.sabre.com/d7cf6a30-fb6a-4725-9c93-2372d9f4bb8d.woff '
                     },{
-                        dest: './app/dist/<%=pkg.version%>/fb6dd99b-78b9-4459-b787-00d3f0fc0c9f.ttf',
+                        dest: './dist/app//fb6dd99b-78b9-4459-b787-00d3f0fc0c9f.ttf',
                         src: './app/vendors/developer.sabre.com/fb6dd99b-78b9-4459-b787-00d3f0fc0c9f.ttf'
                     }
                 ]
@@ -869,16 +874,23 @@ module.exports = function (grunt) {
                     {
                         expand: true,
                         cwd: './',
-                        dest: './dist/',
+                        dest: './dist/backend',
                         src: [
-                            './collections/*.js',
-                            './controllers/*.js',
-                            './models/**/*.js',
+                            './jobs/*.js',
+                            './odm/**/*.js',
+                            './resources/**/*.js',
                             './views/**/*.hbs',
-                            './routes/*.js',
+                            './agenda.js',
+                            './connection.js',
                             './config.js',
                             './server.js',
-                            './error.js'
+                            './error.js',
+                            './logger.js',
+                            './mailer.js',
+                            './odm.js',
+                            './package.json',
+                            './utils.js',
+                            './worker.js'
                         ]
                     }
 

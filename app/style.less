@@ -3,34 +3,25 @@
 @import (inline) "vendors/developer.sabre.com/UX-Overrides.css";
 @import 'views/controls/dialog';
 @import 'views/controls/table';
-
 @nav-height: 50px;
 @footer-height: 38px;
-
 body {
   padding-top: @nav-height;
 }
-
 .toast-top-right {
   top: @nav-height + 12px;
 }
-
-
-.navbar-header {
-  margin-right: 100px;
+@media (max-width: 450px) {
+  a.navbar-brand img {
+    display: block;
+  }
 }
-
-.main-container {
-  padding: 4px;
-  padding-top: 24px;
-  
-  &>.breadcrumb{
+.navbar-header {} .main-container {
+  padding: 24px 4px 4px 8px;
+  &>.breadcrumb {
     margin-left: 10px;
     padding: 24px 0 0px 0px;
   }
-  
-  
-  
   .page-header {
     margin-top: 5px;
     border: none;
@@ -38,16 +29,12 @@ body {
   .page-body {
     padding-bottom: 2em;
   }
-
   .page-footer {
     border-top: 1px solid @table-border-color;
     padding-top: 2em;
     margin-top: 1em;
   }
 }
-
-
-
 .btn-list-item {
   text-align: left;
   padding-left: 5px;
@@ -55,57 +42,57 @@ body {
     padding-right: 5px;
   }
 }
-
 .percentage {
   &:after {
     content: '%';
   }
 }
-
 @import (inline) 'vendors/bootstrapValidator/dist/css/bootstrapValidator.min.css';
-
 input[type="number"] {
   text-align: right;
 }
-
 .form-group {
-
   & > label {
     font-weight: bold;
   }
 }
-
 .help-block {
   color: #aaa;
 }
-
 #nprogress {
   position: absolute;
   z-index: 999999
 }
-
-.wrapper{
+.wrapper {
   padding: 0;
 }
-
-a.logo{
+a.logo {
   margin-top: -5px;
   padding-left: 0px;
-  &>.icon{
-    margin-top: -5px;    
+  &>.icon {
+    margin-top: -5px;
   }
 }
-
-.header{
+.header {
   min-height: @nav-height;
 }
-.footer{
+.footer {
   min-height: @footer-height !important;
   height: @footer-height;
 }
-
+.terminal {
+  .modal-body {
+    code {
+      background-color: black;
+      &>span {
+        background-color: transparent !important;
+      }
+    }
+    background-color: black;
+  }
+  // & > span {
+  //   font-family: "Univers Typewriter", Monaco, Menlo, Consolas, "Courier New", monospace;
+  //   display: block;
+  // }
+}
 @import 'pages/index/index';
-// @import 'pages/index/view';
-
-
-// @import 'pages/script/edit';

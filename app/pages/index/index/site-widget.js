@@ -5,6 +5,7 @@ define(function(require) {
         EditView = require('./site-edit'),
         ModulesView = require('./modules'),
         Dialog = require('views/controls/dialog'),
+        ansi = require('ansi'),
         ExecutionStatus = require('models/execution-status'),
         TEMPLATE = require('hbs!./site-widget.tpl'),
         MODULE_LIST = require('hbs!./module-list.tpl');
@@ -31,6 +32,7 @@ define(function(require) {
         events['click ' + that.toId('header')] = 'onHeaderClick';
         events['click ' + that.toId('edit')] = 'onEditClick';
         events['click ' + that.toId('show-modules')] = 'onModulesClick';
+        events['click ' + that.toClass('module')] = 'onModuleClick';
         events['click ' + that.toId('run')] = 'onRunClick';
         events['click ' + that.toId('stop')] = 'onStopClick';
 
@@ -145,6 +147,40 @@ define(function(require) {
     View.prototype.onHeaderClick = function(event) {
         event.preventDefault();
         this.$el.toggleClass('expanded');
+    };
+
+    View.prototype.onModuleClick = function(event) {
+
+        var that = this,
+            e = $(event.currentTarget),
+            dlg,
+            modules = that.model.get('modules') || [],
+            moduleIndex = e.data('index'),
+            module = modules[moduleIndex];
+
+        event.preventDefault();
+        var html = '<code>' + ansi.ansi_to_html((module.logs||'')) + '</code>';
+
+        var buttons = [{
+            id: 'close',
+            label: 'Close',
+            iconClass: 'fa fa-times',
+            buttonClass: 'btn-default',
+            align: 'left',
+            autoClose: true
+        }];
+
+        dlg = new Dialog({
+            sizeClass: 'modal-lg terminal',
+            body: html,
+            title: 'View Log ' + module.name || '',
+            buttons: buttons
+        });
+
+        dlg.on('shown', function() {
+
+        });
+
     };
 
     View.prototype.onRunClick = function(event) {

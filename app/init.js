@@ -8,7 +8,6 @@ requirejs.config({
     paths: {
         backbone: '//cdnjs.cloudflare.com/ajax/libs/backbone.js/1.1.2/backbone-min',
         bootstrap: '//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min',
-        'bootstrap-switch': '//cdnjs.cloudflare.com/ajax/libs/bootstrap-switch/3.0.0/js/bootstrap-switch.min',
         text: 'vendors/requirejs-plugins/lib/text',
         goog: 'vendors/requirejs-plugins/src/goog',
         async: 'vendors/requirejs-plugins/src/async',
@@ -26,18 +25,13 @@ requirejs.config({
         moment: "//cdnjs.cloudflare.com/ajax/libs/moment.js/2.6.0/moment.min",
         nprogress: "//cdnjs.cloudflare.com/ajax/libs/nprogress/0.1.2/nprogress.min",
         'underscore.string': '//cdnjs.cloudflare.com/ajax/libs/underscore.string/2.3.3/underscore.string.min',
-        accounting: '//cdnjs.cloudflare.com/ajax/libs/accounting.js/0.3.2/accounting.min',
         bluebird: '//cdnjs.cloudflare.com/ajax/libs/bluebird/1.2.2/bluebird',
-        scrollTo: '//cdnjs.cloudflare.com/ajax/libs/jquery-scrollTo/1.4.11/jquery.scrollTo.min',
         underscore: '//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.7.0/underscore-min',
         select2: '//cdnjs.cloudflare.com/ajax/libs/select2/3.5.0/select2.min',
-        bootstrapSwitch: '//cdnjs.cloudflare.com/ajax/libs/bootstrap-switch/3.0.2/js/bootstrap-switch.min',
-        resemble: 'vendors/resemblejs/resemble',
-        jszip: '//cdnjs.cloudflare.com/ajax/libs/jszip/2.4.0/jszip.min',
-        FileSaver: '//cdnjs.cloudflare.com/ajax/libs/FileSaver.js/1.0.0/FileSaver.min',
         ace: '//cdnjs.cloudflare.com/ajax/libs/ace/1.1.3/ace',
         'socket.io': '//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.5/socket.io.min',
-        'data.io': 'vendors/data.io/data.io'
+        'data.io': 'vendors/data.io/data.io',
+        'ansi': 'vendors/ansi_up/ansi_up'
     },
     hbs: {
         helpers: true,
@@ -104,20 +98,8 @@ requirejs.config({
         socket: {
             deps: ['backbone']  
         },
-        app: {
-            deps: [
-                'jquery',
-                'underscore',
-                'backbone',
-                'bootstrap',
-                'toastr',
-                'accounting',
-                'moment',
-                'nprogress',
-                'scrollTo',
-                'select2',
-                'data.io'
-            ]
+        ansi: {
+            exports: 'ansi_up'
         }
     }
 });
@@ -134,7 +116,7 @@ if (!Function.prototype.bind) {
 
 
 
-require(['application'], function(Application) {
+require(['app'], function(Application) {
     window.app = new Application({});
     window.app.run();
 });

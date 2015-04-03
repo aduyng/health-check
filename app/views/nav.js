@@ -2,8 +2,7 @@
 define(function(require) {
 
     var Super = require('views/base'),
-        Promise = require('bluebird'),
-        accounting = require('accounting'),
+        B = require('bluebird'),
         Template = require('hbs!./nav.tpl');
 
     var View = Super.extend({
