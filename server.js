@@ -20,6 +20,9 @@ var path = require('path'),
 app.use('/app', express.static(path.join(__dirname, '/app'), {
     maxAge: (env === 'development') ? 1000 : 86400000 * 90
 }));
+app.use('/screenshots', express.static(path.join(__dirname, '/data/screenshots'), {
+    maxAge: (env === 'development') ? 1000 : 86400000 * 90
+}));
 
 //app.use(express.favicon());
 app.use(express.basicAuth('cssmobile', 'mobile10'));

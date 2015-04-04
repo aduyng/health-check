@@ -31,7 +31,6 @@ define(function(require) {
         });
 
         that.resource.subscribe('update', 'patch', function(data, action) {
-            console.log(action, data);
             var item = that.get(data._id);
             if (item) {
                 item.set(data, {

@@ -159,7 +159,7 @@ define(function(require) {
             module = modules[moduleIndex];
 
         event.preventDefault();
-        var html = '<code>' + ansi.ansi_to_html((module.logs||'')) + '</code>';
+        var html = '<code>' + ansi.ansi_to_html((module.logs || '')) + '</code><div class="screenshot"></div>';
 
         var buttons = [{
             id: 'close',
@@ -169,7 +169,8 @@ define(function(require) {
             align: 'left',
             autoClose: true
         }];
-
+//img-responsive
+        
         dlg = new Dialog({
             sizeClass: 'modal-lg terminal',
             body: html,
@@ -178,9 +179,15 @@ define(function(require) {
         });
 
         dlg.on('shown', function() {
-
+            console.log('trigger dialog shown');
+            var pathToImage = '/screenshots/' + module._id + '.png';
+            var imageElement = $("<img class='img-responsive center-block'/>")
+                .load(function() {
+                    dlg.body.find('.screenshot').append(imageElement);
+                })
+                .error(function() {})
+                .attr("src", pathToImage);
         });
-
     };
 
     View.prototype.onRunClick = function(event) {

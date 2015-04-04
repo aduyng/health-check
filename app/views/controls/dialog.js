@@ -101,6 +101,7 @@ define(function(require) {
             }
             that.$el.css('z-index', 1040 + that.instanceCount+1);
             that.$el.next().css('z-index', 1040 + that.instanceCount);
+            that.trigger('shown');
         }.bind(this));
         this.$el.on('hidden.bs.modal', function() {
             if (msg instanceof Super) {

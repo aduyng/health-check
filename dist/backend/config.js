@@ -8,8 +8,8 @@ config.development = {
     app: {
         name: pkg.name,
         fullName: 'Health Check',
-        version: pkg.version,
-        frontend: '//health-check.divshot.io'
+        version: pkg.version
+        //frontend: '//health-check.divshot.io'
     },
     mail: {
         port: 25,
