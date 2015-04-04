@@ -1,6 +1,6 @@
 {
-  "name": "visual-regression-tool-web",
-  "version": "1.0.0",
+  "name": "health-check",
+  "version": "2.0.0",
   "private": true,
   "engines": {
     "node": "0.10.x"
@@ -12,7 +12,6 @@
     "agenda": "^0.6.28",
     "bluebird": "~1.2.4",
     "checkit": "^0.2.0-pre",
-    "colors": "~0.6.2",
     "connect": "^2.14.3",
     "connect-redis": "1.4.7",
     "data.io": "^0.3.0",
