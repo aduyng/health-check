@@ -11,6 +11,9 @@ Most of the web applications today use are single page applications and their co
 * Allow to see execution log directly from browser. 
 * Responsive design
 
+# Demo: 
+[![Watch a short demo](http://img.youtube.com/vi/7_2NwjJZylk/0.jpg)](http://www.youtube.com/watch?v=7_2NwjJZylk)
+
 #Overview of Architecture
 Primary technologies used: 
 * Backend: [NodeJS](https://nodejs.org/), [ExpressJS](http://expressjs.com/), [PhantomJS](http://phantomjs.org/), [CasperJS](http://casperjs.org/), [mongoose](http://mongoosejs.com/), [agenda](https://github.com/rschmukler/agenda), and [Bluebird](https://github.com/petkaantonov/bluebird)
