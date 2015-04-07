@@ -25,7 +25,6 @@ app.use('/screenshots', express.static(path.join(__dirname, '/data/screenshots')
 }));
 
 //app.use(express.favicon());
-app.use(express.basicAuth('cssmobile', 'mobile10'));
 app.use(express.compress());
 app.use(express.json());
 app.use(express.urlencoded());
