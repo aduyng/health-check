@@ -9,7 +9,6 @@ Primary technologies used:
 * Backend: [NodeJS](https://nodejs.org/), [ExpressJS](http://expressjs.com/), [PhantomJS](http://phantomjs.org/), [CasperJS](http://casperjs.org/), [mongoose](http://mongoosejs.com/), [agenda](https://github.com/rschmukler/agenda), and [Bluebird](https://github.com/petkaantonov/bluebird)
 * Frontend: [BackboneJS](http://backbonejs.org/), [RequireJS](http://requirejs.org/), [UnderscoreJS](http://underscorejs.org/), [JQuery](https://jquery.com/), and [Handlebars](http://handlebarsjs.com/), [socket.io](http://socket.io/), and [data.io](https://github.com/scttnlsn/data.io)
 
-![Overview](https://www.lucidchart.com/publicSegments/view/54ff22f1-ac18-4a37-b665-234c0a00494a/image.jpeg)
 
 # Installation Steps
 * Spin up an Ubuntu instance and access to its console as root
