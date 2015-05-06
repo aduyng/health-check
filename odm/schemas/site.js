@@ -42,6 +42,10 @@ var Schema = new odm.Schema({
     isEnabled: {
         type: Boolean,
         'default': false
+    },
+    type: {
+        type: odm.Schema.Types.ObjectId,
+        required: true
     }
 });
 

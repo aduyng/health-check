@@ -1,7 +1,9 @@
 /**
  * Module dependencies.
  */
-var path = require('path'),
+ 
+var everyauth = require('everyauth'),
+    path = require('path'),
     express = require('express'),
     exphbs = require('express-handlebars'),
     env = process.env.NODE_ENV || 'development',
@@ -16,7 +18,6 @@ var path = require('path'),
     logger = require('./logger');
 
 
-
 app.use('/app', express.static(path.join(__dirname, '/app'), {
     maxAge: (env === 'development') ? 1000 : 86400000 * 90
 }));
@@ -25,12 +26,14 @@ app.use('/screenshots', express.static(path.join(__dirname, '/data/screenshots')
 }));
 
 //app.use(express.favicon());
-app.use(express.basicAuth('cssmobile', 'mobile10'));
+// app.use(express.basicAuth('cssmobile', 'mobile10'));
 app.use(express.compress());
 app.use(express.json());
 app.use(express.urlencoded());
 app.use(express.methodOverride());
-app.use(express.cookieParser());
+app.use(express.cookieParser('css mobile'));
+app.use(express.session());
+app.use(everyauth.middleware(app));
 
 app.engine('hbs', exphbs({
     defaultLayout: false,
@@ -65,5 +68,5 @@ B.all([odm.initialize()])
         });
         var connection = require('./connection')(server);
         require('./resources/site')(connection);
-        // require('./resources/module')(connection);
+        require('./resources/type')(connection);
     });

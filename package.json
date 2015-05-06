@@ -33,6 +33,7 @@
     "winston": "~0.7.3"
   },
   "devDependencies": {
+    "everyauth": "^0.4.9",
     "grunt": "^0.4.4",
     "grunt-contrib-clean": "^0.5.0",
     "grunt-contrib-copy": "^0.5.0",
