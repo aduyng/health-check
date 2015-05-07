@@ -15,6 +15,7 @@
     "connect": "^2.14.3",
     "connect-redis": "1.4.7",
     "data.io": "^0.3.0",
+    "everyauth": "^0.4.9",
     "express": "3.5.1",
     "express-handlebars": "^1.0.1",
     "express-load": "^1.1.9",
