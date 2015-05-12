@@ -15,8 +15,8 @@ config.development = {
         port: 25,
         host: 'smtp.mailgun.org',
         auth: {
-            user: 'postmaster@sandbox6b182246ef0f454c9a739cdcba2ba9e0.mailgun.org',
-            pass: '0adb4032d268d74f2a50c22800c01bb6'
+            user: '<mailgun user>',
+            pass: '<mailgun password>'
         }
     },
     mongo: {

@@ -35,20 +35,6 @@ app.use(session({
     })
 }));
 
-// new User({
-//     username: 'mobile',
-//     password: hasher.generate('6CjPJCev')
-// })
-// .save();
-
-
-// new User({
-//     username: 'activation',
-//     password: hasher.generate('4rQ8Lajh')
-// })
-// .save();
-
-
 
 app.use('/app', express.static(path.join(__dirname, '/app'), {
     maxAge: (env === 'development') ? 1000 : 86400000 * 90
@@ -57,23 +43,12 @@ app.use('/screenshots', express.static(path.join(__dirname, '/data/screenshots')
     maxAge: (env === 'development') ? 1000 : 86400000 * 90
 }));
 
-//app.use(express.favicon());
-// app.use(express.basicAuth('cssmobile', 'mobile10'));
-// app.use(express.compress());
-// app.use(express.json());
-// app.use(express.urlencoded());
-// app.use(express.methodOverride());
-// app.use(express.cookieParser(config.session.secret));
-// app.use(express.session());
 
 app.engine('hbs', exphbs({
     defaultLayout: false,
     extname: '.hbs'
 }));
 app.set('view engine', 'hbs');
-// app.use(app.router);
-
-
 
 
 app.all('/', function(req, res, next) {
