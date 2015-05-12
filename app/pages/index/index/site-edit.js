@@ -11,6 +11,7 @@ define(function(require) {
     View.prototype.initialize = function(options) {
         var that = this;
         Super.prototype.initialize.call(that, options);
+        this.types = options.types;
     };
 
 
@@ -19,7 +20,12 @@ define(function(require) {
 
         that.$el.html(TEMPLATE({
             id: that.id,
-            data: that.model.toJSON()
+            data: that.model.toJSON(),
+            types: that.types.map(function(type){
+                return _.extend(type.toJSON(), {
+                    isSelected: that.model.get('typeId') === type.id
+                });
+            })
         }));
         that.mapControls();
 

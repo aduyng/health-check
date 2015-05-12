@@ -4,6 +4,15 @@
         <input type="text" class="form-control {{id}}-field" id="{{id}}-name" placeholder="Name" value="{{data.name}}">
     </div>
     <div class="form-group">
+        <label for="{{id}}-type">Type</label>
+        <select class="form-control {{id}}-field" id="{{id}}-type-id">
+            {{#each types}}
+            <option value="{{this.id}}" {{#if this.isSelected}}selected{{/if}} >{{this.name}}</option>
+            {{/each}}
+        </select>
+    </div>
+    
+    <div class="form-group">
         <label for="{{id}}-name">Tags</label>
         <input type="text" class="form-control {{id}}-field" id="{{id}}-tags" placeholder="Tags" value="{{data.tags}}">
     </div>

@@ -5,7 +5,7 @@ define(function(require) {
         S = require('underscore.string'),
         moment = require('moment'),
         Toastr = require('toastr'),
-        Bluebird = require('bluebird'),
+        B = require('bluebird'),
         Router = Backbone.Router.extend({
             routes: {
                 "*action": 'defaultAction'
@@ -26,6 +26,12 @@ define(function(require) {
             that.app.page.close();
             //trigger an event
             that.app.trigger('closed');
+        }
+        
+        if(url !== 'index/login' && !that.app.user.isLoggedIn() ){
+            url = 'index/login';
+            that.navigate(url, {trigger: true});
+            return;
         }
 
         //split the url to controller/action
@@ -61,7 +67,7 @@ define(function(require) {
             controllerContainer.attr('id', 'controller-' + controller);
 
             NProgress.inc();
-            Bluebird.resolve(that.app.page.render()).then(function() {
+            B.resolve(that.app.page.render()).then(function() {
                 NProgress.done();
                 that.app.trigger('page-rendered', that.app.page);
             });

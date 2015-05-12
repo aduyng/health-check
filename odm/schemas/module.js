@@ -37,6 +37,9 @@ var Schema = new odm.Schema({
     },
     script: {
         type: String
+    },
+    libraries: {
+        type: []
     }
 });
 

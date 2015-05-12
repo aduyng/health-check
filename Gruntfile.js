@@ -614,7 +614,7 @@ module.exports = function (grunt) {
                     include: [
                         'app',
                         "pages/index/index",
-                        // "pages/index/edit",
+                        "pages/index/login",
                         // "pages/index/view",
                         // "pages/job/index",
                         // "pages/job/edit",

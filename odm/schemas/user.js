@@ -8,13 +8,19 @@ var env = process.env.NODE_ENV || 'development',
 
 
 var Schema = new odm.Schema({
+    lastLoginAt: {
+        type: Number,
+        default: _.now()
+    },
     username: {
-        type: String,
-        trim: true,
-        required: true
+        type: String, 
+        required: true,
+        trim: true
     },
     password: {
-        type: String
+        type: String, 
+        required: true,
+        trim: true
     }
 });
 

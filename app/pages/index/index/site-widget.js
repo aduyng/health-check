@@ -11,12 +11,13 @@ define(function(require) {
         MODULE_LIST = require('hbs!./module-list.tpl');
 
     var View = Super.extend({
-        className: 'panel panel-default site'
+        className: 'col-xm-12 col-sm-6 col-md-4 col-lg-3'
     });
 
 
     View.prototype.initialize = function(options) {
         Super.prototype.initialize.call(this, options);
+        this.types = options.types;
     };
 
     View.prototype.render = function() {
@@ -117,8 +118,7 @@ define(function(require) {
 
 
         that.controls.icon.attr('class', 'fa ' + iconClass);
-        that.$el.removeClass('panel-default panel-danger panel-success panel-warning panel-info').addClass(panelClass);
-
+        that.$el.find('>.panel').removeClass('panel-default panel-danger panel-success panel-warning panel-info').addClass(panelClass);
         that.controls.modules.html(MODULE_LIST({
             id: that.id,
             modules: _.sortBy(_.map(_.filter(that.model.get('modules') || [], function(module) {
@@ -146,7 +146,7 @@ define(function(require) {
 
     View.prototype.onHeaderClick = function(event) {
         event.preventDefault();
-        this.$el.toggleClass('expanded');
+        this.$el.find('>.panel').toggleClass('expanded');
     };
 
     View.prototype.onModuleClick = function(event) {
@@ -246,7 +246,8 @@ define(function(require) {
             isNew = that.model.isNew();
 
         var view = new EditView({
-            model: that.model
+            model: that.model,
+            types: that.types
         });
 
         var buttons = [{

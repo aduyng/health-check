@@ -43,7 +43,7 @@ var Schema = new odm.Schema({
         type: Boolean,
         'default': false
     },
-    type: {
+    typeId: {
         type: odm.Schema.Types.ObjectId,
         required: true
     }

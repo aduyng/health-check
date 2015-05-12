@@ -1,0 +1,8 @@
+<li class="list-group-item">
+  <input type="text" class="form-control {{id}}-input" data-cid="{{data.cid}}" value="{{data.path}}" />
+  {{#if data.path}}
+    <button class="btn btn-danger {{id}}-delete delete" data-cid="{{data.cid}}">
+      <i class="fa fa-trash-o"></i>
+    </button>
+  {{/if}}
+</li>

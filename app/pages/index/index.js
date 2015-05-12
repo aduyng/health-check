@@ -6,13 +6,16 @@ define(function(require) {
         Backbone = require('backbone'),
         SiteEdit = require('./index/site-edit'),
         SiteWidget = require('./index/site-widget'),
+        TypeWidget = require('./index/type-widget'),
         ExecutionStatus = require('models/execution-status'),
         Dialog = require('views/controls/dialog'),
         Sites = require('collections/site'),
         Modules = require('collections/module'),
+        Types = require('collections/type'),
         Site = require('models/site');
 
     var Page = Super.extend({});
+    var activeTypeArray = [];
 
     Page.prototype.initialize = function(options) {
         var that = this;
@@ -20,11 +23,13 @@ define(function(require) {
         Super.prototype.initialize.call(that, options);
 
         that.sites = new Sites();
+        that.types = new Types();
         that.modules = new Modules();
     };
 
     Page.prototype.render = function() {
         var that = this;
+
 
         that.$el.html(MAIN({
             id: that.id
@@ -36,17 +41,35 @@ define(function(require) {
         events['click ' + that.toId('new')] = 'onNewClick';
         events['click ' + that.toId('run-all')] = 'onRunAllClick';
         events['click ' + that.toId('stop')] = 'onStopClick';
+        events['click ' + '.types .btn'] = 'onTypesClick';
+
         that.delegateEvents(events);
 
 
         that.sites.on('sync add', that.renderSites.bind(that));
         that.sites.on('remove', that.onSiteRemove.bind(that));
         that.sites.on('change', that.onSiteChange.bind(that));
+        
+        that.on('search', that.performSearch.bind(that));
 
         //keep updating airlines
-        that.fetch();
+        return B.resolve(that.types.fetch())
+            .then(function() {
+                return that.fetch();
+            })
+            .then(function() {
+                that.children.types = new TypeWidget({
+                    el: that.controls.types,
+                    types: that.types
+                });
+                that.children.types.render();
+                that.children.types.on('change', that.onTypesChange.bind(that));
+                return Super.prototype.render.call(that);
+            });
+    };
 
-        return Super.prototype.render.call(that);
+    Page.prototype.onTypesChange = function(event) {
+        this.trigger('search');
     };
 
     Page.prototype.onSiteChange = function() {
@@ -68,8 +91,8 @@ define(function(require) {
         //TODO: why the heck I'm not getting this event
         removedSite.view.remove();
     };
-    
-    Page.prototype.addSiteToCollection = function(site){
+
+    Page.prototype.addSiteToCollection = function(site) {
         this.sites.add(site);
     }
 
@@ -81,14 +104,15 @@ define(function(require) {
             return !site.isRendered;
         }), function(site) {
             site.view = new SiteWidget({
-                model: site
+                model: site,
+                types: that.types
             });
             site.isRendered = true;
-            
-            site.view.on('cloned', function(clonedModel){
+
+            site.view.on('cloned', function(clonedModel) {
                 that.addSiteToCollection(clonedModel);
             });
-            
+
             return site.view.render()
                 .then(function() {
                     that.controls.sites.append(site.view.$el);
@@ -128,26 +152,39 @@ define(function(require) {
     };
 
     Page.prototype.onQueryKeyup = _.debounce(function(event) {
-        var that = this;
+        this.trigger('search');
+    }, 300);
 
+    Page.prototype.performSearch = function() {
+        var that = this;
         var query = that.controls.query.val().trim();
+        var visibleSites = that.sites.models;
+
         if (!_.isEmpty(query)) {
             var re = new RegExp(query, 'i');
+            visibleSites = _.filter(visibleSites, function(site) {
+                return re.test(site.get('tags') + ',' + site.get('name'));
+            });
+        }
 
-            that.sites.forEach(function(site) {
-                if (site.view) {
-                    site.view.$el.toggleClass('hidden', !re.test(site.get('tags') + ',' + site.get('name')));
-                }
+        var selectedTypes = that.children.types.val();
+        if (!_.isEmpty(selectedTypes)) {
+            var typeIds = _.pluck(selectedTypes, 'id');
+
+            visibleSites = _.filter(visibleSites, function(site) {
+                return _.contains(typeIds, site.get('typeId'));
             });
         }
-        else {
-            that.sites.forEach(function(site) {
-                if (site.view) {
-                    site.view.$el.removeClass('hidden');
-                }
-            });
-        }
-    }, 300);
+
+        that.sites.forEach(function(site) {
+            if (site.view) {
+                var visible = _.find(visibleSites, function(vs){
+                    return site.id === vs.id;
+                });
+                site.view.$el.toggleClass('hidden', !visible);
+            }
+        });
+    };
 
 
     Page.prototype.onRunAllClick = function(event) {

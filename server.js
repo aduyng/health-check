@@ -1,10 +1,10 @@
 /**
  * Module dependencies.
  */
- 
-var everyauth = require('everyauth'),
-    path = require('path'),
+
+var path = require('path'),
     express = require('express'),
+    session = require('express-session'),
     exphbs = require('express-handlebars'),
     env = process.env.NODE_ENV || 'development',
     _ = require('underscore'),
@@ -13,9 +13,41 @@ var everyauth = require('everyauth'),
     app = express(),
     odm = require('./odm'),
     B = require('bluebird'),
+    User = require('./odm/models/user'),
     pkg = require('./package.json'),
-    load = require('express-load'),
-    logger = require('./logger');
+    logger = require('./logger'),
+    hasher = require('password-hash'),
+    MongoStore = require('connect-mongo')(session),
+    bodyParser = require('body-parser');
+
+// parse application/x-www-form-urlencoded
+app.use(bodyParser.urlencoded({
+    extended: false
+}))
+
+// parse application/json
+app.use(bodyParser.json());
+
+app.use(session({
+    secret: config.session.secret,
+    store: new MongoStore({
+        url: config.mongo.url
+    })
+}));
+
+// new User({
+//     username: 'mobile',
+//     password: hasher.generate('6CjPJCev')
+// })
+// .save();
+
+
+// new User({
+//     username: 'activation',
+//     password: hasher.generate('4rQ8Lajh')
+// })
+// .save();
+
 
 
 app.use('/app', express.static(path.join(__dirname, '/app'), {
@@ -27,24 +59,36 @@ app.use('/screenshots', express.static(path.join(__dirname, '/data/screenshots')
 
 //app.use(express.favicon());
 // app.use(express.basicAuth('cssmobile', 'mobile10'));
-app.use(express.compress());
-app.use(express.json());
-app.use(express.urlencoded());
-app.use(express.methodOverride());
-app.use(express.cookieParser('css mobile'));
-app.use(express.session());
-app.use(everyauth.middleware(app));
+// app.use(express.compress());
+// app.use(express.json());
+// app.use(express.urlencoded());
+// app.use(express.methodOverride());
+// app.use(express.cookieParser(config.session.secret));
+// app.use(express.session());
 
 app.engine('hbs', exphbs({
     defaultLayout: false,
     extname: '.hbs'
 }));
 app.set('view engine', 'hbs');
-app.use(app.router);
+// app.use(app.router);
+
+
+
 
 app.all('/', function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "X-Requested-With");
+    
+    if( req.session.userId ){
+        User.findByIdAsync(req.session.userId, {password: 0})
+        .then(function(user){
+            req.user = user;
+            next();
+        });
+        return;
+    }
+    
     next();
 });
 
@@ -52,12 +96,38 @@ app.get('/', function(req, res) {
     res.render('home', {
         path: config.app.frontend || '/app',
         pkg: pkg,
-        config: config
+        config: config,
+        user: JSON.stringify(req.user || {})
     });
 });
 
 
-load('controllers').then('routes').into(app);
+app.post('/login', function(req, res) {
+    var username = req.body.username;
+    var password = req.body.password;
+
+    //hash the password using a hash algorithm
+    var hashedPassword = hasher.generate(password);
+    User.findOneAsync({
+            username: username
+        })
+        .then(function(user) {
+            if( _.isEmpty(user) ){
+                res.send(404, {});
+                return;
+            }
+            
+            if( !hasher.verify(password, user.password)){
+                res.send(400, {});
+                return;
+            }
+            
+            req.session.userId = user._id;
+            res.send(_.omit(user.toJSON(), 'password'));
+        });
+});
+
+
 
 B.all([odm.initialize()])
     .then(function() {

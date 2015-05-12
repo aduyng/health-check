@@ -9,12 +9,14 @@ define(function(require) {
         Config = require('./config'),
         Socket = require('./socket'),
         Toastr = require('toastr'),
+        User = require('models/user'),
         B = require('bluebird');
 
     var App = Super.extend({});
 
     App.prototype.initialize = function(options) {
         Super.prototype.initialize.call(this, options);
+        this.user = new User(window.config.user);
     };
 
 
@@ -29,7 +31,7 @@ define(function(require) {
         });
         return B.resolve();
     };
-    
+
     App.prototype.initSocket = function() {
         this.socket = new Socket({
             app: this
@@ -60,7 +62,7 @@ define(function(require) {
 
     App.prototype.run = function() {
         var that = this;
-
+        
         return B.all([
             this.initConfig(),
             this.initLayout(),
@@ -82,7 +84,7 @@ define(function(require) {
             this.set('router', val);
         }
     });
-    
+
     Object.defineProperty(App.prototype, 'layout', {
         get: function() {
             return this.get('layout');
@@ -101,7 +103,7 @@ define(function(require) {
             this.set('config', val);
         }
     });
-    
+
     Object.defineProperty(App.prototype, 'socket', {
         get: function() {
             return this.get('socket');
@@ -110,6 +112,15 @@ define(function(require) {
             this.set('socket', val);
         }
     });
+    Object.defineProperty(App.prototype, 'user', {
+        get: function() {
+            return this.get('user');
+        },
+        set: function(val) {
+            this.set('user', val);
+        }
+    });
+
 
 
     return App;

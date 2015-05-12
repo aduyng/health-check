@@ -1,4 +1,6 @@
 # Logs
+dist/backend
+dist/app
 data
 logs
 *.log

@@ -29,7 +29,6 @@ define(function(require) {
 
     View.prototype.renderModules = function() {
         var that = this;
-        
         that.$el.html(TEMPLATE({
             id: that.id,
             modules: _.map(_.sortBy(that.collection.where({
