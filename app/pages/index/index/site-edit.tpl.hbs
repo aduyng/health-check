@@ -25,7 +25,7 @@
         <input type="text" class="form-control {{id}}-field" id="{{id}}-notification-receiver-emails" placeholder="Comma separated email addresses which error notifications will be sent to" value="{{data.notificationReceiverEmails}}">
         <div class="checkbox">
             <label>
-                <input type="checkbox" class="{{id}}-field" id="{{id}}-send-email-when-module-fails" {{#if data.sendEmailWhenModuleFails}}checked{{/if}} value="{{data.sendEmailWhenModuleFails}}"/> Send email only if the module fails
+                <input type="checkbox" class="{{id}}-field" id="{{id}}-send-email-when-module-fails" {{#if data.sendEmailWhenModuleFails}}checked{{/if}} value="{{data.sendEmailWhenModuleFails}}"/> Send email only if any module fails
             </label>
         </div>
     </div>

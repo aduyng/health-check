@@ -30,7 +30,7 @@ define(function(require) {
 
     View.prototype.onShowAllClick = function() {
          var that = this;
-        that.$el.parent().find(that.toClass('button')).removeClass('active');
+        that.$el.parent().find(that.toClass('button')).removeClass('active').removeClass('btn-primary').addClass('btn-default');
         
         that.trigger('change', {
             selectedTypes: []
@@ -40,7 +40,7 @@ define(function(require) {
     View.prototype.onButtonClick = function(event) {
         var that = this;
         var e = $(event.currentTarget);
-        e.toggleClass('active');
+        e.toggleClass('btn-primary').toggleClass('active').toggleClass('btn-default');
 
         this.trigger('change', {
             selectedTypes: that.val()

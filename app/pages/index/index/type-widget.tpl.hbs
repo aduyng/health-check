@@ -1,6 +1,8 @@
-<div class="btn-group col-xs-12 col-sm-12">
-{{#each types}}
-    <button class="btn btn-default col-xs-3 col-sm-3 {{../id}}-button" data-id="{{this.id}}"> {{this.name}}</button>
-{{/each}}
-    <button class="btn btn-primary col-xs-3 col-sm-3 {{id}}-show-all">Show All</button>
+<div class="btn-group col-xs-10 col-sm-10">
+    {{#each types}}
+        <button class="btn btn-default col-xs-4 col-sm-4 {{../id}}-button" data-id="{{this.id}}"> {{this.name}}</button>
+    {{/each}}
+</div>
+<div class="btn-group col-xs-2 col-sm-2">
+    <button class="btn btn-primary {{id}}-show-all">All</button>
 </div>

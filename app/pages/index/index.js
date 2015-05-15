@@ -45,7 +45,6 @@ define(function(require) {
 
         that.delegateEvents(events);
 
-
         that.sites.on('sync add', that.renderSites.bind(that));
         that.sites.on('remove', that.onSiteRemove.bind(that));
         that.sites.on('change', that.onSiteChange.bind(that));
@@ -223,12 +222,13 @@ define(function(require) {
         runningAirline.view.run();
     };
 
-    Page.prototype.openSiteDialog = function(model) {
+    Page.prototype.openSiteDialog = function(model, types) {
         var that = this,
             isNew = model.isNew();
 
         var view = new SiteEdit({
-            model: model
+            model: model,
+            types: types
         });
 
         var dlg = new Dialog({
@@ -268,7 +268,8 @@ define(function(require) {
         var model = new Site({
             name: 'New Site'
         });
-        that.openSiteDialog(model);
+
+        that.openSiteDialog(model, that.types);
     };
 
 
