@@ -147,17 +147,13 @@ module.exports = function(agenda) {
                     })
                     .finally(function() {
                         if (!_.isEmpty(site.notificationReceiverEmails) && job.attrs.data.type === 'ON_SCHEDULE') {
-                            var mailer = new Mailer();
-                            mailer.send({
-                                to: site.notificationReceiverEmails,
-                                bcc: 'duyanh.nguyen.ctr@sabre.com',
-                                subject: (site.status === ExecutionStatus.ID_ERROR ? 'FAILED' : 'SUCCESS') + ': Health Check Dashboard Report for ' + site.name,
-                                html: '<h1>' + site.name + ' - ' + '<font color="' + (site.status === ExecutionStatus.ID_ERROR ? 'red' : 'green') + '">' + (site.status === ExecutionStatus.ID_ERROR ? 'FAILED' : 'SUCCESS') + '</font></h1>' +
-                                    '<h3>Modules:</h3>' +
-                                    '<ul>' + _.map(modules, function(module) {
-                                        return '<li>' + module.name + ' - ' + '<font color="' + (module.status === ExecutionStatus.ID_ERROR ? 'red' : 'green') + '">' + (module.status === ExecutionStatus.ID_ERROR ? 'FAILED' : 'SUCCESS') + '</font></li>';
-                                    }).join('') + '</ul>'
-                            });
+                            if(site.sendEmailWhenModuleFails) {
+                                if(site.status === ExecutionStatus.ID_ERROR) {
+                                    sendEmail();
+                                }
+                            } else {
+                                sendEmail();
+                            }
 
                         }
                         if (job.attrs.data.type === 'ON_SCHEDULE' && site.schedule) {
@@ -174,6 +170,20 @@ module.exports = function(agenda) {
                         }
                         L.infoAsync(__filename + ' ::run-site COMPLETED ============================================');
                         done();
+                        
+                        function sendEmail() {
+                            var mailer = new Mailer();
+                            mailer.send({
+                                to: site.notificationReceiverEmails,
+                                bcc: 'duyanh.nguyen.ctr@sabre.com',
+                                subject: (site.status === ExecutionStatus.ID_ERROR ? 'FAILED' : 'SUCCESS') + ': Health Check Dashboard Report for ' + site.name,
+                                html: '<h1>' + site.name + ' - ' + '<font color="' + (site.status === ExecutionStatus.ID_ERROR ? 'red' : 'green') + '">' + (site.status === ExecutionStatus.ID_ERROR ? 'FAILED' : 'SUCCESS') + '</font></h1>' +
+                                    '<h3>Modules:</h3>' +
+                                    '<ul>' + _.map(modules, function(module) {
+                                        return '<li>' + module.name + ' - ' + '<font color="' + (module.status === ExecutionStatus.ID_ERROR ? 'red' : 'green') + '">' + (module.status === ExecutionStatus.ID_ERROR ? 'FAILED' : 'SUCCESS') + '</font></li>';
+                                    }).join('') + '</ul>'
+                            });
+                        }
 
                     });
             });

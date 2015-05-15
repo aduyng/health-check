@@ -114,6 +114,22 @@ a.logo {
   &.full-width {
     margin-top: 10px;
   }
+    & .btn-default {
+       &:focus {
+        background-color: #fff;
+        border-color: #ccc;
+        &.active{
+          background-color: #e6e6e6;
+          border-color: #adadad;
+        }
+      } 
+    }
+  & ul{
+    position: relative;
+    & li{
+      display: block;
+    }
+  }
 }
 @import 'pages/index/index';
 @import 'pages/index/login';

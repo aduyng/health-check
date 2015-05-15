@@ -83,7 +83,7 @@ module.exports = function(connection) {
                                 res.send(doc);
                             });
                     default:
-                        _.extend(doc, _.pick(req.data, 'name', 'tags', 'notificationReceiverEmails', 'schedule', 'status', 'modules', 'isEnabled', 'typeId'));
+                        _.extend(doc, _.pick(req.data, 'name', 'tags', 'notificationReceiverEmails', 'schedule', 'status', 'modules', 'isEnabled', 'sendEmailWhenModuleFails', 'typeId'));
                         if (req.data.modules) {
                             doc.markModified("modules");
                         }

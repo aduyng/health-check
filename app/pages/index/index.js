@@ -59,7 +59,7 @@ define(function(require) {
             })
             .then(function() {
                 that.children.types = new TypeWidget({
-                    el: that.controls.types,
+                    el: that.$el.find('.types'),
                     types: that.types
                 });
                 that.children.types.render();

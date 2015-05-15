@@ -22,19 +22,25 @@ define(function(require) {
 
         var events = {};
         events['click ' + this.toClass('button')] = 'onButtonClick';
+        events['click ' + this.toClass('show-all')] = 'onShowAllClick';
         that.delegateEvents(events);
-
-
 
         return B.resolve();
     };
 
+    View.prototype.onShowAllClick = function() {
+         var that = this;
+        that.$el.parent().find(that.toClass('button')).removeClass('active');
+        
+        that.trigger('change', {
+            selectedTypes: []
+        });
+    };
 
     View.prototype.onButtonClick = function(event) {
         var that = this;
         var e = $(event.currentTarget);
         e.toggleClass('active');
-
 
         this.trigger('change', {
             selectedTypes: that.val()

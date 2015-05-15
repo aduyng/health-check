@@ -291,7 +291,8 @@ define(function(require) {
         });
 
         dlg.on('save', function(event) {
-            B.resolve(that.model.save(view.val(), {
+            var viewValue = view.val();
+            B.resolve(that.model.save(viewValue, {
                     patch: true,
                     wait: true
                 }))

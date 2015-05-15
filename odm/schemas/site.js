@@ -46,6 +46,10 @@ var Schema = new odm.Schema({
     typeId: {
         type: odm.Schema.Types.ObjectId,
         required: true
+    },
+    sendEmailWhenModuleFails: {
+        type: Boolean,
+        'default': false
     }
 });
 
