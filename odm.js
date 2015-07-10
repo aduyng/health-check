@@ -1,6 +1,6 @@
 'use strict';
 var env = process.env.NODE_ENV || 'development',
-    config = require('./config')[env],
+    config = require('./config'),
     B = require('bluebird'),
     mongoose = B.promisifyAll(require('mongoose')),
     L = require('./logger');

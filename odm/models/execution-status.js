@@ -1,5 +1,5 @@
 var env = process.env.NODE_ENV || 'development',
-    config = require('./../../config')[env],
+    config = require('./../../config'),
     B = require('bluebird'),
     odm = require('../../odm'),
     Schema = require('../schemas/execution-status'),

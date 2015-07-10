@@ -1,6 +1,6 @@
 'use strict';
 var env = process.env.NODE_ENV || 'development',
-    config = require('./../../config')[env],
+    config = require('./../../config'),
     B = require('bluebird'),
     odm = require('../../odm'),
     L = require('./../../logger'),
@@ -50,6 +50,10 @@ var Schema = new odm.Schema({
     sendEmailWhenModuleFails: {
         type: Boolean,
         'default': false
+    },
+    userId: {
+        type: odm.Schema.Types.ObjectId,
+        required: true
     }
 });
 
@@ -58,7 +62,7 @@ Schema.methods.stop = function() {
     var that = this;
     that.status = ExecutionStatus.ID_TERMINATED;
     that.modules = _.map(that.modules || [], function(m){
-        m.status = ExecutionStatus.ID_SCHEDULED;
+        m.status = ExecutionStatus.ID_TERMINATED;
         return m;
     });
     that.markModified('modules');
@@ -100,6 +104,10 @@ Schema.methods.stop = function() {
 Schema.methods.run = function() {
     var that = this;
     that.status = ExecutionStatus.ID_SCHEDULED;
+    that.modules = _.map(that.modules || [], function(m){
+        m.status = ExecutionStatus.ID_SCHEDULED;
+        return m;
+    });
     return B.all([
         that.saveAsync(), new B(function(resolve, reject) {
             agenda.jobs({

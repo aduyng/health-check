@@ -1,13 +1,16 @@
-var path = require('path');
+var path = require('path'),
+  _ = require('underscore');
 
 module.exports = function(grunt) {
   'use strict';
   // load all grunt tasks
   require('matchdep').filterDev('grunt-*').forEach(grunt.loadNpmTasks);
-  var pkg = grunt.file.readJSON('package.json');
-  var env = grunt.option('env') || 'development',
-    isDevelopmentMode = env === 'development',
-    config = require('./config')[env];
+  var pkg = grunt.file.readJSON('package.json'),
+    target = grunt.option('target') || 'development',
+    isDevelopmentMode = target === 'development';
+  if (isDevelopmentMode) {
+    console.log('In Development Mode');
+  }
 
   var opts = {
     pkg: pkg,
@@ -20,7 +23,7 @@ module.exports = function(grunt) {
         }
       },
       backend: {
-        tasks: ['shell:start', 'watch:backend'],
+        tasks: ['forever:web:start', 'forever:worker:start', 'watch:backend'],
         options: {
           logConcurrentOutput: true
         }
@@ -28,8 +31,8 @@ module.exports = function(grunt) {
     },
     'http-server': {
       frontend: {
-        root: './dist/frontend',
-        port: grunt.option('http-port') || 80,
+        root: './app',
+        port: grunt.option('http-port') || 5000,
         host: '0.0.0.0',
         cache: -1,
         showDir: true,
@@ -78,20 +81,23 @@ module.exports = function(grunt) {
           'requirejs',
           'less'
         ]
-      }
-      ,
+      },
       backend: {
         files: [
           //backend,
-          './collections/*.js',
-          './controllers/*.js',
-          './models/**/*.js',
+          './resources/*.js',
+          './odm/**/*.js',
           './routes/*.js',
           './config.js',
           './package.json',
           './server.js',
+          './connection.js',
           './error.js',
           './utils.js'
+        ],
+        tasks: [
+          'forever:web:restart',
+          'forever:worker:restart'
         ]
       }
       ,
@@ -244,26 +250,26 @@ module.exports = function(grunt) {
             ]
           }, {
 
-            dest: './dist/frontend/04b3c812-2234-45b5-af16-18a0f70cf1df.eot',
+            dest: './dist/frontend/vendors/developer.sabre.com/04b3c812-2234-45b5-af16-18a0f70cf1df.eot',
             src: './app/vendors/developer.sabre.com/04b3c812-2234-45b5-af16-18a0f70cf1df.eot'
           }, {
 
-            dest: './dist/frontend/131afccb-6196-44dd-9bad-6d2827250d32.woff',
+            dest: './dist/frontend/vendors/developer.sabre.com/131afccb-6196-44dd-9bad-6d2827250d32.woff',
             src: './app/vendors/developer.sabre.com/131afccb-6196-44dd-9bad-6d2827250d32.woff'
           }, {
 
-            dest: './dist/frontend//bc35730a-e839-4dc2-b89f-92575ffec5c1.woff',
+            dest: './dist/frontend/vendors/developer.sabre.com/bc35730a-e839-4dc2-b89f-92575ffec5c1.woff',
             src: './app/vendors/developer.sabre.com/bc35730a-e839-4dc2-b89f-92575ffec5c1.woff '
           }, {
 
-            dest: './dist/frontend//20588565-aa56-46ce-8d7c-6b5f77df85f9.ttf',
+            dest: './dist/frontend/vendors/developer.sabre.com/20588565-aa56-46ce-8d7c-6b5f77df85f9.ttf',
             src: '../app/vendors/developer.sabre.com/20588565-aa56-46ce-8d7c-6b5f77df85f9.ttf'
           }, {
 
-            dest: './dist/frontend//d7cf6a30-fb6a-4725-9c93-2372d9f4bb8d.woff',
+            dest: './dist/frontend/vendors/developer.sabre.com/d7cf6a30-fb6a-4725-9c93-2372d9f4bb8d.woff',
             src: './app/vendors/developer.sabre.com/d7cf6a30-fb6a-4725-9c93-2372d9f4bb8d.woff '
           }, {
-            dest: './dist/frontend//fb6dd99b-78b9-4459-b787-00d3f0fc0c9f.ttf',
+            dest: './dist/frontend/vendors/developer.sabre.com/fb6dd99b-78b9-4459-b787-00d3f0fc0c9f.ttf',
             src: './app/vendors/developer.sabre.com/fb6dd99b-78b9-4459-b787-00d3f0fc0c9f.ttf'
           }
         ]
@@ -296,10 +302,9 @@ module.exports = function(grunt) {
 
         ]
       }
-    }
-    ,
+    },
     less: {
-      server: {
+      dev: {
         options: {
           paths: ["./app"],
           compress: true,
@@ -307,7 +312,27 @@ module.exports = function(grunt) {
         }
         ,
         files: {
-          'dist/frontend/style.css': 'app/style.less'
+          'app/style.css': 'app/style.less'
+        }
+      }
+    },
+    forever: {
+      web: {
+        options: {
+          index: 'server.js',
+          logDir: 'logs',
+          outFile: 'web.log',
+          errFile: 'web.log',
+          logFile: 'web.log'
+        }
+      },
+      worker: {
+        options: {
+          index: 'worker.js',
+          logDir: 'logs',
+          outFile: 'web.log',
+          errFile: 'web.log',
+          logFile: 'web.log'
         }
       }
     }
@@ -334,10 +359,10 @@ module.exports = function(grunt) {
 
   grunt.registerTask('frontend', function(target) {
     grunt.task.run([
-      'clean:frontend',
+      //'clean:frontend',
       'less',
-      'requirejs',
-      'copy:frontend',
+      //'requirejs',
+      //'copy:frontend',
       'concurrent:frontend'
     ]);
   });
@@ -347,5 +372,4 @@ module.exports = function(grunt) {
       'concurrent:backend'
     ]);
   });
-
 };

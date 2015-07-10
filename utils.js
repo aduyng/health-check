@@ -1,5 +1,5 @@
 var env = process.env.NODE_ENV || 'development',
-    config = require('./config')[env],
+    config = require('./config'),
     Promise = require('bluebird'),
     Checkit = require('checkit'),
     _ = require('underscore'),

@@ -1,8 +1,8 @@
 define(function(require) {
-    var io = require('socket.io'),
-        data = require('data.io');
+  var io = require('socket.io'),
+    data = require('data.io');
 
-    var Me = data(io.connect());
+  var Me = data(io.connect());
 
-    return Me;
+  return Me;
 });

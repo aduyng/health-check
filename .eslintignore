@@ -1,0 +1,5 @@
+app/vendors
+node_modules
+heroku
+saucelabs
+divshot

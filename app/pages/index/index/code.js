@@ -4,7 +4,7 @@ define(function(require) {
         B = require('bluebird'),
         Backbone = require('backbone'),
         TEMPLATE = require('hbs!./code.tpl'),
-        SCRIPT_TEMPLATE = require('text!./code.script-template.tpl.hbs'),
+        SCRIPT_TEMPLATE = '',//require('text!./code.script-template.tpl.hbs'),
         Libraries = require('./library'),
         Ace = require('ace');
 
