@@ -23,7 +23,7 @@ var path = require('path'),
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({
     extended: false
-}))
+}));
 
 // parse application/json
 app.use(bodyParser.json());
@@ -35,10 +35,6 @@ app.use(session({
     })
 }));
 
-
-app.use('/app', express.static(path.join(__dirname, '/app'), {
-    maxAge: (env === 'development') ? 1000 : 86400000 * 90
-}));
 app.use('/screenshots', express.static(path.join(__dirname, '/data/screenshots'), {
     maxAge: (env === 'development') ? 1000 : 86400000 * 90
 }));

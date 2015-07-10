@@ -36,15 +36,14 @@
     "winston": "^1.0.0"
   },
   "devDependencies": {
-    "everyauth": "*",
     "grunt": "*",
+    "grunt-concurrent": "^2.0.0",
     "grunt-contrib-clean": "*",
     "grunt-contrib-copy": "*",
     "grunt-contrib-less": "*",
     "grunt-contrib-requirejs": "*",
     "grunt-contrib-watch": "*",
-    "grunt-devtools": "*",
-    "matchdep": "*",
-    "request": "^2.55.0"
+    "grunt-http-server": "^1.4.0",
+    "matchdep": "*"
   }
 }

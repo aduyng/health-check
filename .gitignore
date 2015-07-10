@@ -1,6 +1,7 @@
 # Logs
 dist/backend
 dist/app
+.idea
 data
 logs
 *.log

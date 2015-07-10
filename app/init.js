@@ -1,7 +1,4 @@
-/*global requirejs*/
-
 requirejs.config({
-    //    urlArgs: 'v=' + [config.app.version.major, config.app.version.minor, config.app.version.patch].join('.'),
     baseUrl: './app',
     locale: "en-us",
     waitSeconds: 30,
