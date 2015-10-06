@@ -21,10 +21,12 @@ var Schema = new odm.Schema({
         type: String
     },
     lastExecutedAt: {
-        type: Number
+        type: Date,
+        default: Date.now
     },
     lastExecutionCompletedAt: {
-        type: Number
+        type: Date,
+        default: Date.now
     },
     status: {
         type: Number,

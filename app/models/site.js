@@ -14,10 +14,11 @@ define(function(require) {
             m.status = ExecutionStatus.ID_SCHEDULED;
             return m;
         });
-        
+
         return that.save({
                 requestType: 'run',
-                modules: modules
+                modules: modules,
+                lastExecutedAt: new Date()
             })
             .then(function(result) {
                 that.set('requestType', undefined);
