@@ -6,6 +6,7 @@ define(function(require) {
         ModulesView = require('./modules'),
         Dialog = require('views/controls/dialog'),
         ansi = require('ansi'),
+        moment = require('moment'),
         ExecutionStatus = require('models/execution-status'),
         TEMPLATE = require('hbs!./site-widget.tpl'),
         MODULE_LIST = require('hbs!./module-list.tpl');
@@ -24,7 +25,8 @@ define(function(require) {
         var that = this;
 
         that.$el.html(TEMPLATE({
-            id: that.id
+            id: that.id,
+            lastExecuted: moment(that.model.get('lastExecutedAt')).format('MM/DD/YYYY h:mm')
         }));
 
         that.mapControls();

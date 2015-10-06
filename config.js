@@ -9,7 +9,7 @@ config.development = {
         name: pkg.name,
         fullName: 'Health Check',
         version: pkg.version,
-        frontend: '//development.health-check.divshot.io'
+        frontend: '/app'
     },
     mail: {
         port: 25,
