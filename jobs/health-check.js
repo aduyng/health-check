@@ -8,6 +8,7 @@ var env = process.env.NODE_ENV || 'development',
     Socket = require('socket.io-client'),
     dataIO = require('data.io'),
     Mailer = require('../mailer'),
+    Status = require('../odm/models/status'),
 
     nexpect = require('nexpect'),
 
@@ -138,6 +139,12 @@ module.exports = function(agenda) {
                     .then(function() {
                         site.status = failure ? ExecutionStatus.ID_ERROR : ExecutionStatus.ID_OK;
                         L.infoAsync(__filename + ' ::run-site SITE %s:%s %s.', site._id.toHexString(), site.name, failure ? 'FAILED' : 'succeeded');
+                        // Status.create({type: site.status, date: new Date(), origin: site.name}, function(err, data) {
+                        //     if (err) {
+                        //         console.log('err ', err);
+                        //     }
+                        //     console.log('created : ', data);
+                        // });
                         return updateSiteStatus();
                     })
                     .catch(function(e) {

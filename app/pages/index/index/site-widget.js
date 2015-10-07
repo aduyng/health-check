@@ -8,6 +8,8 @@ define(function(require) {
         ansi = require('ansi'),
         moment = require('moment'),
         ExecutionStatus = require('models/execution-status'),
+        Status = require('models/status'),
+        StatusCollection = require('collections/status'),
         TEMPLATE = require('hbs!./site-widget.tpl'),
         MODULE_LIST = require('hbs!./module-list.tpl');
 
@@ -19,6 +21,20 @@ define(function(require) {
     View.prototype.initialize = function(options) {
         Super.prototype.initialize.call(this, options);
         this.types = options.types;
+        
+        
+    };
+    
+    View.prototype.getLastRunTime = function(date) {
+        var newDate = moment(date);
+        var fromNow = newDate.fromNow().toString();
+        var moments =['hours', 'day', 'days', 'week', 'weeks', 'month', 'months', 'year', 'years'];
+        
+        if (fromNow.indexOf(moments[0]) > -1) {
+            return newDate.format('MM/DD/YYYY h:mm');
+        }
+        
+        return moment(date).fromNow().toString();
     };
 
     View.prototype.render = function() {
@@ -26,7 +42,7 @@ define(function(require) {
 
         that.$el.html(TEMPLATE({
             id: that.id,
-            lastExecuted: moment(that.model.get('lastExecutedAt')).format('MM/DD/YYYY h:mm')
+            lastExecuted: that.getLastRunTime(that.model.get('lastExecutedAt')) //.format('MM/DD/YYYY h:mm')
         }));
 
         that.mapControls();

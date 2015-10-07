@@ -10,9 +10,11 @@ define(function(require) {
         ExecutionStatus = require('models/execution-status'),
         Dialog = require('views/controls/dialog'),
         Sites = require('collections/site'),
+        Statuses = require('collections/status'),
         Modules = require('collections/module'),
         Types = require('collections/type'),
-        Site = require('models/site');
+        Site = require('models/site'),
+        Status = require('models/status');
 
     var Page = Super.extend({});
     var activeTypeArray = [];
@@ -25,11 +27,16 @@ define(function(require) {
         that.sites = new Sites();
         that.types = new Types();
         that.modules = new Modules();
+        this.statuses = new Statuses();
+    };
+    
+    Page.prototype.gotStatuses = function(d) {
+        var successes = d.findWhere({status: 'success'});
+        console.log(successes)
     };
 
     Page.prototype.render = function() {
         var that = this;
-
 
         that.$el.html(MAIN({
             id: that.id
@@ -48,6 +55,7 @@ define(function(require) {
         that.sites.on('sync add', that.renderSites.bind(that));
         that.sites.on('remove', that.onSiteRemove.bind(that));
         that.sites.on('change', that.onSiteChange.bind(that));
+        that.statuses.on('sync', that.gotStatuses.bind(that));
         
         that.on('search', that.performSearch.bind(that));
 
@@ -313,7 +321,7 @@ define(function(require) {
 
     Page.prototype.fetch = function() {
         var that = this;
-        return B.all([that.sites.fetch()]);
+        return B.all([that.sites.fetch(), that.statuses.fetch()]);
     };
 
 

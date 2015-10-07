@@ -114,4 +114,5 @@ B.all([odm.initialize()])
         var connection = require('./connection')(server);
         require('./resources/site')(connection);
         require('./resources/type')(connection);
+        require('./resources/status')(connection);
     });
