@@ -1,23 +1,31 @@
-<div id="local" class="local navbar navbar-default navbar-fixed-top navbar-inverse">
-    <div class="navbar-header">
-        <!--<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navCollapse">-->
-        <!--    <span class="sr-only">Toggle navigation</span>-->
-        <!--    <span class="icon-bar"></span>-->
-        <!--    <span class="icon-bar"></span>-->
-        <!--    <span class="icon-bar"></span>-->
-        <!--</button>-->
-
-        <a href="#index/index" class="navbar-brand"><img src="//developer.sabre.com/public/Mashery/images/clients/sabre/Sabre-Logo-2013.png"></a>
-        <h1 class="navbar-title"><a href="/">{{appFullName}}</a></h1>
+<div class="navbar-inner">
+    <div class="header-seperation">
+        <a href="index.html">
+            <img src="{{path}}/images/sabre.png" class="logo" alt="" height="50">
+        </a>
     </div>
-    
-    <!--<div id="navCollapse" class="collapse navbar-collapse">-->
-    <!--    <ul id="{{id}}-items" class="mainNav nav navbar-nav">-->
-    <!--        <li data-controller="index" class="active"><a href="#"><i class="fa fa-play"></i> Queue</a></li>-->
-    <!--        <li data-controller="job" ><a href="#job/index"><i class="fa fa-tasks"></i> Jobs</a></li>-->
-    <!--        <li data-controller="box" class=""><a href="#box/index"><i class="fa fa-cubes"></i> Boxes</a></li>-->
-    <!--        <li data-controller="script" class=""><a href="#script/index"><i class="fa fa-code"></i> Scripts</a></li>-->
-    <!--        <li data-controller="device" class=""><a href="#device/index"><i class="fa fa-mobile-phone"></i> Devices</a></li>-->
-    <!--    </ul>-->
-    <!--</div>-->
+    <div class="header-quick-nav text-center">
+        <h3 class="pull-left">Health <strong>check</strong></h3>
+        <ul class="nav quick-section pull-right">
+            <li class="m-r-10 input-prepend inside search-form no-boarder">
+                <span class="add-on">
+                    <span class="fa fa-search"></span>
+                </span>
+                <input id="{{id}}-query" type="text" class="no-boarder new-ui-input" placeholder="Search" style="width:250px;">
+            </li>
+            <li class="btn-li">
+                <button class="btn btn-info" id="{{id}}-run-all">
+                    <i class="fa fa-play"></i> <span class="hidden-xs">Run All</span>
+                </button>
+                <button class="btn btn-warning hidden" id="{{id}}-stop">
+                    <i class="fa fa-stop"></i> <span class="hidden-xs">Stop</span>
+                </button>
+            </li>
+            <li class="btn-li">
+                <button class="btn btn-success" id="{{id}}-new">
+                    <i class="fa fa-plus"></i> <span class="hidden-xs">New Site</span>
+                </button>
+            </li>
+        </ul>
+    </div>
 </div>

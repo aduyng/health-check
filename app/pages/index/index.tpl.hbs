@@ -1,13 +1,13 @@
-<div class="clearfix">
+<!--<div class="clearfix">
     <div class="row col-xs-12 col-sm-12 col-md-12 col-lg-12">
         <div class="col-xs-6 col-sm-6 col-md-4 col-lg-4">
             <input type="text" id="{{id}}-query" placeholder="Search" class="form-control" />
         </div>
-        
+
         <div class="col-md-5 col-lg-5 hidden-xs hidden-sm types">
         </div>
-        
-        
+
+
         <div class="col-xs-6 col-sm-6 col-md-3 col-lg-3 text-right">
             <button class="btn btn-info" id="{{id}}-run-all"><i class="fa fa-play"></i> <span class="hidden-xs">Run All</span> </button>
             <button class="btn btn-warning hidden" id="{{id}}-stop"><i class="fa fa-stop"></i> <span class="hidden-xs">Stop</span>
@@ -16,8 +16,45 @@
             </button>
         </div>
     </div>
-</div>
-<div class="row">
+</div>-->
+<!--<div class="row">
     <div class="col-md-12 col-lg-12 hidden-md hidden-lg types full-width"></div>
+</div>-->
+<!-- <div id="{{id}}-sites" class="row"></div> -->
+<div class="row">
+    <div class="col-md-12">
+        <ul class="nav nav-tabs" id="tab-01">
+            <li class="active" role="categories">
+                <a href="#all" role="tab" data-toggle="tab" aria-controls="all">All</a>
+            </li>
+            <li role="categories">
+                <a href="#mobile" role="tab" data-toggle="tab" aria-controls="mobile">Mobile</a>
+            </li>
+            <li role="categories">
+                <a href="#ssweb" role="tab" data-toggle="tab" aria-controls="ssweb">SSWEB</a>
+            </li>
+            <li role="categories">
+                <a href="#wci" role="tab" data-toggle="tab" aria-controls="wci">WCI</a>
+            </li>
+        </ul>
+        <div class="grid simple tab-content">
+            <div role="tabpanel" class="tab-pane active" id="all">
+                <div class="grid-title no-border clearfix">
+                    <div class="pull-right">
+                        <span class="label">CI - Check in</span>
+                        <span class="label">BK - Booking</span>
+                        <span class="label">FS - Flight status</span>
+                        <span class="label">FSC - Flight schedules</span>
+                    </div>
+                </div>
+                <div class="grid-body no-border">
+                    <section class="row" id="{{id}}-sites">
+                    </section>
+                </div>
+            </div>
+            <div role="tabpanel" class="tab-pane" id="mobile"></div>
+            <div role="tabpanel" class="tab-pane" id="ssweb"></div>
+            <div role="tabpanel" class="tab-pane" id="wci"></div>
+        </div>
+    </div>
 </div>
-<div id="{{id}}-sites" class="sites"></div>

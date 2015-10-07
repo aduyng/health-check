@@ -41,6 +41,7 @@ define(function(require) {
         that.$el.html(MAIN({
             id: that.id
         }));
+
         that.mapControls();
 
         var events = {};
@@ -90,7 +91,7 @@ define(function(require) {
                 }
                 return true;
             })) {
-            that.controls.runAll.prop('disabled', false);
+            //that.controls.runAll.prop('disabled', false);
         }
     }
 
@@ -105,7 +106,6 @@ define(function(require) {
 
     Page.prototype.renderSites = function() {
         var that = this;
-
 
         B.all(_.map(that.sites.filter(function(site) {
             return !site.isRendered;
@@ -283,7 +283,7 @@ define(function(require) {
 
     Page.prototype.refresh = function() {
         var that = this;
-        //clean up 
+        //clean up
         that.airlineCollection.forEach(function(airline) {
             if (airline.view) {
                 airline.view.remove();

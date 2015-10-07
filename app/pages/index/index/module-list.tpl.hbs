@@ -1,8 +1,13 @@
-{{#each modules}}
-    <li class="list-group-item clearfix {{../id}}-module" data-index="{{@index}}">
-        <i class="fa {{iconClass}} status pull-right"></i>
-        <div class="name">{{name}}</div>
-    </li>
-{{else}}
-    <li class="list-group-item list-group-item-warning"><i class="fa fa-exclamation-triangle"></i> There is no modules.</li>
-{{/each}}
+<div class="clearfix">
+    {{#each modules}}
+    <div class="text-center {{../id}}-module" data-index="{{@index}}">{{name}}</div>
+    {{else}}
+    <span class="text-center">There are no modules.</span>
+    {{/each}}
+</div>
+<div class="clearfix">
+    {{#each modules}}
+    <div class="text-center {{../id}}-module" data-index="{{@index}}"><i class="status fa {{iconClass}}"></i></div>
+    {{else}}
+    {{/each}}
+</div>

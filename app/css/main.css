@@ -1,0 +1,102 @@
+.header .header-seperation {
+  width: 134px;
+  background-color: #F35958;
+}
+.header-quick-nav h3 {
+  margin: 0;
+  line-height: 60px;
+  padding-left: 20px;
+  text-align: left;
+  color: #fff;
+}
+.header .nav > li.quicklinks > a {
+  padding: 2px 9px !important;
+  margin-left: 4px;
+}
+.header .nav > li.quicklinks > a i {
+  color: #fff !important;
+  margin-left: 3px;
+}
+.alert-info {
+  color: #949494;
+  background-color: #fff3e0;
+}
+.alert-error {
+  background: #fbe9e7;
+}
+.tiles {
+  background: #E8C388;
+}
+.inlinesparkline canvas {
+  vertical-align: middle !important;
+}
+.logo {
+  margin: 5px 14px !important;
+}
+.data-row {
+  padding: 6px;
+  border: 1px solid #C8DAC8;
+  margin-bottom: 10px;
+  background-color: #E8F1E8;
+  position: relative;
+}
+.data-row .last-run {
+  font-size: 10px;
+}
+.data-row.error {
+  background: #F5DEDD;
+  border: 1px solid #E2B9B7;
+}
+.data-row.error .btn-primary {
+  background: #f35958;
+}
+.data-row.error .details {
+  display: block;
+}
+.data-row .name {
+  font-weight: bold;
+}
+.data-row footer {
+  margin-top: 10px;
+}
+.data-row .details {
+  position: absolute;
+  top: 4px;
+  right: 0;
+  line-height: 12px;
+}
+.data-row .details .clearfix > div {
+  float: right;
+  width: 30px;
+}
+.grid.simple .grid-title {
+  padding: 15px;
+}
+.btn-li {
+  margin-left: 5px !important;
+}
+.btn-li button {
+  padding: 9px 12px !important;
+  margin-top: -5px;
+  background-color: #72B972;
+}
+.header .navbar-inner {
+  background-color: #22262E!important;
+}
+.form-group > label {
+  font-weight:bold
+}
+.terminal .modal-body {
+  background-color: black;
+}
+code, pre {
+  font-family: "Univers Typewriter", Monaco, Menlo, Consolas, "Courier New", monospace;
+  word-break: break-word;
+  white-space: pre-wrap;
+}
+.terminal .modal-body code {
+  background-color: black;
+}
+.terminal .modal-body code>span {
+  background-color: transparent !important;
+}

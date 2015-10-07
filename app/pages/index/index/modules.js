@@ -113,7 +113,7 @@ define(function(require) {
             label: 'Done',
             iconClass: 'fa fa-check',
             buttonClass: 'btn-primary',
-            align: 'left',
+            align: 'right',
             autoClose: true
         }];
 

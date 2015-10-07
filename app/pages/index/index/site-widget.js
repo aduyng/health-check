@@ -14,9 +14,8 @@ define(function(require) {
         MODULE_LIST = require('hbs!./module-list.tpl');
 
     var View = Super.extend({
-        className: 'col-xm-12 col-sm-6 col-md-4 col-lg-3'
+        className: ''
     });
-
 
     View.prototype.initialize = function(options) {
         Super.prototype.initialize.call(this, options);
@@ -48,7 +47,6 @@ define(function(require) {
         that.mapControls();
 
         var events = {};
-        events['click ' + that.toId('header')] = 'onHeaderClick';
         events['click ' + that.toId('edit')] = 'onEditClick';
         events['click ' + that.toId('show-modules')] = 'onModulesClick';
         events['click ' + that.toClass('module')] = 'onModuleClick';
@@ -68,10 +66,6 @@ define(function(require) {
         //stop the status querying process
         return Super.prototype.remove.apply(this, arguments);
     }
-
-
-
-
 
     View.prototype.draw = function() {
         var that = this;
@@ -100,43 +94,41 @@ define(function(require) {
         }
 
         var iconClass = 'fa-square-o',
-            panelClass = 'panel-default';
-        switch (that.model.get('status')) {
+            panelClass = '';
 
+        switch (that.model.get('status')) {
             case ExecutionStatus.ID_SCHEDULED:
                 iconClass = 'fa-clock-o text-info';
-                panelClass = 'panel-info';
+                panelClass = 'info';
                 break;
 
             case ExecutionStatus.ID_ERROR:
                 iconClass = 'fa-exclamation-circle text-danger';
-                panelClass = 'panel-danger';
+                panelClass = 'error';
                 break;
 
             case ExecutionStatus.ID_RUNNING:
                 iconClass = 'fa-spinner fa-spin text-warning';
-                panelClass = 'panel-warning';
+                panelClass = 'warning';
                 break;
 
             case ExecutionStatus.ID_RUNNING:
                 iconClass = 'fa-check text-success';
-                panelClass = 'panel-success';
                 break;
 
             case ExecutionStatus.ID_TERMINATED:
                 iconClass = 'fa-exclamation text-warning';
-                panelClass = 'panel-warning';
+                panelClass = 'warning';
                 break;
 
             case ExecutionStatus.ID_OK:
                 iconClass = 'fa-check-square text-success';
-                panelClass = 'panel-success';
                 break;
         }
 
+        //that.controls.icon.attr('class', 'fa ' + iconClass);
+        that.$el.find('.data-row').removeClass('danger success warning info').addClass(panelClass);
 
-        that.controls.icon.attr('class', 'fa ' + iconClass);
-        that.$el.find('>.panel').removeClass('panel-default panel-danger panel-success panel-warning panel-info').addClass(panelClass);
         that.controls.modules.html(MODULE_LIST({
             id: that.id,
             modules: _.sortBy(_.map(_.filter(that.model.get('modules') || [], function(module) {
@@ -146,29 +138,47 @@ define(function(require) {
                     iconClass: (function() {
                         switch (module.status) {
                             case ExecutionStatus.ID_RUNNING:
-                                return 'fa-spinner fa-spin text-warning';
+                                return 'fa-spinner fa-spin';
                             case ExecutionStatus.ID_OK:
-                                return 'fa-check text-success';
+                                return 'fa-check-circle text-success';
                             case ExecutionStatus.ID_ERROR:
-                                return 'fa-exclamation-circle text-danger';
+                                return 'fa-times-circle text-error';
                             default:
                                 return 'fa-square-o';
                         }
                     })()
                 });
             }), function(module) {
+                var name = module.name.toLowerCase();
+                switch (name) {
+                    case 'check in':
+                        module.name = 'CI';
+                        break;
+
+                    case 'booking':
+                    case 'booking flow':
+                    case 'book my flight':
+                        module.name = 'BK';
+                        break;
+
+                    case 'flight status':
+                        module.name = 'FS';
+                        break;
+
+                    case 'flight schedule':
+                        module.name = 'FSC';
+                        break;
+
+                    default:
+                        break;
+                }
+
                 return module.name;
             })
         }));
     };
 
-    View.prototype.onHeaderClick = function(event) {
-        event.preventDefault();
-        this.$el.find('>.panel').toggleClass('expanded');
-    };
-
     View.prototype.onModuleClick = function(event) {
-
         var that = this,
             e = $(event.currentTarget),
             dlg,
@@ -187,8 +197,8 @@ define(function(require) {
             align: 'left',
             autoClose: true
         }];
-//img-responsive
-        
+        //img-responsive
+
         dlg = new Dialog({
             sizeClass: 'modal-lg terminal',
             body: html,
@@ -251,7 +261,6 @@ define(function(require) {
             });
     };
 
-
     View.prototype.onEditClick = function(event) {
         event.preventDefault();
         event.stopPropagation();
@@ -273,13 +282,13 @@ define(function(require) {
             label: 'Save',
             iconClass: 'fa fa-save',
             buttonClass: 'btn-primary',
-            align: 'left'
+            align: 'right'
         }, {
             id: 'cancel',
             label: 'Cancel',
             iconClass: 'fa fa-times',
             buttonClass: 'btn-default',
-            align: 'left',
+            align: 'right',
             autoClose: true
         }];
 
@@ -289,7 +298,7 @@ define(function(require) {
                 label: 'Clone',
                 iconClass: 'fa fa-copy',
                 buttonClass: 'btn-info',
-                align: 'right'
+                align: 'left'
             });
 
             buttons.push({
@@ -297,7 +306,7 @@ define(function(require) {
                 label: 'Delete',
                 iconClass: 'fa fa-trash-o',
                 buttonClass: 'btn-danger',
-                align: 'right'
+                align: 'left'
             });
         }
 
@@ -360,8 +369,6 @@ define(function(require) {
         });
     };
 
-
-
     View.prototype.showModulesDialog = function() {
         var that = this;
 
@@ -374,7 +381,7 @@ define(function(require) {
             label: 'Done',
             iconClass: 'fa fa-check',
             buttonClass: 'btn-primary',
-            align: 'left',
+            align: 'right',
             autoClose: true
         }];
 
@@ -396,8 +403,6 @@ define(function(require) {
     View.prototype.remove = function() {
         Super.prototype.remove.call(this);
     };
-
-
 
     return View;
 });

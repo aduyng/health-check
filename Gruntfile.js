@@ -6,17 +6,34 @@ module.exports = function (grunt) {
     require('matchdep').filterDev('grunt-*').forEach(grunt.loadNpmTasks);
     var pkg = grunt.file.readJSON('package.json');
     var config = require('./config')['development'];
-    
+
     var opts = {
         pkg: pkg,
+
+        concat: {
+            css: {
+                src: [
+                    './app/css/normalize.css',
+                    './app/css/less/bootstrap.css',
+                    './app/css/general.css',
+                    './app/css/main.css',
+                ],
+                dest: './app/new-ui.css'
+            }
+        },
+
         watch: {
             less: {
                 files: [
-                    './app/**/*.less',
-                ],  
+                    './app/**/*.less'
+                ],
                  tasks: [
                     'less'
                 ]
+            },
+            css: {
+                files: './app/css/*.css',
+                tasks: ['concat', 'cssmin']
             },
             frontend: {
                 files: [
@@ -78,10 +95,21 @@ module.exports = function (grunt) {
             }
         },
 
+        cssmin: {
+            minify: {
+                files: [{
+                    expand: true,
+                    cwd: './app',
+                    src: ['new-ui.css'],
+                    dest: './app',
+                    ext: '.min.css'
+                }]
+            }
+        },
+
         requirejs: {
             compile: {
                 options: {
-
                     //The top level directory that contains your app. If this option is used
                     //then it assumed your scripts are in a subdirectory under this path.
                     //This option is not required. If it is not specified, then baseUrl
@@ -257,7 +285,7 @@ module.exports = function (grunt) {
                     //- "closure.keepLines": Same as closure option, but keeps line returns
                     //in the minified files.
                     //- "none": no minification will be done.
-//                    optimize                  : "uglify2",
+                    //optimize                  : "uglify2",
                     optimize: "uglify2",
                     // optimize: 'none',
 
@@ -279,7 +307,7 @@ module.exports = function (grunt) {
                     //build after r1592 (20111114 release).
                     //The source files will show up in a browser developer tool that supports
                     //source maps as ".js.src" files.
-//                    generateSourceMaps: true,
+                    //generateSourceMaps: true,
 
                     //Introduced in 2.1.1: If a full directory optimization ("dir" is used), and
                     //optimize is not "none", and skipDirOptimize is false, then normally all JS
@@ -376,7 +404,7 @@ module.exports = function (grunt) {
                     //returns.  (r.js 1.0.8+)
                     //- "standard.keepComments.keepLines": keeps the file comments and line
                     //returns. (r.js 1.0.8+)
-//    optimizeCss: "standard.keepLines",
+                    //optimizeCss: "standard.keepLines",
                     optimizeCss: "none",
 
                     //If optimizeCss is in use, a list of of files to ignore for the @import
@@ -387,8 +415,8 @@ module.exports = function (grunt) {
 
                     //cssIn is typically used as a command line option. It can be used
                     //along with out to optimize a single CSS file.
-//    cssIn: "path/to/main.css",
-//    out: "path/to/css-optimized.css",
+                    //    cssIn: "path/to/main.css",
+                    //    out: "path/to/css-optimized.css",
 
                     //If "out" is not in the same directory as "cssIn", and there is a relative
                     //url() in the cssIn file, use this to set a prefix URL to use. Only set it
@@ -461,7 +489,7 @@ module.exports = function (grunt) {
                     //system. The example below will rename define() calls to foo.define().
                     //See http://requirejs.org/docs/faq-advanced.html#rename for a more
                     //complete example.
-//    namespace: '',
+                    //namespace: '',
 
                     //Skip processing for pragmas.
                     skipPragmas: false,
@@ -514,77 +542,77 @@ module.exports = function (grunt) {
                     //dependencies will be included in the module's file when the build is
                     //done. If that module or any of its dependencies includes i18n bundles,
                     //only the root bundles will be included unless the locale: section is set above.
-//    modules: [
-//        //Just specifying a module name means that module will be converted into
-//        //a built file that contains all of its dependencies. If that module or any
-//        //of its dependencies includes i18n bundles, they may not be included in the
-//        //built file unless the locale: section is set above.
-//        {
-//            name: "init",
-//            include: [
-//                "app",
-//
-//                "pages/index/index",
-//                "pages/index/check-in",
-//                "pages/index/clear-store",
-//                "pages/index/index",
-//                "pages/index/select-store",
-//                "pages/index/sign-in",
-//                "pages/index/sign-out",
-//
-//                "pages/products/edit",
-//                "pages/products/index",
-//                "pages/products/view",
-//
-//                "pages/users/edit",
-//                "pages/users/index",
-//                "pages/users/view"
-//
-//            ]
-//
-//            //For build profiles that contain more than one modules entry,
-//            //allow overrides for the properties that set for the whole build,
-//            //for example a different set of pragmas for this module.
-//            //The override's value is an object that can
-//            //contain any of the other build options in this file.
-//            override: {
-//                pragmas: {
-//                    fooExclude: true
-//                }
-//            }
-//        }
+                    //    modules: [
+                    //        //Just specifying a module name means that module will be converted into
+                    //        //a built file that contains all of its dependencies. If that module or any
+                    //        //of its dependencies includes i18n bundles, they may not be included in the
+                    //        //built file unless the locale: section is set above.
+                    //        {
+                    //            name: "init",
+                    //            include: [
+                    //                "app",
+                    //
+                    //                "pages/index/index",
+                    //                "pages/index/check-in",
+                    //                "pages/index/clear-store",
+                    //                "pages/index/index",
+                    //                "pages/index/select-store",
+                    //                "pages/index/sign-in",
+                    //                "pages/index/sign-out",
+                    //
+                    //                "pages/products/edit",
+                    //                "pages/products/index",
+                    //                "pages/products/view",
+                    //
+                    //                "pages/users/edit",
+                    //                "pages/users/index",
+                    //                "pages/users/view"
+                    //
+                    //            ]
+                    //
+                    //            //For build profiles that contain more than one modules entry,
+                    //            //allow overrides for the properties that set for the whole build,
+                    //            //for example a different set of pragmas for this module.
+                    //            //The override's value is an object that can
+                    //            //contain any of the other build options in this file.
+                    //            override: {
+                    //                pragmas: {
+                    //                    fooExclude: true
+                    //                }
+                    //            }
+                    //        }
 
-                    //This module entry combines all the dependencies of foo/bar/bop and foo/bar/bee
-                    //and any of their dependencies into one file.
-//        {
-//            name: "foo/bar/bop",
-//            include: ["foo/bar/bee"]
-//        },
-//
-                    //This module entry combines all the dependencies of foo/bar/bip into one file,
-                    //but excludes foo/bar/bop and its dependencies from the built file. If you want
-                    //to exclude a module that is also another module being optimized, it is more
-                    //efficient if you define that module optimization entry before using it
-                    //in an exclude array.
-//        {
-//            name: "foo/bar/bip",
-//            exclude: [
-//                "foo/bar/bop"
-//            ]
-//        },
+                                        //This module entry combines all the dependencies of foo/bar/bop and foo/bar/bee
+                                        //and any of their dependencies into one file.
+                    //        {
+                    //            name: "foo/bar/bop",
+                    //            include: ["foo/bar/bee"]
+                    //        },
+                    //
+                                        //This module entry combines all the dependencies of foo/bar/bip into one file,
+                                        //but excludes foo/bar/bop and its dependencies from the built file. If you want
+                                        //to exclude a module that is also another module being optimized, it is more
+                                        //efficient if you define that module optimization entry before using it
+                                        //in an exclude array.
+                    //        {
+                    //            name: "foo/bar/bip",
+                    //            exclude: [
+                    //                "foo/bar/bop"
+                    //            ]
+                    //        },
 
-                    //This module entry shows how to specify a specific module be excluded
-                    //from the built module file. excludeShallow means just exclude that
-                    //specific module, but if that module has nested dependencies that are
-                    //part of the built file, keep them in there. This is useful during
-                    //development when you want to have a fast bundled set of modules, but
-                    //just develop/debug one or two modules at a time.
-//        {
-//            name: "foo/bar/bin",
-//            excludeShallow: [
-//                "foo/bar/bot"
-//            ]
-//        },
+                                        //This module entry shows how to specify a specific module be excluded
+                                        //from the built module file. excludeShallow means just exclude that
+                                        //specific module, but if that module has nested dependencies that are
+                                        //part of the built file, keep them in there. This is useful during
+                                        //development when you want to have a fast bundled set of modules, but
+                                        //just develop/debug one or two modules at a time.
+                    //        {
+                    //            name: "foo/bar/bin",
+                    //            excludeShallow: [
+                    //                "foo/bar/bot"
+                    //            ]
+                    //        },
 
                     //This module entry shows the use insertRequire (first available in 2.0):
                     //if the target module only calls define and does not call require()
@@ -599,11 +627,11 @@ module.exports = function (grunt) {
                     //that are built into the build bundle. It just adds a require([])
                     //call to the end of the built file for use during the runtime
                     //execution of the built code.
-//        {
-//            name: "foo/baz",
-//            insertRequire: ["foo/baz"]
-//        }
-//    ],
+                    //        {
+                    //            name: "foo/baz",
+                    //            insertRequire: ["foo/baz"]
+                    //        }
+                    //    ],
 
                     //If you only intend to optimize a module (and its dependencies), with
                     //a single file as the output, you can specify the module options inline,
@@ -629,7 +657,6 @@ module.exports = function (grunt) {
                         // "pages/health-check/index",
                         // "pages/health-check/edit",
                         // "pages/health-check/view",
-                        
                     ],
                     excludeShallow: [
                         'dist'
@@ -731,19 +758,19 @@ module.exports = function (grunt) {
                     //A function that if defined will be called for every file read in the
                     //build that is done to trace JS dependencies. This allows transforms of
                     //the content.
-//                    onBuildRead: function (moduleName, path, contents) {
-//                        //Always return a value.
-//                        //This is just a contrived example.
-//                        return contents.replace(/foo/g, 'bar');
-//                    },
+                    //onBuildRead: function (moduleName, path, contents) {
+                    ////Always return a value.
+                    ////This is just a contrived example.
+                    //return contents.replace(/foo/g, 'bar');
+                    //},
 
                     //A function that will be called for every write to an optimized bundle
                     //of modules. This allows transforms of the content before serialization.
-//                    onBuildWrite: function (moduleName, path, contents) {
-//                        //Always return a value.
-//                        //This is just a contrived example.
-//                        return contents.replace(/bar/g, 'foo');
-//                    },
+                    //onBuildWrite: function (moduleName, path, contents) {
+                    ////Always return a value.
+                    ////This is just a contrived example.
+                    //return contents.replace(/bar/g, 'foo');
+                    //},
 
                     //A function that is called for each JS module bundle that has been
                     //completed. This function is called after all module bundles have
@@ -815,6 +842,7 @@ module.exports = function (grunt) {
                 }
             }
         },
+
         clean: {
             options: {
                 force: true
@@ -830,6 +858,7 @@ module.exports = function (grunt) {
                 ]
             }
         },
+
         // Put files not handled in other tasks here
         copy: {
             frontend: {
@@ -844,23 +873,22 @@ module.exports = function (grunt) {
                             'images/*'
                         ]
                     },{
-                        
                         dest: './dist/app/04b3c812-2234-45b5-af16-18a0f70cf1df.eot',
                         src: './app/vendors/developer.sabre.com/04b3c812-2234-45b5-af16-18a0f70cf1df.eot'
                     },{
-                        
+
                         dest: './dist/app/131afccb-6196-44dd-9bad-6d2827250d32.woff',
                         src: './app/vendors/developer.sabre.com/131afccb-6196-44dd-9bad-6d2827250d32.woff'
                     },{
-                        
+
                         dest: './dist/app//bc35730a-e839-4dc2-b89f-92575ffec5c1.woff',
                         src: './app/vendors/developer.sabre.com/bc35730a-e839-4dc2-b89f-92575ffec5c1.woff '
                     },{
-                        
+
                         dest: './dist/app//20588565-aa56-46ce-8d7c-6b5f77df85f9.ttf',
                         src: '../app/vendors/developer.sabre.com/20588565-aa56-46ce-8d7c-6b5f77df85f9.ttf'
                     },{
-                        
+
                         dest: './dist/app//d7cf6a30-fb6a-4725-9c93-2372d9f4bb8d.woff',
                         src: './app/vendors/developer.sabre.com/d7cf6a30-fb6a-4725-9c93-2372d9f4bb8d.woff '
                     },{
@@ -897,6 +925,7 @@ module.exports = function (grunt) {
                 ]
             }
         },
+
         less: {
             server: {
                 options: {
@@ -910,10 +939,9 @@ module.exports = function (grunt) {
             }
         }
     };
-    
-    
+
     grunt.initConfig(opts);
-    
+
     grunt.registerTask('build', function (target) {
         grunt.task.run([
             'clean',
@@ -922,11 +950,12 @@ module.exports = function (grunt) {
             'copy'
         ]);
     });
-    
+
     grunt.registerTask('default', function (target) {
         grunt.task.run([
             'less',
-            'watch:less'
+            'cssmin',
+            'watch:css',
         ]);
     });
 };

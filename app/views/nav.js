@@ -18,7 +18,8 @@ define(function(require) {
 
         var params = {
             id: this.id,
-            appFullName: window.app.config.get('fullName')
+            appFullName: window.app.config.get('fullName'),
+            path: window.app.config.get('baseUrl')
         };
 
         this.$el.html(Template(params));

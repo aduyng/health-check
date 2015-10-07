@@ -21,7 +21,7 @@ define(function(require) {
                 label: 'OK',
                 iconClass: 'fa fa-check-circle',
                 buttonClass: 'btn-primary',
-                align: 'left'
+                align: 'right'
             });
 
             that.buttons.add({
@@ -29,7 +29,7 @@ define(function(require) {
                 label: 'Cancel',
                 iconClass: 'fa fa-times',
                 buttonClass: 'btn-default',
-                align: 'left',
+                align: 'right',
                 autoClose: true
             });
         }
@@ -54,6 +54,7 @@ define(function(require) {
     View.prototype.open = function() {
         var that = this;
 
+        console.log(that);
         this.$el.html(Template({
             id: this.getId(),
             sizeClass: this.options.sizeClass,

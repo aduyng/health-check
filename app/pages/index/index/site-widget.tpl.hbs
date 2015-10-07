@@ -1,27 +1,15 @@
-<div class="panel panel-default site">
-<div class="panel-heading" id="{{id}}-header">
-  <span class="pull-right">
-    <i class="fa" id="{{id}}-icon"></i>
-  </span>
-
-  <h3 class="panel-title hello-world" id="{{id}}-name">{{data.name}}</h3>
-  <p id="{{id}}{{lastExecuted}}">Last Run : {{lastExecuted}}</p>
-</div>
-
-<ul class="list-group modules" id="{{id}}-modules">
-
-</ul>
-
-<div class="panel-footer clearfix">
-  <div class="btn-group pull-right">
-    <button class="btn btn-xs btn-default" id="{{id}}-edit"><i class="fa fa-edit"></i> <span class="hidden-xs">Edit</span>
-    </button>
-    <button class="btn btn-xs btn-default" id="{{id}}-show-modules"><i class="fa fa-tasks"></i> <span class="hidden-xs">Modules</span>
-    </button>
-  </div>
-
-  
-  <button class="btn btn-xs btn-success hidden" id="{{id}}-run"><i class="fa fa-play"></i> <span class="hidden-xs">Run</span></button>
-  <button class="btn btn-xs btn-warning hidden" id="{{id}}-stop"><i class="fa fa-stop"></i> <span class="hidden-xs">Stop</span></button>
-</div>
+<div class="col-lg-4 col-md-6 table-data">
+    <div class="data-row">
+        <div class="name" id="{{id}}-name">{{data.name}}</div>
+        <div class="last-run" id="{{id}}{{lastExecuted}}">Last run: {{lastExecuted}}</div>
+        <div class="details" id="{{id}}-modules"></div>
+        <footer>
+            <div class="btn-group" role="group">
+                <button class="btn btn-white btn-xs btn-mini" id="{{id}}-edit"><i class="fa fa-pencil"></i> Edit</button>
+                <button class="btn btn-white btn-xs btn-mini" id="{{id}}-show-modules"><i class="fa fa-list"></i> Modules</button>
+            </div>
+            <button type="button" class="pull-right btn btn-primary btn-xs btn-mini hidden" id="{{id}}-run"><span class="hidden-xs">Run</span> <i class="fa fa-play"></i></button>
+            <button type="button" class="pull-right btn btn-danger btn-xs btn-mini hidden" id="{{id}}-stop"><span class="hidden-xs">Stop <i class="fa fa-stop"></i></button>
+        </footer>
+    </div>
 </div>
