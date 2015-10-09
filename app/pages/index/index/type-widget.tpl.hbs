@@ -1,8 +1,8 @@
-<div class="btn-group col-xs-10 col-sm-10">
-    {{#each types}}
-        <button class="btn btn-default col-xs-4 col-sm-4 {{../id}}-button" data-id="{{this.id}}"> {{this.name}}</button>
-    {{/each}}
-</div>
-<div class="btn-group col-xs-2 col-sm-2">
-    <button class="btn btn-primary {{id}}-show-all">All</button>
-</div>
+<li class="active" role="categories">
+    <a href="#all" role="tab" data-toggle="tab" aria-controls="all" class="{{id}}-show-all">All</a>
+</li>
+{{#each types}}
+<li role="categories">
+    <a href="#{{this.name}}" class="{{../id}}-button" role="tab" data-toggle="tab" aria-controls="{{this.name}}" data-id="{{this.id}}">{{this.name}}</a>
+</li>
+{{/each}}

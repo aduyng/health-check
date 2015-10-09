@@ -39,6 +39,7 @@ module.exports = function(agenda) {
 
         var updateSiteStatus = function(modules) {
             var socket = Socket.connect('http://127.0.0.1:' + process.env.PORT);
+            console.log(socket);
             var conn = require('data.io').client(socket);
             var resource = conn.resource('site');
 

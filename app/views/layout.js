@@ -30,23 +30,16 @@ define(function(require) {
             version: window.config.version,
             loggedIn: loggedIn
         }));
-        
+
         that.mapControls();
-        that.controls.container = $('#container');
-        that.controls.mainContent = $('#main-content');
-        
 
         that.nav = new Nav({
             el: that.controls.nav
         });
         that.nav.render();
 
-
         return Bluebird.resolve();
-
     };
-    
-    
 
     return Layout;
 });
