@@ -39,6 +39,7 @@ module.exports = function(agenda) {
 
         var updateSiteStatus = function(modules) {
             var socket = Socket.connect('http://127.0.0.1:' + process.env.PORT);
+            console.log(socket);
             var conn = require('data.io').client(socket);
             var resource = conn.resource('site');
 
@@ -274,7 +275,7 @@ module.exports = function(agenda) {
                         }
                         L.infoAsync(__filename + ' ::run-site COMPLETED ============================================');
                         done();
-                        
+
                         function sendEmail() {
                             var mailer = new Mailer();
                             mailer.send({

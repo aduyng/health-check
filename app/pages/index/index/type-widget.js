@@ -14,10 +14,12 @@ define(function(require) {
 
     View.prototype.render = function() {
         var that = this;
+
         that.$el.html(TEMPLATE({
             id: this.id,
             types: this.types.toJSON()
         }));
+
         that.mapControls();
 
         var events = {};
@@ -29,21 +31,21 @@ define(function(require) {
     };
 
     View.prototype.onShowAllClick = function() {
-         var that = this;
-        that.$el.parent().find(that.toClass('button')).removeClass('active').removeClass('btn-primary').addClass('btn-default');
-        
+        var that = this;
+
         that.trigger('change', {
             selectedTypes: []
         });
     };
 
-    View.prototype.onButtonClick = function(event) {
+    View.prototype.onButtonClick = function(e) {
         var that = this;
-        var e = $(event.currentTarget);
-        e.toggleClass('btn-primary').toggleClass('active').toggleClass('btn-default');
+        e.preventDefault();
+
+        var $btn = $(e.currentTarget);
 
         this.trigger('change', {
-            selectedTypes: that.val()
+            selectedTypes: [that.types.get($btn.data('id'))]
         });
     };
 
@@ -52,9 +54,9 @@ define(function(require) {
         var that = this;
         if (values === undefined) {
             return _.reduce(this.find(this.toClass('button')) || [], function(memo, btn) {
-                var button = $(btn);
-                if (button.hasClass('active')) {
-                    memo.push(that.types.get(button.data('id')));
+                var $li = $(btn).parent();
+                if ($li.hasClass('active')) {
+                    memo.push(that.types.get($(btn).data('id')));
                 }
                 return memo;
             }, []);

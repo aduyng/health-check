@@ -88,7 +88,7 @@ define(function(require) {
 
     Page.prototype.render = function() {
         var that = this;
-        
+
         that.$el.html(MAIN({
             id: that.id
         }));
@@ -96,10 +96,6 @@ define(function(require) {
         that.mapControls();
 
         var events = {};
-        events['keyup ' + that.toId('query')] = 'onQueryKeyup';
-        events['click ' + that.toId('new')] = 'onNewClick';
-        events['click ' + that.toId('run-all')] = 'onRunAllClick';
-        events['click ' + that.toId('stop')] = 'onStopClick';
         events['click ' + '.types .btn'] = 'onTypesClick';
 
         that.delegateEvents(events);
@@ -111,6 +107,7 @@ define(function(require) {
         //that.stats.on('sync', that.renderStats.bind(that));
         
         that.on('search', that.performSearch.bind(that));
+        that.layout.nav.on('search', that.performSearch.bind(that));
 
         //keep updating airlines
         return B.resolve(that.types.fetch())
@@ -129,7 +126,9 @@ define(function(require) {
     };
 
     Page.prototype.onTypesChange = function(event) {
-        this.trigger('search');
+        this.trigger('search', {
+            selectedType: event.selectedTypes
+        });
     };
 
     Page.prototype.onSiteChange = function() {
@@ -182,6 +181,45 @@ define(function(require) {
         that.updateUI();
     };
 
+    Page.prototype.performSearch = function(options) {
+        var that = this;
+        var query = options.query ? options.query : (that.controls.query ? that.controls.query.val().trim() : '');
+        var visibleSites = that.sites.models;
+        var selectedTypes = options.selectedType || that.children.types.val();
+
+        if (!_.isEmpty(selectedTypes)) {
+            var typeIds = _.pluck(selectedTypes, 'id');
+
+            if (!_.isEmpty(query)) {
+                var re = new RegExp(query, 'i');
+                visibleSites = _.filter(visibleSites, function(site) {
+                    return _.contains(typeIds, site.get('typeId')) &&
+                            re.test(site.get('tags') + ',' + site.get('name'));
+                });
+            } else {
+                visibleSites = _.filter(visibleSites, function(site) {
+                    return _.contains(typeIds, site.get('typeId'));
+                });
+            }
+        } else {
+            if (!_.isEmpty(query)) {
+                var re = new RegExp(query, 'i');
+                visibleSites = _.filter(visibleSites, function(site) {
+                    return re.test(site.get('tags') + ',' + site.get('name'));
+                });
+            }
+        }
+
+        that.sites.forEach(function(site) {
+            if (site.view) {
+                var visible = _.find(visibleSites, function(vs){
+                    return site.id === vs.id;
+                });
+                site.view.$el.toggleClass('hidden', !visible);
+            }
+        });
+    };
+
     Page.prototype.onSiteScheduled = function() {
         var that = this;
         that.toast.success('Job has been scheduled to start in 10 seconds.');
@@ -203,60 +241,6 @@ define(function(require) {
         this.controls.runAll.addClass('hidden');
         this.controls.new.addClass('hidden');
         this.controls.stop.removeClass('hidden');
-    };
-
-    Page.prototype.onStopClick = function(event) {
-        var that = this;
-        that.runAllStopRequested = true;
-    };
-
-    Page.prototype.onQueryKeyup = _.debounce(function(event) {
-        this.trigger('search');
-    }, 300);
-
-    Page.prototype.performSearch = function() {
-        var that = this;
-        var query = that.controls.query.val().trim();
-        var visibleSites = that.sites.models;
-
-        if (!_.isEmpty(query)) {
-            var re = new RegExp(query, 'i');
-            visibleSites = _.filter(visibleSites, function(site) {
-                return re.test(site.get('tags') + ',' + site.get('name'));
-            });
-        }
-
-        var selectedTypes = that.children.types.val();
-        if (!_.isEmpty(selectedTypes)) {
-            var typeIds = _.pluck(selectedTypes, 'id');
-
-            visibleSites = _.filter(visibleSites, function(site) {
-                return _.contains(typeIds, site.get('typeId'));
-            });
-        }
-
-        that.sites.forEach(function(site) {
-            if (site.view) {
-                var visible = _.find(visibleSites, function(vs){
-                    return site.id === vs.id;
-                });
-                site.view.$el.toggleClass('hidden', !visible);
-            }
-        });
-    };
-
-
-    Page.prototype.onRunAllClick = function(event) {
-        var that = this;
-        that.controls.runAll.prop('disabled', true);
-        B.all(_.map(that.sites.filter(function(site) {
-                return site.view && !site.view.$el.hasClass('hidden');
-            }), function(site) {
-                return site.run();
-            }))
-            .then(function() {
-                that.toast.success('All matched sites have been scheduled to run.');
-            });
     };
 
     Page.prototype.run = function() {
@@ -281,57 +265,6 @@ define(function(require) {
 
         runningAirline.view.run();
     };
-
-    Page.prototype.openSiteDialog = function(model, types) {
-        var that = this,
-            isNew = model.isNew();
-
-        var view = new SiteEdit({
-            model: model,
-            types: types
-        });
-
-        var dlg = new Dialog({
-            title: isNew ? 'New Site' : 'Edit: ' + model.get('name'),
-            body: view,
-            buttons: [{
-                id: 'save',
-                label: 'Save',
-                iconClass: 'fa fa-save',
-                buttonClass: 'btn-primary',
-                align: 'left'
-            }, {
-                id: 'cancel',
-                label: 'Cancel',
-                iconClass: 'fa fa-times',
-                buttonClass: 'btn-default',
-                align: 'left',
-                autoClose: true
-            }]
-        })
-
-        dlg.on('save', function() {
-            B.resolve(model.save(view.val()))
-                .then(function() {
-                    if (isNew) {
-                        that.sites.add(model);
-                    }
-                    that.toast.success('New site has been added.');
-                    dlg.close();
-                });
-        });
-    };
-
-    Page.prototype.onNewClick = function(event) {
-        event.preventDefault();
-        var that = this;
-        var model = new Site({
-            name: 'New Site'
-        });
-
-        that.openSiteDialog(model, that.types);
-    };
-
 
     Page.prototype.refresh = function() {
         var that = this;
@@ -369,15 +302,10 @@ define(function(require) {
         this.toast.success("Airline has been cloned!");
     };
 
-
-
     Page.prototype.fetch = function() {
         var that = this;
         return B.all([that.sites.fetch(), that.statuses.fetch(), this.stats.fetch()]);
     };
 
-
     return Page;
-
-
 });
