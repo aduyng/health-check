@@ -57,6 +57,7 @@ define(function(require) {
         delete options.error;
 
         if (method === 'read' && !model.id) method = 'list';
+        
 
         return new B(function(resolve, reject) {
             that.resource.sync(method, model, options, function(err, res) {

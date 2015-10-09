@@ -10,11 +10,16 @@ define(function(require) {
         ExecutionStatus = require('models/execution-status'),
         Dialog = require('views/controls/dialog'),
         Sites = require('collections/site'),
-        Statuses = require('collections/status'),
+        StatusCollection = require('collections/status'),
         Modules = require('collections/module'),
         Types = require('collections/type'),
         Site = require('models/site'),
-        Status = require('models/status');
+        Status = require('models/status'),
+        moment = require('moment'),
+        StatusWidget = require('views/controls/status'),
+        Chart = require('vendors/Chart.js/Chart.min'),
+        GraphWidget = require('views/controls/graph'),
+        StatCollection = require('collections/stat');
 
     var Page = Super.extend({});
     var activeTypeArray = [];
@@ -27,17 +32,63 @@ define(function(require) {
         that.sites = new Sites();
         that.types = new Types();
         that.modules = new Modules();
-        this.statuses = new Statuses();
+        this.statuses = new StatusCollection();
+        this.stats = new StatCollection();
     };
     
-    Page.prototype.gotStatuses = function(d) {
-        var successes = d.findWhere({status: 'success'});
-        console.log(successes)
+    Page.prototype.renderStats = function(d) {
+        console.log('Stats: ', d);
+    };
+    
+    Page.prototype.renderStatus = function(d) {
+        var that = this;
+        this.errors = d.findWhere({status: 0}).collection.length;
+        var now = moment();
+        var yesterday = 0;
+        var weeks = 0;
+        var lastMonth = 0;
+        var thisMonth = 0;
+        
+        d.findWhere({status: 0}).collection.each(function(model) {
+            if (moment(model.get('dateCreated')).isAfter(now.subtract(1, 'days'))) {
+                yesterday++;
+            }
+            
+            if (moment(model.get('dateCreated')).isAfter(now.subtract(1, 'weeks'))) {
+                weeks++;
+            }
+            
+            if (moment(model.get('dateCreated')).isBefore(now.subtract(1, 'months'))) {
+                lastMonth++;
+            }
+            
+            if (moment(model.get('dateCreated')).isAfter(now.subtract(1, 'months'))) {
+                thisMonth++;
+            }
+        });
+        
+        var statusWidget = new StatusWidget({
+            errors: this.errors || 0,
+            el: that.$el.find('.statuses'),
+            yesterday: yesterday || 0,
+            weeks: weeks || 0,
+            percentage: (thisMonth - lastMonth) / thisMonth  * 100
+        });
+        
+        statusWidget.render();
+        
+        that.statuses.on('add change', that.renderStatus.bind(that));
+        
+        var graphWidget = new GraphWidget({
+            el: that.$el.find('.status-graph')
+        });
+        
+        graphWidget.render();
     };
 
     Page.prototype.render = function() {
         var that = this;
-
+        
         that.$el.html(MAIN({
             id: that.id
         }));
@@ -56,7 +107,8 @@ define(function(require) {
         that.sites.on('sync add', that.renderSites.bind(that));
         that.sites.on('remove', that.onSiteRemove.bind(that));
         that.sites.on('change', that.onSiteChange.bind(that));
-        that.statuses.on('sync', that.gotStatuses.bind(that));
+        //that.statuses.on('sync', that.renderStatus.bind(that));
+        //that.stats.on('sync', that.renderStats.bind(that));
         
         that.on('search', that.performSearch.bind(that));
 
@@ -321,7 +373,7 @@ define(function(require) {
 
     Page.prototype.fetch = function() {
         var that = this;
-        return B.all([that.sites.fetch(), that.statuses.fetch()]);
+        return B.all([that.sites.fetch(), that.statuses.fetch(), this.stats.fetch()]);
     };
 
 

@@ -100,3 +100,11 @@ code, pre {
 .terminal .modal-body code>span {
   background-color: transparent !important;
 }
+
+.status-graph {margin-top: 2.5em;}
+.status-graph-canvas {width: 100%; height: 200px;}
+.status-widget {float:right; margin-right: -2.2em;}
+@media (max-width: 768px) {
+  .status-widget {float:none;}
+}
+.status-widget{margin-top:3em;}.status-widget h4 {color: #000;} .status-widget ul{list-style-type:none; margin-left: -3.5em;}.status-widget ul li{float:left; padding-left: 1em; padding-right: 1em; color: #fff;}.status-widget ul li.add-side-borders{border-left: 1px solid #fff; border-right: 1px solid #fff;}.status-widget .data-row{background-color:#f35958; padding: 35px;}.status-widget footer {color: #000;} .status-widget footer span{color:#fff} .status-widget footer div {margin-top: 2.5em;} .status-widget footer div progress[value]::-webkit-progress-value {background-color: #FFF;} div.progress{margin-bottom: 1.25em;} 

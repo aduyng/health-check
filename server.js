@@ -115,4 +115,5 @@ B.all([odm.initialize()])
         require('./resources/site')(connection);
         require('./resources/type')(connection);
         require('./resources/status')(connection);
+        require('./resources/stat')(connection);
     });

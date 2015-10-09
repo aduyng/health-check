@@ -9,15 +9,23 @@ var env = process.env.NODE_ENV || 'development',
 
 
 var Schema = new odm.Schema({
-    days: {
+    site: Object,
+    data: {
         type: Object,
-        dates: [String],
-        total: Number
-    },
-    months: {
-        type: Object,
-        dates: [String],
-        total: Number
+        error: {
+            type: Object,
+            days: Number,
+            weeks: Number,
+            months: Number,
+            total: Number
+        },
+        success: {
+            type: Object,
+            days: Number,
+            weeks: Number,
+            months: Number,
+            total: Number
+        }
     }
 });
 

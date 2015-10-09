@@ -8,7 +8,10 @@ var env = process.env.NODE_ENV || 'development',
     Socket = require('socket.io-client'),
     dataIO = require('data.io'),
     Mailer = require('../mailer'),
+    moment = require('moment'),
     Status = require('../odm/models/status'),
+    Stat = require('../odm/models/stat'),
+    User = require('../odm/models/user'),
 
     nexpect = require('nexpect'),
 
@@ -77,6 +80,7 @@ module.exports = function(agenda) {
                 return updateSiteStatus()
                     .then(function() {
                         return B.reduce(modules, function(memo, module) {
+                            console.log('Module: ', module);
                             module.status = ExecutionStatus.ID_RUNNING;
                             module.logs = '';
                             var screenshotAbsPath = [config.rootPath, 'data', 'screenshots', module._id + '.png'].join('/');
@@ -139,13 +143,106 @@ module.exports = function(agenda) {
                     .then(function() {
                         site.status = failure ? ExecutionStatus.ID_ERROR : ExecutionStatus.ID_OK;
                         L.infoAsync(__filename + ' ::run-site SITE %s:%s %s.', site._id.toHexString(), site.name, failure ? 'FAILED' : 'succeeded');
-                        // Status.create({type: site.status, date: new Date(), origin: site.name}, function(err, data) {
+                        // Status.create({status: failure ? 0 : 1, date: moment(new Date()).unix(), origin: site}, function(err, data) {
                         //     if (err) {
                         //         console.log('err ', err);
+                        //         return;
                         //     }
-                        //     console.log('created : ', data);
+                        //     Stat.create({}, function(err, data) {
+                        //         if (err) {
+                        //             console.log('err ', err);
+                        //             return;
+                        //         }
+                        //         return updateSiteStatus();
+                        //     });
+                            
                         // });
-                        return updateSiteStatus();
+                        // Status.create({
+                        //         days: {
+                        //             dates: [moment().unix()],
+                        //             total: 0
+                        //         },
+                        //         months: {
+                        //             dates: [moment().unix()],
+                        //             total: 0
+                        //         }
+                        //     }, function(err, data) {
+                        //     if (err) {
+                        //         console.log('err ', err);
+                        //         return;
+                        //     }
+                        //     Stat.create({}, function(err, data) {
+                        //         if (err) {
+                        //             console.log('err ', err);
+                        //             return;
+                        //         }
+                        //         return updateSiteStatus();
+                        //     });
+                            
+                        // });
+                        
+                        // Status.find({}, function(err, statuses) {
+                        //     if (err) {
+                        //         console.log(err);
+                        //     }
+                        //     console.log('Got Statuses::::');
+                        //     var status = statuses[0];
+                            
+                        //     status.days.dates.push(moment().unix());
+                        //     status.days.total++;
+                        //     status.months.dates.push(moment().unix());
+                        //     status.months.total++;
+                            
+                        //     status.save(function(err) {
+                        //         if (err) {
+                        //             console.log(err);
+                        //         }
+                        //     });
+                        // });
+                        
+                        Site.findById(site._id, function(err, data) {
+                            if (err) {
+                                console.log(err);
+                                return;
+                            }
+                            
+                            var userId = data.userId;
+                            
+                            data.days.dates.push(moment().unix());
+                            data.days.total = data.days.total + 1;
+                            data.weeks.dates.push(moment().unix());
+                            data.weeks.total = data.weeks.total + 1;
+                            data.months.dates.push(moment().unix());
+                            data.months.total = data.months.total + 1;
+                            
+                            data.save(function(err) {
+                                if (err) {
+                                    console.log(err);
+                                    return;
+                                }
+                                
+                                User.findById(userId, function(err, user) {
+                                    if (err) {
+                                        console.log(err);
+                                        return;
+                                    }
+                                    
+                                    user.days.dates.push(moment().unix());
+                                    user.days.total = user.days.total + 1;
+                                    user.weeks.dates.push(moment().unix());
+                                    user.weeks.total = user.weeks.total + 1;
+                                    user.months.dates.push(moment().unix());
+                                    user.months.total = user.months.total + 1;
+                                    
+                                    user.save(function(err) {
+                                        if (err) {
+                                            console.log(err);
+                                            return;
+                                        }
+                                    });
+                                });
+                            });
+                        });
                     })
                     .catch(function(e) {
                         site.status = ExecutionStatus.ID_ERROR;

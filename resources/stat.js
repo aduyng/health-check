@@ -3,10 +3,10 @@ var env = process.env.NODE_ENV || 'development',
     _ = require('underscore'),
     L = require('../logger'),
     B = require('bluebird'),
-    Status = require('../odm/models/status');
+    Status = require('../odm/models/stat');
 
 module.exports = function(connection) {
-    var name = 'status',
+    var name = 'stat',
         Model = require('../odm/models/' + name),
         resource = connection.resource(name);
 
@@ -80,7 +80,7 @@ module.exports = function(connection) {
                                 res.send(doc);
                             });
                     default:
-                        _.extend(doc, _.pick(req.data, 'type', 'date', 'origin'));
+                        _.extend(doc, _.pick(req.data, 'boxType', 'data'));
                         if (req.data.modules) {
                             doc.markModified("modules");
                         }

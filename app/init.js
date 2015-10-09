@@ -31,7 +31,8 @@ requirejs.config({
         ace: '//cdnjs.cloudflare.com/ajax/libs/ace/1.1.3/ace',
         'socket.io': '//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.5/socket.io.min',
         'data.io': 'vendors/data.io/data.io',
-        'ansi': 'vendors/ansi_up/ansi_up'
+        'ansi': 'vendors/ansi_up/ansi_up',
+        Chart: '//cdnjs.com/libraries/chart.js'
     },
     hbs: {
         helpers: true,

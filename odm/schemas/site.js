@@ -8,6 +8,9 @@ var env = process.env.NODE_ENV || 'development',
     agenda = require('../../agenda'),
     ModuleSchema = require('./module'),
     ExecutionStatus = require('../models/execution-status'),
+    mongoose = require('mongoose'),
+    Schema = mongoose.Schema,
+    
     _ = require('underscore');
 
 
@@ -16,6 +19,9 @@ var Schema = new odm.Schema({
         type: String,
         trim: true,
         required: true
+    },
+    userId: {
+        type: Schema.Types.ObjectId
     },
     notificationReceiverEmails: {
         type: String
@@ -52,6 +58,65 @@ var Schema = new odm.Schema({
     sendEmailWhenModuleFails: {
         type: Boolean,
         'default': false
+    },
+   stats: {
+        type: Object,
+        error: {
+            type: Object,
+            days: {
+                type: Object,
+                dates: [{
+                    type: Object,
+                    date: String,
+                    total: Number
+                }]
+            },
+            weeks: {
+                type: Object,
+                dates: [{
+                    type: Object,
+                    date: String,
+                    total: Number
+                }]
+            },
+            months: {
+                type: Object,
+                dates: [{
+                    type: Object,
+                    date: String,
+                    total: Number
+                }]
+            },
+            total: Number
+        },
+        success: {
+            type: Object,
+            days: {
+                type: Object,
+                dates: [{
+                    type: Object,
+                    date: String,
+                    total: Number
+                }]
+            },
+            weeks: {
+                type: Object,
+                dates: [{
+                    type: Object,
+                    date: String,
+                    total: Number
+                }]
+            },
+            months: {
+                type: Object,
+                dates: [{
+                    type: Object,
+                    date: String,
+                    total: Number
+                }]
+            },
+            total: Number
+        }
     }
 });
 
@@ -121,7 +186,8 @@ Schema.methods.run = function() {
                 else {
                     job = agenda.create('run-site', {
                         siteId: that._id,
-                        type: 'ON_DEMAND'
+                        type: 'ON_DEMAND',
+                        userId: that.userId
                     });
                 }
 

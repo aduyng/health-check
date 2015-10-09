@@ -18,7 +18,8 @@ define(function(require) {
         return that.save({
                 requestType: 'run',
                 modules: modules,
-                lastExecutedAt: new Date()
+                userId: window.app.user.id,
+                lastExecutedAt: new Date() //TODO may need to change to moment(new Date()).unix()
             })
             .then(function(result) {
                 that.set('requestType', undefined);

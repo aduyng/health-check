@@ -21,6 +21,65 @@ var Schema = new odm.Schema({
         type: String, 
         required: true,
         trim: true
+    },
+    stats: {
+        type: Object,
+        error: {
+            type: Object,
+            days: {
+                type: Object,
+                dates: [{
+                    type: Object,
+                    date: String,
+                    total: Number
+                }]
+            },
+            weeks: {
+                type: Object,
+                dates: [{
+                    type: Object,
+                    date: String,
+                    total: Number
+                }]
+            },
+            months: {
+                type: Object,
+                dates: [{
+                    type: Object,
+                    date: String,
+                    total: Number
+                }]
+            },
+            total: Number
+        },
+        success: {
+            type: Object,
+            days: {
+                type: Object,
+                dates: [{
+                    type: Object,
+                    date: String,
+                    total: Number
+                }]
+            },
+            weeks: {
+                type: Object,
+                dates: [{
+                    type: Object,
+                    date: String,
+                    total: Number
+                }]
+            },
+            months: {
+                type: Object,
+                dates: [{
+                    type: Object,
+                    date: String,
+                    total: Number
+                }]
+            },
+            total: Number
+        }
     }
 });
 
