@@ -148,13 +148,14 @@ define(function(require) {
         that.sites.on('change', that.onSiteChange.bind(that));
         //that.statuses.on('sync', that.renderStatus.bind(that));
         //that.stats.on('sync', that.renderStats.bind(that));
-        
+        that.sites.on('update-module-labels', that.mapModuleNames.bind(that));
+
         that.on('search', that.performSearch.bind(that));
         that.layout.nav.on('search', that.performSearch.bind(that));
 
         B.resolve(that.sites.fetch()).
             then(function() {
-                that.mapModuleNames(that.sites);
+                that.mapModuleNames();
             });
 
         //keep updating airlines
@@ -230,7 +231,11 @@ define(function(require) {
     };
 
     Page.prototype.mapModuleNames = function(sites) {
-        var that = this;
+        var that = this,
+            sites = that.sites;
+
+        that.moduleNamesMap = {};
+
         sites.each(function (site) {
             _.each(site.get('modules'), function (module) {
                 if (module.name !== '' && module.abbreviation !== '') {
@@ -238,6 +243,8 @@ define(function(require) {
                 }
             });
         });
+
+        that.controls.moduleLabels.html('');
 
         _.each(that.moduleNamesMap, function(name, abbreviation) {
             var formattedName = name;

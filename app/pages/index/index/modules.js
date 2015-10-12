@@ -49,6 +49,7 @@ define(function(require) {
         var modules = (that.model.get('modules') || []);
         modules[e.data('index')].name = e.val().trim();
         that.model.set('modules', modules);
+        that.model.trigger('update-module-labels');
 
         return that.model.save();
     };
@@ -59,6 +60,7 @@ define(function(require) {
         var modules = (that.model.get('modules') || []);
         modules[e.data('index')].abbreviation = e.val().trim();
         that.model.set('modules', modules);
+        that.model.trigger('update-module-labels');
 
         return that.model.save();
     };
