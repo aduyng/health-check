@@ -34,6 +34,7 @@ define(function(require) {
         events['click ' + that.toId('all-modules-checkbox')] = 'allModulesCheckboxClickHandler';
         events['click ' + that.toClass('module-checkbox')] = 'moduleCheckboxClickHandler';
         events['change ' + that.toClass('name')] = 'onNameChange';
+        events['change ' + that.toClass('abbreviation')] = 'onAbbreviationChange';
 
         that.delegateEvents(events);
 
@@ -47,6 +48,16 @@ define(function(require) {
         var e = $(event.currentTarget);
         var modules = (that.model.get('modules') || []);
         modules[e.data('index')].name = e.val().trim();
+        that.model.set('modules', modules);
+
+        return that.model.save();
+    };
+
+    View.prototype.onAbbreviationChange = function(event) {
+        var that = this;
+        var e = $(event.currentTarget);
+        var modules = (that.model.get('modules') || []);
+        modules[e.data('index')].abbreviation = e.val().trim();
         that.model.set('modules', modules);
 
         return that.model.save();
@@ -143,7 +154,8 @@ define(function(require) {
         var that = this;
         var modules = (that.model.get('modules') || []);
         modules.push({
-            name: 'New Module'
+            name: 'New Module',
+            abbreviation: 'New'
         });
 
         that.model.set('modules', modules);
