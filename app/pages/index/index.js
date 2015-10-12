@@ -34,12 +34,13 @@ define(function(require) {
         that.modules = new Modules();
         this.statuses = new StatusCollection();
         this.stats = new StatCollection();
+        this.moduleNamesMap = {};
     };
-    
+
     Page.prototype.renderStats = function(d) {
         console.log('Stats: ', d);
     };
-    
+
     Page.prototype.renderStatus = function(d) {
         var that = this;
         this.errors = d.findWhere({status: 0}).collection.length;
@@ -48,25 +49,25 @@ define(function(require) {
         var weeks = 0;
         var lastMonth = 0;
         var thisMonth = 0;
-        
+
         d.findWhere({status: 0}).collection.each(function(model) {
             if (moment(model.get('dateCreated')).isAfter(now.subtract(1, 'days'))) {
                 yesterday++;
             }
-            
+
             if (moment(model.get('dateCreated')).isAfter(now.subtract(1, 'weeks'))) {
                 weeks++;
             }
-            
+
             if (moment(model.get('dateCreated')).isBefore(now.subtract(1, 'months'))) {
                 lastMonth++;
             }
-            
+
             if (moment(model.get('dateCreated')).isAfter(now.subtract(1, 'months'))) {
                 thisMonth++;
             }
         });
-        
+
         var statusWidget = new StatusWidget({
             errors: this.errors || 0,
             el: that.$el.find('.statuses'),
@@ -74,15 +75,15 @@ define(function(require) {
             weeks: weeks || 0,
             percentage: (thisMonth - lastMonth) / thisMonth  * 100
         });
-        
+
         statusWidget.render();
-        
+
         that.statuses.on('add change', that.renderStatus.bind(that));
-        
+
         var graphWidget = new GraphWidget({
             el: that.$el.find('.status-graph')
         });
-        
+
         graphWidget.render();
     };
 
@@ -105,7 +106,7 @@ define(function(require) {
         that.sites.on('change', that.onSiteChange.bind(that));
         //that.statuses.on('sync', that.renderStatus.bind(that));
         //that.stats.on('sync', that.renderStats.bind(that));
-        
+
         that.on('search', that.performSearch.bind(that));
         that.layout.nav.on('search', that.performSearch.bind(that));
 

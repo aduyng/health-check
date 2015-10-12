@@ -20,8 +20,6 @@ define(function(require) {
     View.prototype.initialize = function(options) {
         Super.prototype.initialize.call(this, options);
         this.types = options.types;
-
-
     };
 
     View.prototype.getLastRunTime = function(date) {
@@ -140,39 +138,15 @@ define(function(require) {
                             case ExecutionStatus.ID_RUNNING:
                                 return 'fa-spinner fa-spin';
                             case ExecutionStatus.ID_OK:
-                                return 'fa-check-circle text-success';
+                                return '';
                             case ExecutionStatus.ID_ERROR:
-                                return 'fa-times-circle text-error';
+                                return 'fa-times text-error';
                             default:
                                 return 'fa-square-o';
                         }
                     })()
                 });
             }), function(module) {
-                var name = module.name.toLowerCase();
-                switch (name) {
-                    case 'check in':
-                        module.name = 'CI';
-                        break;
-
-                    case 'booking':
-                    case 'booking flow':
-                    case 'book my flight':
-                        module.name = 'BK';
-                        break;
-
-                    case 'flight status':
-                        module.name = 'FS';
-                        break;
-
-                    case 'flight schedule':
-                        module.name = 'FSC';
-                        break;
-
-                    default:
-                        break;
-                }
-
                 return module.name;
             })
         }));
