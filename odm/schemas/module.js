@@ -40,11 +40,15 @@ var Schema = new odm.Schema({
     },
     libraries: {
         type: []
+    },
+    abbreviation: {
+        type: String,
+        'default': ''
     }
 });
 
 Schema.virtual('basic').get(function() {
-    return _.pick(this, '_id', 'name', 'url', 'isEnabled', 'lastExecutedAt', 'status', 'lastExecutionCompletedAt');
+    return _.pick(this, '_id', 'name', 'url', 'abbreviation', 'isEnabled', 'lastExecutedAt', 'status', 'lastExecutionCompletedAt');
 });
 
 

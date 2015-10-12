@@ -2,7 +2,7 @@
   <div class="panel-heading">
     {{#if isRunning}}
     <i class="fa fa-spinner fa-spin text-warning pull-right"></i> {{/if}}
-    
+
     <span class="text-nowrap"><code class="abbr">{{airline.abbr}}</code> {{airline.name}}</span> {{#if airline.executedAt}}
     <div class="text-muted last-executed-at">
       <span class="text-nowrap">{{formatDateTime airline.executedAt}}</span> <span class="text-nowrap">({{fromNow airline.executedAt}})</span>
@@ -17,15 +17,15 @@
         {{#if this.isRunning}}
         <i class="fa fa-spinner fa-spin text-warning"></i>
         {{/if}}
-        
+
         {{#if this.isError}}
         <i class="fa fa-exclamation-circle text-danger"></i>
         {{/if}}
-        
+
         {{#if this.isOK}}
         <i class="fa fa-check-circle text-success"></i>
         {{/if}}
-        
+
         {{#if this.isNotStarted}}
         <i class="fa fa-certificate"></i>
         {{/if}}
