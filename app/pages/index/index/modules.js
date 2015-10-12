@@ -30,6 +30,7 @@ define(function(require) {
         events['click ' + that.toId('new')] = 'newButtonClickHandler';
         events['click ' + that.toClass('remove')] = 'removeButtonClickHandler';
         events['click ' + that.toClass('code')] = 'codeButtonClickHandler';
+        events['click ' + that.toClass('view-log')] = 'logButtonClickHandler';
         events['click ' + that.toId('all-modules-checkbox')] = 'allModulesCheckboxClickHandler';
         events['click ' + that.toClass('module-checkbox')] = 'moduleCheckboxClickHandler';
         events['change ' + that.toClass('name')] = 'onNameChange';
@@ -131,6 +132,11 @@ define(function(require) {
             that.model.save();
             dlg.close();
         });
+    };
+
+    View.prototype.logButtonClickHandler = function(event) {
+        var that = this;
+        that.model.trigger('view-module-log', event);
     };
 
     View.prototype.newButtonClickHandler = function() {
