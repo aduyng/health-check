@@ -55,6 +55,7 @@ define(function(require) {
 
         that.model.on('sync change', that.draw.bind(that));
         that.model.on('destroy', that.remove.bind(that));
+        that.model.on('view-module-log', that.onModuleClick.bind(that));
         that.draw();
 
         return B.resolve();
