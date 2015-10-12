@@ -34,6 +34,7 @@ define(function(require) {
         that.modules = new Modules();
         this.statuses = new StatusCollection();
         this.stats = new StatCollection();
+        this.moduleNamesMap = {};
     };
     
     Page.prototype.renderStats = function(d, type) {
