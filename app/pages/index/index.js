@@ -160,9 +160,12 @@ define(function(require) {
         that.layout.nav.on('run-all-sites', that.onRunAllClick.bind(that));
         that.layout.nav.on('stop-all-sites', that.onStopClick.bind(that));
 
+
         B.resolve(that.sites.fetch()).
             then(function() {
+                //that.setInitialAbbreviations();
                 that.mapModuleNames();
+                //that.stopAllSites();
             });
 
         //keep updating airlines
@@ -179,6 +182,47 @@ define(function(require) {
                 that.children.types.on('change', that.onTypesChange.bind(that));
                 return Super.prototype.render.call(that);
             });
+    };
+
+    Page.prototype.stopAllSites = function() {
+        var that = this;
+        that.sites.each(function (site) {
+            site.stop();
+        });
+    };
+
+    Page.prototype.setInitialAbbreviations = function() {
+        var that = this,
+            sites = that.sites;
+
+        sites.each(function (site) {
+            _.each(site.get('modules'), function (module) {
+                switch(module.name) {
+                    case 'Book My Flight':
+                    case 'Booking Flow':
+                    case 'Booking':
+                        module.abbreviation = 'BK';
+                        break;
+
+                    case 'Flight Status':
+                        module.abbreviation = 'FS';
+                        break;
+
+                    case 'Flight Schedule':
+                        module.abbreviation = 'FSC';
+                        break;
+
+                    case 'Check In':
+                        module.abbreviation = 'CI';
+                        break;
+
+                    default:
+                        module.abbreviation = module.name.substr(0,3).toUpperCase();
+                        break;
+                }
+            });
+            site.save();
+        });
     };
 
     Page.prototype.onTypesChange = function(event) {
