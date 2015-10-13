@@ -251,7 +251,7 @@ define(function(require) {
             if (name.length > 20) {
                 formattedName = formattedName.substr(0,20) + '...';
             }
-            var $label = $('<span>').addClass('label').text(abbreviation + ' - ' + formattedName);
+            var $label = $('<span>').addClass('label hidden-xs hidden-sm').text(abbreviation + ' - ' + formattedName);
             that.controls.moduleLabels.append($label);
             that.controls.moduleLabels.append('\n');
         });

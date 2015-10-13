@@ -4818,6 +4818,7 @@ form legend, .form-view legend {
     font-family: 'Open Sans';
     font-weight: 600;
     color: #5E5E5E;
+    line-height: 25px;
 }
 .badge {
     text-shadow: none;
@@ -7496,4 +7497,27 @@ body.rtl .header {
 body.rtl .footer-widget {
     right: 0;
     left: auto;
+}
+.data-row.scheduled{
+    color: #31708f;
+    background-color: #d9edf7;
+    border-color: #bce8f1;
+}
+.data-row.running{
+    background-color: #5bc0de;
+    border-color: #46b8da;
+}
+.data-row.terminated{
+    color: #8a6d3b;
+    background-color: #fcf8e3;
+    border-color: #faebcc;
+}
+.data-row.success{
+    color: #3c763d;
+    background-color: #dff0d8;
+    border-color: #d6e9c6;
+}
+.data-row.no-modules{
+    background-color: #e8e8e8;
+    border-color: #ddd;
 }
