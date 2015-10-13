@@ -92,41 +92,31 @@ define(function(require) {
             that.controls.stop.addClass('hidden');
         }
 
-        var iconClass = 'fa-square-o',
-            panelClass = '';
+        var panelClass = 'no-modules';
 
         switch (that.model.get('status')) {
             case ExecutionStatus.ID_SCHEDULED:
-                iconClass = 'fa-clock-o text-info';
-                panelClass = 'info';
+                panelClass = 'scheduled';
                 break;
 
             case ExecutionStatus.ID_ERROR:
-                iconClass = 'fa-exclamation-circle text-danger';
                 panelClass = 'error';
                 break;
 
             case ExecutionStatus.ID_RUNNING:
-                iconClass = 'fa-spinner fa-spin text-warning';
-                panelClass = 'warning';
-                break;
-
-            case ExecutionStatus.ID_RUNNING:
-                iconClass = 'fa-check text-success';
+                panelClass = 'running';
                 break;
 
             case ExecutionStatus.ID_TERMINATED:
-                iconClass = 'fa-exclamation text-warning';
-                panelClass = 'warning';
+                panelClass = 'terminated';
                 break;
 
             case ExecutionStatus.ID_OK:
-                iconClass = 'fa-check-square text-success';
+                panelClass = 'success';
                 break;
         }
 
-        //that.controls.icon.attr('class', 'fa ' + iconClass);
-        that.$el.find('.data-row').removeClass('danger success warning info').addClass(panelClass);
+        that.$el.find('.data-row').removeClass('scheduled success error running terminated').addClass(panelClass);
 
         that.controls.modules.html(MODULE_LIST({
             id: that.id,
@@ -138,12 +128,10 @@ define(function(require) {
                         switch (module.status) {
                             case ExecutionStatus.ID_RUNNING:
                                 return 'fa-spinner fa-spin';
-                            case ExecutionStatus.ID_OK:
-                                return '';
                             case ExecutionStatus.ID_ERROR:
                                 return 'fa-times text-error';
                             default:
-                                return 'fa-square-o';
+                                return '';
                         }
                     })()
                 });
