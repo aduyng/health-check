@@ -1,31 +1,52 @@
-<div class="navbar-inner">
-    <div class="header-seperation">
-        <a href="index.html">
-            <img src="{{path}}/images/sabre.png" class="logo" alt="" height="50">
-        </a>
+<div class="container-fluid">
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="index.html"></a>
+        <h3 class="navbar-left">Health <strong>check</strong></h3>
     </div>
-    <div class="header-quick-nav text-center">
-        <h3 class="pull-left">Health <strong>check</strong></h3>
-        <ul class="nav quick-section pull-right">
-            <li class="m-r-10 input-prepend inside search-form no-boarder">
-                <span class="add-on">
-                    <span class="fa fa-search"></span>
-                </span>
-                <input id="{{id}}-query" type="text" class="no-boarder new-ui-input" placeholder="Search" style="width:250px;">
+    <div id="navbar" class="navbar-collapse collapse">
+        <ul class="nav navbar-nav navbar-right">
+            <li class="hidden-md hidden-lg hidden-sm">
+                <div class="row">
+                    <div class="col-sm-6 col-xs-6">
+                        <button class="btn btn-success btn-block" id="{{id}}-run-all">
+                            <span>Run All</span> <i class="fa fa-angle-right"></i>
+                        </button>
+                        <button class="btn btn-danger btn-block hidden" id="{{id}}-stop">
+                            <span>Stop</span> <i class="fa fa-stop"></i>
+                        </button>
+                    </div>
+                    <div class="col-sm-6 col-xs-6">
+                        <button class="btn btn-success btn-block" id="{{id}}-new">
+                            <span>New Site</span> <i class="fa fa-plus"></i>
+                        </button>
+                    </div>
+                </div>
             </li>
-            <li class="btn-li">
+            <li class="hidden-xs">
                 <button class="btn btn-success" id="{{id}}-run-all">
-                    <span class="hidden-xs">Run All</span> <i class="fa fa-angle-right"></i>
+                    <span>Run All</span> <i class="fa fa-angle-right"></i>
                 </button>
                 <button class="btn btn-danger hidden" id="{{id}}-stop">
-                    <span class="hidden-xs">Stop</span> <i class="fa fa-stop"></i>
+                    <span>Stop</span> <i class="fa fa-stop"></i>
                 </button>
             </li>
-            <li class="btn-li">
+            <li class="hidden-xs">
                 <button class="btn btn-success" id="{{id}}-new">
-                    <span class="hidden-xs">New Site</span> <i class="fa fa-plus"></i>
+                    <span>New Site</span> <i class="fa fa-plus"></i>
                 </button>
             </li>
         </ul>
-    </div>
+        <form class="navbar-form navbar-right">
+            <div class="input-group">
+                <span class="input-group-addon" id="search-icon"><i class="fa fa-search"></i></span>
+                <input id="{{id}}-query" type="text" class="form-control search-input" placeholder="Search" aria-describedby="search-icon">
+            </div>
+        </form>
+    </div><!--/.navbar-collapse -->
 </div>

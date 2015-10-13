@@ -100,15 +100,15 @@ code, pre {
   background-color: transparent !important;
 }
 
-.status-graph {margin-top: 2.5em;}
+/* .status-graph {margin-top: 2.5em;}*/
 canvas {background-color: #fff;padding: 1em;}
 .status-widget {float:right; margin-right: -2.2em;}
 @media (max-width: 1005px) {
   .status-widget {float:none;}
 }
-.status-widget{
+/* .status-widget{
   margin-top:3em;
-}
+} */
 .status-widget h4 {
   color: #000;
 }
@@ -165,4 +165,51 @@ div.progress{
 }
 .form-signin .form-control:focus {
   z-index: 2;
+}
+
+.navbar-brand {
+  background-color: #F35958;
+  border-color: #F35958;
+  background-image: url(/app/images/sabre.png);
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  min-width: 134px;
+  margin-right: 20px;
+}
+.navbar-inverse .navbar-brand:hover, .navbar-inverse .navbar-brand:focus {
+  background-color: #F35958;
+}
+.navbar-fixed-top {
+  border: 0;
+}
+.navbar h3 {
+  color: white;
+}
+.nav.navbar-nav {
+  padding: 8px 0px;
+  margin-right: 0;
+}
+#navbar .input-group-addon {
+  background-color: white !important;
+}
+.search-input {
+  -webkit-appearance: none!important;
+  color: #282323;
+  outline: 0;
+  background-color: #ffffff;
+  -webkit-box-shadow: none!important;
+  -moz-box-shadow: none!important;
+  box-shadow: none!important;
+  border: 1px solid #e5e9ec;
+  transition: background 0.2s linear 0s, box-shadow 0.2s linear 0s;
+  border-left: 0;
+}
+.search-input:focus {
+  border-color: #f1f1f1;
+  background-color: #f4f5f7;
+  outline: 0!important;
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
 }
