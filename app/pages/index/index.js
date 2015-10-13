@@ -129,7 +129,7 @@ define(function(require) {
 
     Page.prototype.render = function() {
         var that = this;
-
+        
         that.$el.html(MAIN({
             id: that.id
         }));
@@ -139,6 +139,10 @@ define(function(require) {
         that.mapControls();
 
         var events = {};
+        events['keyup ' + that.toId('query')] = 'onQueryKeyup';
+        events['click ' + that.toId('new')] = 'onNewClick';
+        events['click ' + that.toId('run-all')] = 'onRunAllClick';
+        events['click ' + that.toId('stop')] = 'onStopClick';
         events['click ' + '.types .btn'] = 'onTypesClick';
 
         that.delegateEvents(events);
