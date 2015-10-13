@@ -5568,11 +5568,9 @@ h4.custom-line-height {
     margin-bottom: 0;
     font-size: 14px;
     line-height: 20px;
-    color: #5e5e5e;
     text-align: center;
     vertical-align: middle;
     cursor: pointer;
-    background-color: #d1dade;
     -webkit-border-radius: 3px;
     background-image: none!important;
     border: none;
@@ -5589,9 +5587,6 @@ h4.custom-line-height {
 }
 .btn .caret.single {
     margin-left: 0px;
-}
-.btn:hover, .btn:focus, .btn:active, .btn.active, .btn.disabled, .btn[disabled] {
-    background-color: #b9c3c8;
 }
 .btn-cons {
     margin-right: 5px;
@@ -5612,41 +5607,6 @@ h4.custom-line-height {
 .btn-social:hover, .btn-social:focus, .btn-social:active, .btn-social.active, .btn-social.disabled, .btn-social[disabled] {
     color: #2d8ebf;
     text-decoration: none;
-}
-.btn-primary {
-    color: #ffffff;
-    background-color: #0aa699;
-}
-.btn-primary:hover, .btn-primary:focus, .btn-primary:active, .btn-primary.active, .btn-primary.disabled, .btn-primary[disabled] {
-    background-color: #099a8c;
-}
-.btn-success {
-    color: #ffffff;
-    background-color: #0090d9;
-}
-.btn-success:hover, .btn-success:focus, .btn-success:active, .btn-success.active, .btn-success.disabled, .btn-success[disabled] {
-    background-color: #0082d4;
-}
-.btn-info {
-    color: #ffffff;
-    background-color: #1f3853;
-}
-.btn-info:hover, .btn-info:focus, .btn-info:active, .btn-info.active, .btn-info.disabled, .btn-info[disabled] {
-    background-color: #1b3148;
-}
-.btn-warning {
-    color: #ffffff;
-    background-color: #fbb05e;
-}
-.btn-warning:hover, .btn-warning:focus, .btn-warning:active, .btn-warning.active, .btn-warning.disabled, .btn-warning[disabled] {
-    background-color: #faa652;
-}
-.btn-danger {
-    color: #ffffff;
-    background-color: #f35958;
-}
-.btn-danger:hover, .btn-danger:focus, .btn-danger:active, .btn-danger.active, .btn-danger.disabled, .btn-danger[disabled] {
-    background-color: #f14d4d;
 }
 .btn-danger-dark {
     color: #ffffff;
@@ -7504,8 +7464,8 @@ body.rtl .footer-widget {
     border-color: #bce8f1;
 }
 .data-row.running{
-    background-color: #5bc0de;
-    border-color: #46b8da;
+    background-color: #e1bee7;
+    border-color: #ce93d8;
 }
 .data-row.terminated{
     color: #8a6d3b;

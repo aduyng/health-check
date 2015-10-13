@@ -38,71 +38,15 @@ define(function(require) {
     }, 300);
 
     View.prototype.onNewClick = function(event) {
-        event.preventDefault();
-        var that = this;
-        var model = new Site({
-            name: 'New Site'
-        });
-
-        that.openSiteDialog(model, that.types);
-    };
-
-    View.prototype.openSiteDialog = function(model, types) {
-        var that = this,
-            isNew = model.isNew();
-
-        var view = new SiteEdit({
-            model: model,
-            types: types
-        });
-
-        var dlg = new Dialog({
-            title: isNew ? 'New Site' : 'Edit: ' + model.get('name'),
-            body: view,
-            buttons: [{
-                id: 'save',
-                label: 'Save',
-                iconClass: 'fa fa-save',
-                buttonClass: 'btn-primary',
-                align: 'left'
-            }, {
-                id: 'cancel',
-                label: 'Cancel',
-                iconClass: 'fa fa-times',
-                buttonClass: 'btn-default',
-                align: 'left',
-                autoClose: true
-            }]
-        })
-
-        dlg.on('save', function() {
-            B.resolve(model.save(view.val()))
-                .then(function() {
-                    if (isNew) {
-                        that.sites.add(model);
-                    }
-                    that.toast.success('New site has been added.');
-                    dlg.close();
-                });
-        });
+        this.trigger('add-new-site', event);
     };
 
     View.prototype.onRunAllClick = function(event) {
-        var that = this;
-        that.controls.runAll.prop('disabled', true);
-        B.all(_.map(that.sites.filter(function(site) {
-                return site.view && !site.view.$el.hasClass('hidden');
-            }), function(site) {
-                return site.run();
-            }))
-            .then(function() {
-                that.toast.success('All matched sites have been scheduled to run.');
-            });
+        this.trigger('run-all-sites', event);
     };
 
     View.prototype.onStopClick = function(event) {
-        var that = this;
-        that.runAllStopRequested = true;
+        this.trigger('stop-all-sites', event);
     };
 
     return View;

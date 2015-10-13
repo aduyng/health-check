@@ -36,7 +36,7 @@ define(function(require) {
         this.stats = new StatCollection();
         this.moduleNamesMap = {};
     };
-    
+
     Page.prototype.renderStats = function(d, type) {
         var that = this;
         if (!d) {
@@ -47,17 +47,17 @@ define(function(require) {
                 weeks: window.app.user.get('stats').error.weeks.dates[window.app.user.get('stats').error.weeks.dates.length - 1] || 0,
                 percentage: window.app.user.get('stats').error.months.dates.length < 2 ? 100 : (window.app.user.get('stats').error.months.dates[window.app.user.get('stats').error.months.dates.length - 1].total - window.app.user.get('stats').error.months.dates[window.app.user.get('stats').error.months.dates.length - 2].total) / (window.app.user.get('stats').error.months.dates[window.app.user.get('stats').error.months.dates.length - 1].total  * 100)
             });
-            
+
             statusWidget.render();
-            
+
             var graphWidget = new GraphWidget({
                 el: that.$el.find('.status-graph'),
                 type: type || 'days'
             });
-            
-            graphWidget.render(); 
-            
-           
+
+            graphWidget.render();
+
+
         } else {
             var s = {
                 el: that.$el.find('.statuses'),
@@ -72,15 +72,15 @@ define(function(require) {
                 s.weeks += item.get('stats').error.weeks.dates[item.get('stats').error.weeks.dates.length - 1] || 0;
                 s.percentage = item.get('stats').error.days.dates.length < 2 ? 100 : item.get('stats').error.months.dates[item.get('stats').error.months.dates.length - 1].total - item.get('stats').error.months.dates[item.get('stats').error.months.dates.length - 2].total / item.get('stats').error.months.dates[item.get('stats').error.months.dates.length - 1].total * 100
             });
-            
+
             var statusWidget = new StatusWidget(s);
-            
+
             statusWidget.render();
         }
-        
+
     };
-    
-    
+
+
     // Page.prototype.renderStatus = function(d) {
     //     var that = this;
     //     this.errors = d.findWhere({status: 0}).collection.length;
@@ -89,25 +89,25 @@ define(function(require) {
     //     var weeks = 0;
     //     var lastMonth = 0;
     //     var thisMonth = 0;
-        
+
     //     d.findWhere({status: 0}).collection.each(function(model) {
     //         if (moment(model.get('dateCreated')).isAfter(now.subtract(1, 'days'))) {
     //             yesterday++;
     //         }
-            
+
     //         if (moment(model.get('dateCreated')).isAfter(now.subtract(1, 'weeks'))) {
     //             weeks++;
     //         }
-            
+
     //         if (moment(model.get('dateCreated')).isBefore(now.subtract(1, 'months'))) {
     //             lastMonth++;
     //         }
-            
+
     //         if (moment(model.get('dateCreated')).isAfter(now.subtract(1, 'months'))) {
     //             thisMonth++;
     //         }
     //     });
-        
+
     //     var statusWidget = new StatusWidget({
     //         errors: this.errors || 0,
     //         el: that.$el.find('.statuses'),
@@ -115,25 +115,25 @@ define(function(require) {
     //         weeks: weeks || 0,
     //         percentage: (thisMonth - lastMonth) / thisMonth  * 100
     //     });
-        
+
     //     statusWidget.render();
-        
+
     //     that.statuses.on('add change', that.renderStatus.bind(that));
-        
+
     //     var graphWidget = new GraphWidget({
     //         el: that.$el.find('.status-graph')
     //     });
-        
+
     //     graphWidget.render();
     // };
 
     Page.prototype.render = function() {
         var that = this;
-        
+
         that.$el.html(MAIN({
             id: that.id
         }));
-        
+
         that.renderStats(null, 'days');
 
         that.mapControls();
@@ -156,6 +156,9 @@ define(function(require) {
 
         that.on('search', that.performSearch.bind(that));
         that.layout.nav.on('search', that.performSearch.bind(that));
+        that.layout.nav.on('add-new-site', that.onNewClick.bind(that));
+        that.layout.nav.on('run-all-sites', that.onRunAllClick.bind(that));
+        that.layout.nav.on('stop-all-sites', that.onStopClick.bind(that));
 
         B.resolve(that.sites.fetch()).
             then(function() {
@@ -323,6 +326,26 @@ define(function(require) {
         this.controls.stop.removeClass('hidden');
     };
 
+    Page.prototype.onStopClick = function(event) {
+        var that = this;
+        that.runAllStopRequested = true;
+    };
+
+    Page.prototype.onRunAllClick = function(event) {
+        var that = this;
+        //that.layout.nav.controls.runAll.prop('disabled', true);
+        that.layout.nav.controls.runAll.addClass('hidden');
+        that.layout.nav.controls.stop.removeClass('hidden');
+        B.all(_.map(that.sites.filter(function(site) {
+                return site.view && !site.view.$el.hasClass('hidden');
+            }), function(site) {
+                return site.run();
+            }))
+            .then(function() {
+                that.toast.success('All matched sites have been scheduled to run.');
+            });
+    };
+
     Page.prototype.run = function() {
         var that = this;
         var runningAirline = that.airlineCollection.at(that.runningAirlineIndex);
@@ -344,6 +367,56 @@ define(function(require) {
         });
 
         runningAirline.view.run();
+    };
+
+    Page.prototype.openSiteDialog = function(model, types) {
+        var that = this,
+            isNew = model.isNew();
+
+        var view = new SiteEdit({
+            model: model,
+            types: types
+        });
+
+        var dlg = new Dialog({
+            title: isNew ? 'New Site' : 'Edit: ' + model.get('name'),
+            body: view,
+            buttons: [{
+                id: 'save',
+                label: 'Save',
+                iconClass: 'fa fa-save',
+                buttonClass: 'btn-primary',
+                align: 'left'
+            }, {
+                id: 'cancel',
+                label: 'Cancel',
+                iconClass: 'fa fa-times',
+                buttonClass: 'btn-default',
+                align: 'left',
+                autoClose: true
+            }]
+        })
+
+        dlg.on('save', function() {
+            B.resolve(model.save(view.val()))
+                .then(function() {
+                    if (isNew) {
+                        that.sites.add(model);
+                    }
+                    that.toast.success('New site has been added.');
+                    dlg.close();
+                });
+        });
+    };
+
+    Page.prototype.onNewClick = function(event) {
+        event.preventDefault();
+        var that = this;
+        var model = new Site({
+            name: 'New Site'
+        });
+
+        that.openSiteDialog(model, that.types);
     };
 
     Page.prototype.refresh = function() {

@@ -54,7 +54,6 @@ define(function(require) {
     View.prototype.open = function() {
         var that = this;
 
-        console.log(that);
         this.$el.html(Template({
             id: this.getId(),
             sizeClass: this.options.sizeClass,
