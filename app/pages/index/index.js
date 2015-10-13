@@ -36,62 +36,105 @@ define(function(require) {
         this.stats = new StatCollection();
     };
     
-    Page.prototype.renderStats = function(d) {
-        console.log('Stats: ', d);
+    Page.prototype.renderStats = function(d, type) {
+        var that = this;
+        if (!d) {
+           var statusWidget = new StatusWidget({
+                errors: window.app.user.get('stats').error.total || 0,
+                el: that.$el.find('.statuses'),
+                yesterday: window.app.user.get('stats').error.days.dates.length < 2 ? 0 : window.app.user.get('stats').error.days.dates[window.app.user.get('stats').error.days.dates.length - 2].total || 0,
+                weeks: window.app.user.get('stats').error.weeks.dates[window.app.user.get('stats').error.weeks.dates.length - 1] || 0,
+                percentage: window.app.user.get('stats').error.months.dates.length < 2 ? 100 : (window.app.user.get('stats').error.months.dates[window.app.user.get('stats').error.months.dates.length - 1].total - window.app.user.get('stats').error.months.dates[window.app.user.get('stats').error.months.dates.length - 2].total) / (window.app.user.get('stats').error.months.dates[window.app.user.get('stats').error.months.dates.length - 1].total  * 100)
+            });
+            
+            statusWidget.render();
+            
+            var graphWidget = new GraphWidget({
+                el: that.$el.find('.status-graph'),
+                type: type || 'days'
+            });
+            
+            graphWidget.render(); 
+            
+           
+        } else {
+            var s = {
+                el: that.$el.find('.statuses'),
+                errors: 0,
+                yesterday: 0,
+                weeks: 0,
+                percentage: 0
+            };
+            _.each(d, function(item) {
+                s.errors += item.get('stats').error.total;
+                s.yesterday += item.get('stats').error.days.dates.length < 2 ? 0 : item.get('stats').error.days.dates[item.get('stats').error.days.dates.length - 2].total || 0;
+                s.weeks += item.get('stats').error.weeks.dates[item.get('stats').error.weeks.dates.length - 1] || 0;
+                s.percentage = item.get('stats').error.days.dates.length < 2 ? 100 : item.get('stats').error.months.dates[item.get('stats').error.months.dates.length - 1].total - item.get('stats').error.months.dates[item.get('stats').error.months.dates.length - 2].total / item.get('stats').error.months.dates[item.get('stats').error.months.dates.length - 1].total * 100
+            });
+            
+            var statusWidget = new StatusWidget(s);
+            
+            statusWidget.render();
+        }
+        
     };
     
-    Page.prototype.renderStatus = function(d) {
-        var that = this;
-        this.errors = d.findWhere({status: 0}).collection.length;
-        var now = moment();
-        var yesterday = 0;
-        var weeks = 0;
-        var lastMonth = 0;
-        var thisMonth = 0;
+    
+    // Page.prototype.renderStatus = function(d) {
+    //     var that = this;
+    //     this.errors = d.findWhere({status: 0}).collection.length;
+    //     var now = moment();
+    //     var yesterday = 0;
+    //     var weeks = 0;
+    //     var lastMonth = 0;
+    //     var thisMonth = 0;
         
-        d.findWhere({status: 0}).collection.each(function(model) {
-            if (moment(model.get('dateCreated')).isAfter(now.subtract(1, 'days'))) {
-                yesterday++;
-            }
+    //     d.findWhere({status: 0}).collection.each(function(model) {
+    //         if (moment(model.get('dateCreated')).isAfter(now.subtract(1, 'days'))) {
+    //             yesterday++;
+    //         }
             
-            if (moment(model.get('dateCreated')).isAfter(now.subtract(1, 'weeks'))) {
-                weeks++;
-            }
+    //         if (moment(model.get('dateCreated')).isAfter(now.subtract(1, 'weeks'))) {
+    //             weeks++;
+    //         }
             
-            if (moment(model.get('dateCreated')).isBefore(now.subtract(1, 'months'))) {
-                lastMonth++;
-            }
+    //         if (moment(model.get('dateCreated')).isBefore(now.subtract(1, 'months'))) {
+    //             lastMonth++;
+    //         }
             
-            if (moment(model.get('dateCreated')).isAfter(now.subtract(1, 'months'))) {
-                thisMonth++;
-            }
-        });
+    //         if (moment(model.get('dateCreated')).isAfter(now.subtract(1, 'months'))) {
+    //             thisMonth++;
+    //         }
+    //     });
         
-        var statusWidget = new StatusWidget({
-            errors: this.errors || 0,
-            el: that.$el.find('.statuses'),
-            yesterday: yesterday || 0,
-            weeks: weeks || 0,
-            percentage: (thisMonth - lastMonth) / thisMonth  * 100
-        });
+    //     var statusWidget = new StatusWidget({
+    //         errors: this.errors || 0,
+    //         el: that.$el.find('.statuses'),
+    //         yesterday: yesterday || 0,
+    //         weeks: weeks || 0,
+    //         percentage: (thisMonth - lastMonth) / thisMonth  * 100
+    //     });
         
-        statusWidget.render();
+    //     statusWidget.render();
         
-        that.statuses.on('add change', that.renderStatus.bind(that));
+    //     that.statuses.on('add change', that.renderStatus.bind(that));
         
-        var graphWidget = new GraphWidget({
-            el: that.$el.find('.status-graph')
-        });
+    //     var graphWidget = new GraphWidget({
+    //         el: that.$el.find('.status-graph')
+    //     });
         
-        graphWidget.render();
-    };
+    //     graphWidget.render();
+    // };
 
     Page.prototype.render = function() {
         var that = this;
         
+        
         that.$el.html(MAIN({
             id: that.id
         }));
+        
+        that.renderStats(null, 'days');
 
         that.mapControls();
 

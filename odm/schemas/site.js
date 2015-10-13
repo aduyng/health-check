@@ -67,27 +67,39 @@ var Schema = new odm.Schema({
                 type: Object,
                 dates: [{
                     type: Object,
-                    date: String,
-                    total: Number
+                    date: Number,
+                    total: {
+                        type: Number,
+                        default: 0
+                    }
                 }]
             },
             weeks: {
                 type: Object,
                 dates: [{
                     type: Object,
-                    date: String,
-                    total: Number
+                    date: Number,
+                    total: {
+                        type: Number,
+                        default: 0
+                    }
                 }]
             },
             months: {
                 type: Object,
                 dates: [{
                     type: Object,
-                    date: String,
-                    total: Number
+                    date: Number,
+                    total: {
+                        type: Number,
+                        default: 0
+                    }
                 }]
             },
-            total: Number
+            total: {
+                        type: Number,
+                        default: 0
+                    }
         },
         success: {
             type: Object,
@@ -95,27 +107,39 @@ var Schema = new odm.Schema({
                 type: Object,
                 dates: [{
                     type: Object,
-                    date: String,
-                    total: Number
+                    date: Number,
+                    total: {
+                        type: Number,
+                        default: 0
+                    }
                 }]
             },
             weeks: {
                 type: Object,
                 dates: [{
                     type: Object,
-                    date: String,
-                    total: Number
+                    date: Number,
+                    total: {
+                        type: Number,
+                        default: 0
+                    }
                 }]
             },
             months: {
                 type: Object,
                 dates: [{
                     type: Object,
-                    date: String,
-                    total: Number
+                    date: Number,
+                    total: {
+                        type: Number,
+                        default: 0
+                    }
                 }]
             },
-            total: Number
+            total: {
+                        type: Number,
+                        default: 0
+                    }
         }
     }
 });
@@ -172,7 +196,8 @@ Schema.methods.run = function() {
             agenda.jobs({
                 name: 'run-site',
                 'data.siteId': that._id,
-                'data.type': 'ON_DEMAND'
+                'data.type': 'ON_DEMAND',
+                'data.userId': that.userId
             }, function(err, jobs) {
                 var job;
                 if (err) {

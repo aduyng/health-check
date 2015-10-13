@@ -107,7 +107,7 @@ module.exports = function(agenda) {
                                                     flags: 'w'
                                                 });
                                             })
-                                            .catch(function(e){
+                                            .catch(function(e) {
                                                 L.warnAsync('Failed to download ' + lib.path);
                                             });
                                     }));
@@ -155,7 +155,7 @@ module.exports = function(agenda) {
                         //         }
                         //         return updateSiteStatus();
                         //     });
-                            
+
                         // });
                         // Status.create({
                         //         days: {
@@ -178,71 +178,543 @@ module.exports = function(agenda) {
                         //         }
                         //         return updateSiteStatus();
                         //     });
-                            
+
                         // });
-                        
+
                         // Status.find({}, function(err, statuses) {
                         //     if (err) {
                         //         console.log(err);
                         //     }
                         //     console.log('Got Statuses::::');
                         //     var status = statuses[0];
-                            
+
                         //     status.days.dates.push(moment().unix());
                         //     status.days.total++;
                         //     status.months.dates.push(moment().unix());
                         //     status.months.total++;
-                            
+
                         //     status.save(function(err) {
                         //         if (err) {
                         //             console.log(err);
                         //         }
                         //     });
                         // });
-                        
+
+                        function handleDate(dateArr, type) {
+                            
+                            if (type === 'days') {
+                                if (!dateArr.length) {
+                                    return [{
+                                        date: moment().dayOfYear(),
+                                        total: 1
+                                    }];
+                                }
+                                var found = false;
+                                console.log('Day comp==========================> ', dateArr[0].date + ' ' + moment().dayOfYear())
+                                for (var i = 0; i < dateArr.length; i++) {
+                                        if (dateArr[i].date === moment().dayOfYear()) {
+                                            dateArr[i].total++;
+                                            found = true;
+                                            break;
+                                        }
+                                    }
+                                    //dateArr[dateArr.indexOf(moment().dayOfYear())].total = dateArr[dateArr.indexOf(moment().dayOfYear())].total + 1;
+                                    if (found) {
+                                        console.log('Days: exists: =====================================', dateArr);
+                                        return dateArr;
+                                    }
+                                if (dateArr.length < 7) {
+                                    dateArr.push({
+                                        date: moment().dayOfYear(),
+                                        total: 1
+                                    });
+                                    console.log('Days: >7: =====================================', dateArr);
+                                    return dateArr;
+                                }
+                                console.log('Days: shift: =====================================', dateArr);
+                                dateArr.shift();
+                                dateArr.push({
+                                    date: moment().dayOfYear(),
+                                    total: 1
+                                });
+                                return dateArr;
+                            }
+                            if (type === 'weeks') {
+                                if (!dateArr.length) {
+                                    return [{
+                                        date: moment().week(),
+                                        total: 1
+                                    }];
+                                }
+                                var found = false;
+                                
+                                for (var i = 0; i < dateArr.length; i++) {
+                                        if (dateArr[i].date === moment().week()) {
+                                            dateArr[i].total++;
+                                            found = true;
+                                            break;
+                                        }
+                                    }
+                                    //dateArr[dateArr.indexOf(moment().dayOfYear())].total = dateArr[dateArr.indexOf(moment().dayOfYear())].total + 1;
+                                    if (found) {
+                                        console.log('Days: exists: =====================================', dateArr);
+                                        return dateArr;
+                                    }
+                                if (dateArr.indexOf(moment().week()) > -1) {
+                                    dateArr[dateArr.indexOf(moment().week())].total = dateArr[dateArr.indexOf(moment().week())].total + 1;
+                                    return dateArr;
+                                }
+                                if (dateArr.length < 10) {
+                                    dateArr.push({
+                                        date: moment().week(),
+                                        total: 1
+                                    });
+                                    return dateArr;
+                                }
+                                dateArr.shift();
+                                dateArr.push({
+                                    date: moment().week(),
+                                    total: 1
+                                });
+                                return dateArr;
+                            }
+                            if (type === 'months') {
+                                if (!dateArr.length) {
+                                    return [{
+                                        date: moment().month(),
+                                        total: 1
+                                    }];
+                                }
+                                var found = false;
+                                
+                                for (var i = 0; i < dateArr.length; i++) {
+                                        if (dateArr[i].date === moment().month()) {
+                                            dateArr[i].total++;
+                                            found = true;
+                                            break;
+                                        }
+                                    }
+                                    //dateArr[dateArr.indexOf(moment().dayOfYear())].total = dateArr[dateArr.indexOf(moment().dayOfYear())].total + 1;
+                                    if (found) {
+                                        console.log('Days: exists: =====================================', dateArr);
+                                        return dateArr;
+                                    }
+                                if (dateArr.indexOf(moment().month()) > -1) {
+                                    dateArr[dateArr.indexOf(moment().month())].total = dateArr[dateArr.indexOf(moment().month())].total + 1;
+                                    return dateArr;
+                                }
+                                if (dateArr.length < 12) {
+                                    dateArr.push({
+                                        date: moment().month(),
+                                        total: 1
+                                    });
+                                    return dateArr;
+                                }
+                                dateArr.shift();
+                                dateArr.push({
+                                    date: moment().month(),
+                                    total: 1
+                                });
+                                return dateArr;
+                            }
+                        }
+
+                        var updateDocWIthInc;
+                        var updateDocWithSetForData;
+                        var updateDocWithSetForUser;
+
+
                         Site.findById(site._id, function(err, data) {
                             if (err) {
                                 console.log(err);
                                 return;
                             }
-                            
-                            var userId = data.userId;
-                            
-                            data.days.dates.push(moment().unix());
-                            data.days.total = data.days.total + 1;
-                            data.weeks.dates.push(moment().unix());
-                            data.weeks.total = data.weeks.total + 1;
-                            data.months.dates.push(moment().unix());
-                            data.months.total = data.months.total + 1;
-                            
-                            data.save(function(err) {
+                            User.findById(job.attrs.data.userId, function(err, user) {
                                 if (err) {
                                     console.log(err);
                                     return;
                                 }
-                                
-                                User.findById(userId, function(err, user) {
+
+                                if (data && !data.stats) {
+                                    data.stats = {
+                                        error: {
+                                            days: {
+                                                dates: [],
+                                                total: 0
+                                            },
+                                            weeks: {
+                                                dates: [],
+                                                total: 0
+                                            },
+                                            months: {
+                                                dates: [],
+                                                total: 0
+                                            },
+                                            total: 0
+                                        },
+                                        success: {
+                                            days: {
+                                                dates: [],
+                                                total: 0
+                                            },
+                                            weeks: {
+                                                dates: [],
+                                                total: 0
+                                            },
+                                            months: {
+                                                dates: [],
+                                                total: 0
+                                            },
+                                            total: 0
+                                        },
+                                        total: 0
+                                    }
+                                }
+                                if (user && !user.stats) {
+                                    user.stats = {
+                                        error: {
+                                            days: {
+                                                dates: [],
+                                                total: 0
+                                            },
+                                            weeks: {
+                                                dates: [],
+                                                total: 0
+                                            },
+                                            months: {
+                                                dates: [],
+                                                total: 0
+                                            },
+                                            total: 0
+                                        },
+                                        success: {
+                                            days: {
+                                                dates: [],
+                                                total: 0
+                                            },
+                                            weeks: {
+                                                dates: [],
+                                                total: 0
+                                            },
+                                            months: {
+                                                dates: [],
+                                                total: 0
+                                            },
+                                            total: 0
+                                        },
+                                        total: 0
+                                    }
+                                }
+                                if (failure) {
+                                    updateDocWIthInc = {
+                                        'stats.total': 1,
+                                        'stats.error.total': 1,
+                                        'stats.error.days.total': 1,
+                                        'stats.error.weeks.total': 1,
+                                        'stats.error.months.total': 1
+                                    };
+                                    updateDocWithSetForData = {
+                                        'stats.error.days.dates': handleDate(data.stats.error.days.dates, 'days'),
+                                        'stats.error.weeks.dates': handleDate(data.stats.error.weeks.dates, 'weeks'),
+                                        'stats.error.months.dates': handleDate(data.stats.error.months.dates, 'months'),
+                                    };
+                                    updateDocWithSetForUser = {
+                                        'stats.error.days.dates': handleDate(user.stats.error.days.dates, 'days'),
+                                        'stats.error.weeks.dates': handleDate(user.stats.error.weeks.dates, 'weeks'),
+                                        'stats.error.months.dates': handleDate(user.stats.error.months.dates, 'months'),
+                                    };
+                                }
+                                else {
+                                    updateDocWIthInc = {
+                                        'stats.total': 1,
+                                        'stats.success.total': 1,
+                                        'stats.success.days.total': 1,
+                                        'stats.success.weeks.total': 1,
+                                        'stats.success.months.total': 1
+                                    };
+                                    updateDocWithSetForData = {
+                                        'stats.success.days.dates': handleDate(data.stats.success.days.dates, 'days'),
+                                        'stats.success.weeks.dates': handleDate(data.stats.success.weeks.dates, 'weeks'),
+                                        'stats.success.months.dates': handleDate(data.stats.success.months.dates, 'months'),
+                                    };
+                                    updateDocWithSetForUser = {
+                                        'stats.success.days.dates': handleDate(user.stats.success.days.dates, 'days'),
+                                        'stats.success.weeks.dates': handleDate(user.stats.success.weeks.dates, 'weeks'),
+                                        'stats.success.months.dates': handleDate(user.stats.success.months.dates, 'months'),
+                                    };
+                                }
+                                Site.findOneAndUpdate({
+                                    _id: site._id
+                                }, {
+                                    $inc: updateDocWIthInc,
+                                    $set: updateDocWithSetForData
+                                }, {
+                                    'new': true
+                                }, function(err, doc) {
                                     if (err) {
                                         console.log(err);
                                         return;
                                     }
-                                    
-                                    user.days.dates.push(moment().unix());
-                                    user.days.total = user.days.total + 1;
-                                    user.weeks.dates.push(moment().unix());
-                                    user.weeks.total = user.weeks.total + 1;
-                                    user.months.dates.push(moment().unix());
-                                    user.months.total = user.months.total + 1;
-                                    
-                                    user.save(function(err) {
+                                    console.log('DOC**********************', doc);
+
+                                    User.findOneAndUpdate({
+                                        _id: job.attrs.data.userId
+                                    }, {
+                                        $inc: updateDocWIthInc,
+                                        $set: updateDocWithSetForUser
+                                    }, {
+                                        'new': true
+                                    }, function(err, user) {
                                         if (err) {
                                             console.log(err);
                                             return;
                                         }
+                                        console.log('user&&&&&&&&&&&&&& : ', user);
                                     });
                                 });
                             });
+
                         });
+
+                        // Site.findOneAndUpdate({_id: site._id}, {
+                        //     $inc: updateDocWIthInc
+                        // }, {'new': true}, function(err, doc) {
+                        //     if (err) {
+                        //         console.log(err);
+                        //         return;
+                        //     }
+                        //     console.log('DOC**********************', doc);
+                        //     User.findOneAndUpdate({_id: job.attrs.data.userId}, {
+                        //     $inc: updateDocWIthInc
+                        // }, {'new': true}, function(err, user) {
+                        //         if (err) {
+                        //             console.log(err);
+                        //             return;
+                        //         }
+                        //         console.log('user&&&&&&&&&&&&&& : ', user);
+                        //     });
+                        // });
+
+
+                        // Site.findById(site._id, function(err, data) {
+                        //     if (err) {
+                        //         console.log(err);
+                        //         return;
+                        //     }
+
+
+                        //     var userId = job.attrs.data.userId;
+
+                        //     if (data && !data.stats) {
+                        //         data.stats = {
+                        //             error: {
+                        //                 days: {
+                        //                     dates: [],
+                        //                     total: 0
+                        //                 },
+                        //                 weeks: {
+                        //                     dates: [],
+                        //                     total: 0
+                        //                 },
+                        //                 months: {
+                        //                     dates: [],
+                        //                     total: 0
+                        //                 },
+                        //                 total: 0
+                        //             },
+                        //             success: {
+                        //                 days: {
+                        //                     dates: [],
+                        //                     total: 0
+                        //                 },
+                        //                 weeks: {
+                        //                     dates: [],
+                        //                     total: 0
+                        //                 },
+                        //                 months: {
+                        //                     dates: [],
+                        //                     total: 0
+                        //                 },
+                        //                 total: 0
+                        //             },
+                        //             total: 0
+                        //         }
+                        //     }
+
+                        //     function handleDate(dateArr, type) {
+                        //         if (!dateArr.length) {
+                        //             return [{
+                        //                 date: moment().unix(),
+                        //                 total: 1
+                        //             }];
+                        //         }
+                        //         if (type === 'days') {
+                        //             if (dateArr.indexOf(moment.unix()) > -1) {
+                        //                 dateArr[dateArr.indexOf(moment.unix())].total = dateArr[dateArr.indexOf(moment.unix())].total + 1;
+                        //                 console.log('Days: exists: =====================================', dateArr);
+                        //                 return dateArr;
+                        //             }
+                        //             if (dateArr.length < 7) {
+                        //                 dateArr.push({
+                        //                     date: moment().unix(),
+                        //                     total: 1
+                        //                 });
+                        //                 console.log('Days: >7: =====================================', dateArr);
+                        //                 return dateArr;
+                        //             }
+                        //             console.log('Days: shift: =====================================', dateArr);
+                        //             dateArr.shift();
+                        //             dateArr.push({
+                        //                 date: moment().unix(),
+                        //                 total: 1
+                        //             });
+                        //             return dateArr;
+                        //         }
+                        //         if (type === 'weeks') {
+                        //             if (dateArr.indexOf(moment().week()) > -1) {
+                        //                 dateArr[dateArr.indexOf(moment().week())].total = dateArr[dateArr.indexOf(moment().week())].total + 1;
+                        //                 return dateArr;
+                        //             }
+                        //             if (dateArr.length < 10) {
+                        //                 dateArr.push({
+                        //                     date: moment().week(),
+                        //                     total: 1
+                        //                 });
+                        //                 return dateArr;
+                        //             }
+                        //             dateArr.shift();
+                        //             dateArr.push({
+                        //                 date: moment().week(),
+                        //                 total: 1
+                        //             });
+                        //             return dateArr;
+                        //         }
+                        //         if (type === 'months') {
+                        //             if (dateArr.indexOf(moment().week()) > -1) {
+                        //                 dateArr[dateArr.indexOf(moment().week())].total = dateArr[dateArr.indexOf(moment().week())].total + 1;
+                        //                 return dateArr;
+                        //             }
+                        //             if (dateArr.length < 12) {
+                        //                 dateArr.push({
+                        //                     date: moment().month(),
+                        //                     total: 1
+                        //                 });
+                        //                 return dateArr;
+                        //             }
+                        //             dateArr.shift();
+                        //             dateArr.push({
+                        //                 date: moment().month(),
+                        //                 total: 1
+                        //             });
+                        //             return dateArr;
+                        //         }
+                        //     }
+
+                        //     if (failure) {
+                        //         console.log('DAYS: %%%%%%%%%%%%%%%%%%%% :', handleDate(data.stats.error.days.dates, 'days'));
+                        //         data.stats.error.days.dates = handleDate(data.stats.error.days.dates, 'days');
+                        //         data.stats.error.days.total = 2;//data.stats.error.days.total + 1;
+                        //         data.stats.error.weeks.dates = handleDate(data.stats.error.weeks.dates, 'weeks');
+                        //         data.stats.error.weeks.total = 2;//data.stats.error.weeks.total + 1;
+                        //         data.stats.error.months.dates = handleDate(data.stats.error.months.dates, 'months');
+                        //         data.stats.error.months.total = 2;//data.stats.error.months.total + 1;
+                        //         //data.stats.error.total.$inc() = 2;//data.stats.error.total === 0 ? 1 : data.stats.error.total + 1;
+                        //         data.stats.error.total === 0 ? 1 : data.stats.error.total.$inc();
+                        //         data.stats.total = data.stats.total === 0 ? 1 : data.stats.total + 1;
+                        //     }
+                        //     else {
+                        //         data.stats.success.days.dates = handleDate(data.stats.success.days.dates, 'days');
+                        //         data.stats.success.days.total = data.stats.success.days.total + 1;
+                        //         data.stats.success.weeks.dates = handleDate(data.stats.success.weeks.dates, 'weeks');
+                        //         data.stats.success.weeks.total = data.stats.success.weeks.total + 1;
+                        //         data.stats.success.months.dates = handleDate(data.stats.success.months.dates, 'months');
+                        //         data.stats.success.months.total = data.stats.success.months.total + 1;
+                        //         data.stats.success.total = data.stats.success.total === 0 ? 1 : data.stats.success.total + 1;
+                        //         data.stats.total = data.stats.total === 0 ? 1 : data.stats.total + 1;
+                        //     }
+
+                        //     console.log('DATA::::::::::::::::::::::::::::::::', data.stats);
+
+                        //     data.save(function(err, newData) {
+                        //         if (err) {
+                        //             console.log(err);
+                        //             return;
+                        //         }
+
+                        //         console.log('Data Saved%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%', newData);
+
+                        //         User.findById(userId, function(err, user) {
+                        //             if (err) {
+                        //                 console.log(err);
+                        //                 return;
+                        //             }
+
+                        //             if (user && !user.stats) {
+                        //                 user.stats = {
+                        //                     error: {
+                        //                         days: {
+                        //                             dates: [],
+                        //                             total: 0
+                        //                         },
+                        //                         weeks: {
+                        //                             dates: [],
+                        //                             total: 0
+                        //                         },
+                        //                         months: {
+                        //                             dates: [],
+                        //                             total: 0
+                        //                         },
+                        //                         total: 0
+                        //                     },
+                        //                     success: {
+                        //                         days: {
+                        //                             dates: [],
+                        //                             total: 0
+                        //                         },
+                        //                         weeks: {
+                        //                             dates: [],
+                        //                             total: 0
+                        //                         },
+                        //                         months: {
+                        //                             dates: [],
+                        //                             total: 0
+                        //                         },
+                        //                         total: 0
+                        //                     },
+                        //                     total: 0
+                        //                 }
+                        //             }
+
+                        //             if (failure) {
+                        //                 user.stats.error.days.dates = handleDate(user.stats.error.days.dates, 'days');
+                        //                 user.stats.error.days.total = user.stats.error.days.total + 1;
+                        //                 user.stats.error.weeks.dates = handleDate(user.stats.error.weeks.dates, 'weeks');
+                        //                 user.stats.error.weeks.total = user.stats.error.weeks.total + 1;
+                        //                 user.stats.error.months.dates = handleDate(user.stats.error.months.dates, 'months');
+                        //                 user.stats.error.months.total = user.stats.error.months.total + 1;
+                        //                 user.stats.error.total = user.stats.error.total === 0 ? 1 : user.stats.error.total + 1;
+                        //                 user.stats.total = user.stats.total === 0 ? 1 : user.stats.total + 1;
+                        //             }
+                        //             else {
+                        //                 user.stats.success.days.dates = handleDate(user.stats.success.days.dates, 'days');
+                        //                 user.stats.success.days.total = user.stats.success.days.total + 1;
+                        //                 user.stats.success.weeks.dates = handleDate(user.stats.success.weeks.dates, 'weeks');
+                        //                 user.stats.success.weeks.total = user.stats.success.weeks.total + 1;
+                        //                 user.stats.success.months.dates = handleDate(user.stats.success.months.dates, 'months');
+                        //                 user.stats.success.months.total = user.stats.success.months.total + 1;
+                        //                 user.stats.success.total = user.stats.success.total === 0 ? 1 : user.stats.success.total + 1;
+                        //                 user.stats.total = user.stats.total === 0 ? 1 : user.stats.total + 1;
+                        //             }
+
+                        //             user.save(function(err) {
+                        //                 if (err) {
+                        //                     console.log(err);
+                        //                     return;
+                        //                 }
+                        //             });
+                        //         });
+                        //     });
+                        // });
                     })
                     .catch(function(e) {
                         site.status = ExecutionStatus.ID_ERROR;
@@ -251,11 +723,12 @@ module.exports = function(agenda) {
                     })
                     .finally(function() {
                         if (!_.isEmpty(site.notificationReceiverEmails) && job.attrs.data.type === 'ON_SCHEDULE') {
-                            if(site.sendEmailWhenModuleFails) {
-                                if(site.status === ExecutionStatus.ID_ERROR) {
+                            if (site.sendEmailWhenModuleFails) {
+                                if (site.status === ExecutionStatus.ID_ERROR) {
                                     sendEmail();
                                 }
-                            } else {
+                            }
+                            else {
                                 sendEmail();
                             }
 
@@ -274,7 +747,7 @@ module.exports = function(agenda) {
                         }
                         L.infoAsync(__filename + ' ::run-site COMPLETED ============================================');
                         done();
-                        
+
                         function sendEmail() {
                             var mailer = new Mailer();
                             mailer.send({

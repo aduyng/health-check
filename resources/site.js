@@ -26,6 +26,7 @@ module.exports = function(connection) {
     });
 
     resource.use('create', function(req, res) {
+       
         L.infoAsync(__filename + ' ::create(%s)', name, req.data);
         new Model(req.data)
             .saveAsync()
@@ -72,6 +73,7 @@ module.exports = function(connection) {
                                 res.send(d);
                             });
                     case 'run':
+                        _.extend(doc, _.pick(req.data, 'userId'));
                         return doc.run()
                             .then(function() {
                                 res.send(doc);
@@ -83,7 +85,7 @@ module.exports = function(connection) {
                                 res.send(doc);
                             });
                     default:
-                        _.extend(doc, _.pick(req.data, 'name', 'tags', 'notificationReceiverEmails', 'schedule', 'status', 'modules', 'isEnabled', 'sendEmailWhenModuleFails', 'typeId'));
+                        _.extend(doc, _.pick(req.data, 'name', 'tags', 'notificationReceiverEmails', 'schedule', 'status', 'modules', 'isEnabled', 'sendEmailWhenModuleFails', 'typeId', 'userId'));
                         if (req.data.modules) {
                             doc.markModified("modules");
                         }
