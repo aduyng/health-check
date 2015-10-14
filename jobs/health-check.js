@@ -144,7 +144,10 @@ module.exports = function(agenda) {
                     .then(function() {
                         site.status = failure ? ExecutionStatus.ID_ERROR : ExecutionStatus.ID_OK;
                         L.infoAsync(__filename + ' ::run-site SITE %s:%s %s.', site._id.toHexString(), site.name, failure ? 'FAILED' : 'succeeded');
-                        // Status.create({status: failure ? 0 : 1, date: moment(new Date()).unix(), origin: site}, function(err, data) {
+                        return updateSiteStatus();
+		    })
+		    .then(function(){
+			// Status.create({status: failure ? 0 : 1, date: moment(new Date()).unix(), origin: site}, function(err, data) {
                         //     if (err) {
                         //         console.log('err ', err);
                         //         return;
@@ -324,7 +327,7 @@ module.exports = function(agenda) {
                         var updateDocWithSetForData;
                         var updateDocWithSetForUser;
 
-
+			return new B(function(resolve, reject){
                         Site.findById(site._id, function(err, data) {
                             if (err) {
                                 console.log(err);
@@ -454,6 +457,7 @@ module.exports = function(agenda) {
                                 }, function(err, doc) {
                                     if (err) {
                                         console.log(err);
+					reject(err);
                                         return;
                                     }
                                     console.log('DOC**********************', doc);
@@ -468,14 +472,17 @@ module.exports = function(agenda) {
                                     }, function(err, user) {
                                         if (err) {
                                             console.log(err);
+						reject(err);
                                             return;
                                         }
+					resolve();
                                         console.log('user&&&&&&&&&&&&&& : ', user);
                                     });
                                 });
                             });
 
                         });
+		});
 
                         // Site.findOneAndUpdate({_id: site._id}, {
                         //     $inc: updateDocWIthInc
