@@ -19,6 +19,59 @@ var path = require('path'),
     hasher = require('password-hash'),
     MongoStore = require('connect-mongo')(session),
     bodyParser = require('body-parser');
+    
+    // var Sites = require('./odm/models/site');
+    // Sites.findAsync()
+    // .then(function (sites) {
+    //     return _.map(sites, function (site) {
+    //       var str = site.tags.toLowerCase();
+    //       if(str.indexOf('prod') > -1) {
+    //           console.log('found prod')
+    //       } else {
+    //         site.stats.error.total = 25 ;
+    //         site.stats.error.months.total = 19 ;
+    //         site.stats.error.months.dates = [
+    //             {'date': 10, 'total': 1 },
+    //             {'date': 11, 'total': 1 },
+    //             {'date': 0, 'total': 0 },
+    //             {'date': 1, 'total': 2 },
+    //             {'date': 2, 'total': 3 },
+    //             {'date': 3, 'total': 2 },
+    //             {'date': 4, 'total': 1 },
+    //             {'date': 5, 'total': 1 },
+    //             {'date': 6, 'total': 2 },
+    //             {'date': 7, 'total': 1 },
+    //             {'date': 8, 'total': 1 },
+    //             {'date': 9, 'total': 4 }
+    //         ];
+    //         site.stats.error.weeks.total = 4 ;
+    //         site.stats.error.weeks.dates = [
+    //             {'date': 33, 'total': 0 },
+    //             {'date': 34, 'total': 1 },
+    //             {'date': 35, 'total': 0 },
+    //             {'date': 36, 'total': 1 },
+    //             {'date': 37, 'total': 0 },
+    //             {'date': 38, 'total': 0 },
+    //             {'date': 39, 'total': 0 },
+    //             {'date': 40, 'total': 1 },
+    //             {'date': 41, 'total': 1 },
+    //             {'date': 42, 'total': 2 }];
+    //         site.stats.error.days.total = 2 ;
+    //         site.stats.error.days.dates = [
+    //             {'date':281, 'total': 0 },
+    //             {'date':282, 'total': 1 },
+    //             {'date':283, 'total': 0 },
+    //             {'date':284, 'total': 0},
+    //             {'date':285, 'total': 1 }, // day befor
+    //             {'date':286, 'total': 0 }, // yesterdy
+    //             {'date':287, 'total': 0 }
+    //         ];
+    //         //site.stats.total = 372;
+    //         site.markModified('stats');
+    //         return site.saveAsync();
+    //       }
+    //     });
+    // })
 
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({

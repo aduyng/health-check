@@ -103,21 +103,27 @@ code, pre {
 /* .status-graph {margin-top: 2.5em;}*/
 canvas {background-color: #fff;padding: 1em;}
 .status-widget {float:right; margin-right: -2.2em;}
-@media (max-width: 1005px) {
-  .status-widget {float:none;}
-}
+
 /* .status-widget{
   margin-top:3em;
 } */
+
+.status-graph-canvas {
+  width: 100%;
+}
+.status-graph-canvas {
+  margin-left: -1.2em;
+}
+#graph-select {
+  width: 100px;
+}
 .status-widget h4 {
   color: #000;
 }
 .status-widget ul{
   list-style-type:none; margin-left: -3.5em;
 }
-.status-widget ul li{
-  float:left; padding-left: 1em; padding-right: 1em; color: #fff;
-}
+
 .status-widget ul li.add-side-borders{
   border-left: 1px solid #fff; border-right: 1px solid #fff;
 }
@@ -135,6 +141,35 @@ canvas {background-color: #fff;padding: 1em;}
 }
 .status-widget footer div progress[value]::-webkit-progress-value {
   background-color: #FFF;
+}
+@media (max-width: 1215px) {
+  .status-widget {float:none;}
+}
+@media (min-width: 450px) {
+  .status-widget ul li{
+  float:left; padding-left: 1em; padding-right: 1em; color: #fff;
+}
+}
+@media (max-width: 450px) {
+  .status-graph,
+.status-graph-canvas {
+    width: 100%;
+  }
+  .status-graph-canvas {
+    margin-left: -1.2em;
+  }
+  .status-widget {
+    padding: 0;
+  }
+  .status-widget ul li {
+    color: #fff;
+    float:left;
+    padding-right: 0.25em;
+    padding-left: 0.25em;
+  }
+  .statuses {
+    margin-bottom: 1em;
+  }
 }
 div.progress{
   margin-bottom: 1.25em;

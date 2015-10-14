@@ -16,20 +16,22 @@ define(function(require) {
         this.yesterday = options.yesterday;
         this.weeks = options.weeks;
         this.percentage = options.percentage;
+        
+        console.log(this.percentage)
     };
 
     View.prototype.render = function() {
         var that = this;
         return B.resolve()
             .then(function() {
-                
+                console.log(this.weeks)
 
                 that.$el.html(Template({
                     id: that.id,
                     errors: that.errors,
                     yesterday: that.yesterday,
                     weeks: that.weeks,
-                    percentage: that.percentage
+                    percentage: that.percentage.toString().substr(0, 1) === '-' ? that.percentage.toString().slice(1, that.percentage.toString().length) + '% lower than last month.' : that.percentage + '% higher than last month.'
                 }));
 
                 that.mapControls();

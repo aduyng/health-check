@@ -1,18 +1,18 @@
-<div id="{{id}}" class="status-widget col-lg-5 col-md-12 col-xs-12">
+<div id="{{id}}" class="status-widget col-lg-12 col-md-11 col-xs-12">
     <div class="table-data p">
         <div class="data-row">
             <h4>OVERALL ERRORS</h4>
             <ul>
                 <li>Total errors<br />{{errors}}</li>
                 <li class="add-side-borders">Yesterday<br />{{yesterday}}</li>
-                <li>This week<br />{{errors}}</li>
+                <li>This week<br />{{#if weeks.total}}{{weeks.total}}{{else}}{{weeks}}{{/if}}</li>
             </ul>
             <br />
             <footer>
                 <div class="progress transparent progress-small no-radius m-t-20">
                   <progress class="progress-bar" max="100" value="{{percentage}}" style="width: 100%;"></progress>
                 </div>
-                <span>{{percentage}}% higher</span> than last month
+                <span>{{percentage}}</span>
             </footer>
         </div>
     </div>
