@@ -40,12 +40,15 @@ define(function(require) {
     Page.prototype.renderStats = function(d, type) {
         var that = this;
         if (!d) {
+            var currentMonth = window.app.user.get('stats').error.months.dates[window.app.user.get('stats').error.months.dates.length - 1].total;
+            var lastMonth = window.app.user.get('stats').error.months.dates[window.app.user.get('stats').error.months.dates.length - 2].total;
+            var percentage = ((currentMonth - lastMonth) / currentMonth) * 100;
            var statusWidget = new StatusWidget({
                 errors: window.app.user.get('stats').error.total || 0,
                 el: that.$el.find('.statuses'),
                 yesterday: window.app.user.get('stats').error.days.dates.length < 2 ? 0 : window.app.user.get('stats').error.days.dates[window.app.user.get('stats').error.days.dates.length - 2].total || 0,
                 weeks: window.app.user.get('stats').error.weeks.dates[window.app.user.get('stats').error.weeks.dates.length - 1] || 0,
-                percentage: window.app.user.get('stats').error.months.dates.length < 2 ? 100 : (window.app.user.get('stats').error.months.dates[window.app.user.get('stats').error.months.dates.length - 1].total - window.app.user.get('stats').error.months.dates[window.app.user.get('stats').error.months.dates.length - 2].total) / (window.app.user.get('stats').error.months.dates[window.app.user.get('stats').error.months.dates.length - 1].total  * 100)
+                percentage: percentage
             });
 
             statusWidget.render();
@@ -365,7 +368,12 @@ define(function(require) {
             }
         });
         
-        that.renderStats(visibleSites, 'days');
+        if(_.isEmpty(options.query) && _.isEmpty(selectedTypes)) {
+            that.renderStats(null, 'days');    
+        } else {
+            that.renderStats(visibleSites, 'days');    
+        }
+        
     };
 
     Page.prototype.onSiteScheduled = function() {
