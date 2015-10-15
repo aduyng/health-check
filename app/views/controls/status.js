@@ -28,7 +28,7 @@ define(function(require) {
                     errors: that.errors,
                     yesterday: that.yesterday,
                     weeks: that.weeks,
-                    percentage: that.percentage.toString().substr(0, 1) === '-' ? that.percentage.toString().slice(1, that.percentage.toString().length) + '% lower than last month.' : that.percentage + '% higher than last month.'
+                    percentage: that.percentage < 0 ? that.percentage.toFixed(2) + '% lower than last month.' : that.percentage.toFixed(2) + '% higher than last month.'
                 }));
 
                 that.mapControls();
