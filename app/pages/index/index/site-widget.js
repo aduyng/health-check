@@ -146,8 +146,10 @@ define(function(require) {
             e = $(event.currentTarget),
             dlg,
             modules = that.model.get('modules') || [],
-            moduleIndex = e.data('index'),
-            module = modules[moduleIndex];
+            moduleId = e.data('index');
+        var module = _.find(modules, function (mod) {
+            return mod._id === moduleId
+        })
 
         event.preventDefault();
         var html = '<code>' + ansi.ansi_to_html((module.logs || '')) + '</code><div class="screenshot"></div>';
@@ -170,7 +172,6 @@ define(function(require) {
         });
 
         dlg.on('shown', function() {
-            console.log('trigger dialog shown');
             var pathToImage = '/screenshots/' + module._id + '.png';
             var imageElement = $("<img class='img-responsive center-block'/>")
                 .load(function() {

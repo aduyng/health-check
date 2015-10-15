@@ -39,7 +39,6 @@ define(function(require) {
 
     Page.prototype.renderStats = function(d, type) {
         var that = this;
-        console.log('SITES!!!!!!!!!!!!!!!!!!!!!!!!! ', d)
         if (!d) {
            var statusWidget = new StatusWidget({
                 errors: window.app.user.get('stats').error.total || 0,
@@ -74,13 +73,17 @@ define(function(require) {
                 s.errors += item.get('stats').error.total;
                 s.yesterday += item.get('stats').error.days.dates.length < 2 ? 0 : item.get('stats').error.days.dates[item.get('stats').error.days.dates.length - 2].total || 0;
                 s.weeks += (item.get('stats').error.weeks.dates[item.get('stats').error.weeks.dates.length - 1] || {}).total || 0;
-                month += item.get('stats').error.months.dates[item.get('stats').error.months.dates.length - 1].total;
-                lastMonth += item.get('stats').error.months.dates.length ? item.get('stats').error.months.dates[item.get('stats').error.months.dates.length - 2].total : 0;
+                month += (item.get('stats').error.months.dates[item.get('stats').error.months.dates.length - 1] || {}).total;
+                lastMonth += (item.get('stats').error.months.dates[item.get('stats').error.months.dates.length - 2] || {}).total;
                 //s.percentage = item.get('stats').error.months.dates.length < 2 ? 100 : item.get('stats').error.months.dates[item.get('stats').error.months.dates.length - 1].total - item.get('stats').error.months.dates[item.get('stats').error.months.dates.length - 2].total / item.get('stats').error.months.dates[item.get('stats').error.months.dates.length - 1].total * 100
             });
-            s.percentage = (month - lastMonth) / month * 100;
-            console.log(s);
 
+            if(month - lastMonth === 0) {
+                s.percentage = 0;
+            } else {
+                s.percentage = (month - lastMonth) / month * 100;    
+            }            
+            
             var statusWidget = new StatusWidget(s);
 
             statusWidget.render();
@@ -361,8 +364,6 @@ define(function(require) {
                 site.view.$el.toggleClass('hidden', !visible);
             }
         });
-        
-        console.log('SITES: ', visibleSites)
         
         that.renderStats(visibleSites, 'days');
     };

@@ -14,7 +14,6 @@ define(function(require) {
 
         this.type = options.type;
         if (options.sites) {
-            console.log('got sites');
             this.sites = options.sites;
         }
     };
@@ -114,6 +113,14 @@ define(function(require) {
                                 }
                             });
                         });
+                        
+                        var daysData = [0,0,0,0,0,0,0];
+                        _.each(that.sites, function(site) {
+                           _.each(site.get('stats').error.days.dates, function(day, key) {
+                               daysData[key] += day.total;
+                           });
+                        });
+                            
 
                         if (!daysData.length) {
                             daysData = [0, 0, 0, 0, 0, 0, 0];
@@ -125,7 +132,6 @@ define(function(require) {
                             
                             _.each(daysLabels, function(label, i) {
                                  if (newLabels.indexOf(label) > -1) {
-                                     console.log(daysData[daysLabels.indexOf(label)])
                                      newData[newLabels.indexOf(label)] = daysData[daysLabels.indexOf(label)]
                                  }
                             });
@@ -156,7 +162,6 @@ define(function(require) {
                         var weeksLabels = [];
                         
                         function getWeek(weeks) {
-                            console.log('weeks num', weeks);
                             var lastDay = weeks[weeks.length - 1];
                             var firstDay = lastDay - 9;
                             
@@ -167,8 +172,6 @@ define(function(require) {
                             }
                             
                             returnArr.push(lastDay);
-                            
-                            console.log(lastDay)
                             
                             return returnArr;
                         }
@@ -186,6 +189,13 @@ define(function(require) {
                             });
                         });
                         
+                        var weeksData = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+                        _.each(that.sites, function(site) {
+                           _.each(site.get('stats').error.weeks.dates, function(week, key) {
+                               weeksData[key] += week.total;
+                           });
+                        });
+                        
                         if (!weeksData.length) {
                             weeksData = [0, 0, 0, 0, 0, 0, 0];
                             //weeksLabels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
@@ -196,7 +206,6 @@ define(function(require) {
                             
                             _.each(weeksLabels, function(label, i) {
                                  if (newLabels.indexOf(label) > -1) {
-                                     console.log(weeksData[weeksLabels.indexOf(label)])
                                      newData[newLabels.indexOf(label)] = weeksData[weeksLabels.indexOf(label)]
                                  }
                             });
@@ -246,6 +255,13 @@ define(function(require) {
                                 }
                             });
                         });
+                        
+                        var monthssData = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+                        _.each(that.sites, function(site) {
+                           _.each(site.get('stats').error.months.dates, function(month, key) {
+                               monthssData[key] += month.total;
+                           });
+                        });
 
                         if (!monthssData.length) {
                             monthssData = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
@@ -257,7 +273,6 @@ define(function(require) {
                             
                             _.each(monthsLabel, function(label, i) {
                                  if (newLabels.indexOf(label) > -1) {
-                                     console.log(monthssData[monthsLabel.indexOf(label)])
                                      newData[newLabels.indexOf(label)] = monthssData[monthsLabel.indexOf(label)]
                                  }
                             });
@@ -306,7 +321,6 @@ define(function(require) {
                             
                             _.each(daysLabels, function(label, i) {
                                  if (newLabels.indexOf(label) > -1) {
-                                     console.log(daysData[daysLabels.indexOf(label)])
                                      newData[newLabels.indexOf(label)] = daysData[daysLabels.indexOf(label)]
                                  }
                             });
@@ -336,7 +350,6 @@ define(function(require) {
                         var weeksLabels = [];
                         
                         function getWeek(weeks) {
-                            console.log('weeks num', weeks);
                             var lastDay = weeks[weeks.length - 1];
                             var firstDay = lastDay - 9;
                             
@@ -347,8 +360,6 @@ define(function(require) {
                             }
                             
                             returnArr.push(lastDay);
-                            
-                            console.log(lastDay)
                             
                             return returnArr;
                         }
@@ -368,7 +379,6 @@ define(function(require) {
                             
                             _.each(weeksLabels, function(label, i) {
                                  if (newLabels.indexOf(label) > -1) {
-                                     console.log(weeksData[weeksLabels.indexOf(label)])
                                      newData[newLabels.indexOf(label)] = weeksData[weeksLabels.indexOf(label)]
                                  }
                             });
@@ -411,7 +421,6 @@ define(function(require) {
                             
                             _.each(monthsLabel, function(label, i) {
                                  if (newLabels.indexOf(label) > -1) {
-                                     console.log(monthssData[monthsLabel.indexOf(label)])
                                      newData[newLabels.indexOf(label)] = monthssData[monthsLabel.indexOf(label)]
                                  }
                             });
@@ -493,7 +502,6 @@ define(function(require) {
     };
 
     View.prototype.handleSelect = function(e) {
-        console.log(this);
         this.type = $(e.currentTarget).val();
         this.render();
     };

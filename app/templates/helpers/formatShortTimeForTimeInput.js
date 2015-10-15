@@ -4,7 +4,6 @@
 define('templates/helpers/formatShortTimeForTimeInput', ['hbs/handlebars', 'moment'], function (Handlebars, moment) {
     var f = function (input) {
         var format = 'HH:mm';
-        console.log(input, moment.unix(input).format(format));
         if( /\d+/.test(input)){
             
             return moment.unix(input).format(format);

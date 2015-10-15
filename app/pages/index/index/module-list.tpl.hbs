@@ -1,13 +1,13 @@
 <div class="clearfix">
     {{#each modules}}
-    <div class="text-center {{../id}}-module" data-index="{{@index}}">{{abbreviation}}</div>
+    <div class="text-center {{../id}}-module" data-index="{{_id}}">{{abbreviation}}</div>
     {{else}}
     <span class="text-center">There are no modules.</span>
     {{/each}}
 </div>
 <div class="clearfix">
     {{#each modules}}
-    <div class="text-center {{../id}}-module" data-index="{{@index}}"><i class="status fa {{iconClass}}"></i></div>
+    <div class="text-center {{../id}}-module" data-index="{{_id}}"><i class="status fa {{iconClass}}"></i></div>
     {{else}}
     {{/each}}
 </div>

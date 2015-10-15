@@ -16,15 +16,12 @@ define(function(require) {
         this.yesterday = options.yesterday;
         this.weeks = options.weeks;
         this.percentage = options.percentage;
-        
-        console.log(this.percentage)
     };
 
     View.prototype.render = function() {
         var that = this;
         return B.resolve()
             .then(function() {
-                console.log(this.weeks)
 
                 that.$el.html(Template({
                     id: that.id,
