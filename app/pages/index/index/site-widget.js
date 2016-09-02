@@ -64,7 +64,7 @@ define(function(require) {
     View.prototype.remove = function() {
         //stop the status querying process
         return Super.prototype.remove.apply(this, arguments);
-    }
+    };
 
     View.prototype.draw = function() {
         var that = this;
@@ -116,6 +116,7 @@ define(function(require) {
                 break;
         }
 
+        that.$el.find('.last-run').text(that.getLastRunTime(that.model.get('lastExecutedAt')));
         that.$el.find('.data-row').removeClass('scheduled success error running terminated').addClass(panelClass);
 
         that.controls.modules.html(MODULE_LIST({

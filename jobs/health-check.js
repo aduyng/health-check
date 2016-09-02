@@ -39,7 +39,6 @@ module.exports = function(agenda) {
 
         var updateSiteStatus = function(modules) {
             var socket = Socket.connect('http://127.0.0.1:' + process.env.PORT);
-            console.log(socket);
             var conn = require('data.io').client(socket);
             var resource = conn.resource('site');
 
@@ -81,7 +80,6 @@ module.exports = function(agenda) {
                 return updateSiteStatus()
                     .then(function() {
                         return B.reduce(modules, function(memo, module) {
-                            console.log('Module: ', module);
                             module.status = ExecutionStatus.ID_RUNNING;
                             module.logs = '';
                             var screenshotAbsPath = [config.rootPath, 'data', 'screenshots', module._id + '.png'].join('/');
@@ -273,16 +271,14 @@ module.exports = function(agenda) {
                         return new B(function(resolve, reject) {
                             Site.findById(site._id, function(err, data) {
                                 if (err) {
-                                    console.log(err);
                                     return;
                                 }
                                 User.findById(job.attrs.data.userId, function(err, user) {
                                     if (err) {
-                                        console.log(err);
                                         return;
                                     }
 
-                                    if (data && !data.stats) {
+                                    //if (data && !data.stats) {
                                         data.stats = {
                                             error: {
                                                 days: {
@@ -316,8 +312,8 @@ module.exports = function(agenda) {
                                             },
                                             total: 0
                                         }
-                                    }
-                                    if (user && !user.stats) {
+                                    //}
+                                    //if (user && !user.stats) {
                                         user.stats = {
                                             error: {
                                                 days: {
@@ -351,7 +347,7 @@ module.exports = function(agenda) {
                                             },
                                             total: 0
                                         }
-                                    }
+                                    //}
                                     if (failure) {
                                         updateDocWIthInc = {
                                             'stats.total': 1,
@@ -399,7 +395,6 @@ module.exports = function(agenda) {
                                         'new': true
                                     }, function(err, doc) {
                                         if (err) {
-                                            console.log(err);
                                             reject(err);
                                             return;
                                         }
@@ -413,7 +408,6 @@ module.exports = function(agenda) {
                                             'new': true
                                         }, function(err, user) {
                                             if (err) {
-                                                console.log(err);
                                                 reject(err);
                                                 return;
                                             }

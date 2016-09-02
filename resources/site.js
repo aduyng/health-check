@@ -63,9 +63,13 @@ module.exports = function(connection) {
                                     }
                                     return true;
                                 });
-                            })
+                            });
                             doc.modules = modules;
                             doc.markModified("modules");
+                        }
+
+                        if (req.data.status === 3) {
+                            doc.lastExecutedAt = doc.lastExecutionCompletedAt = new Date();
                         }
 
                         return doc.saveAsync()
