@@ -101,6 +101,7 @@ define(function(require) {
 
             case ExecutionStatus.ID_ERROR:
                 panelClass = 'error';
+                that.trigger('completed');
                 break;
 
             case ExecutionStatus.ID_RUNNING:
@@ -108,10 +109,12 @@ define(function(require) {
                 break;
 
             case ExecutionStatus.ID_TERMINATED:
+                that.trigger('completed');
                 panelClass = 'terminated';
                 break;
 
             case ExecutionStatus.ID_OK:
+                that.trigger('completed');
                 panelClass = 'success';
                 break;
         }

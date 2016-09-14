@@ -20,13 +20,14 @@ config.development = {
         }
     },
     mongo: {
+        //url: 'mongodb://localhost:27017',
         url: 'mongodb://heroku_app35515501:ck2jd4t6mq9dgsapr4saau66r4@ds059651.mongolab.com:59651/heroku_app35515501',
         options: {
             debug: false
         }
     },
     casper: {
-        absolutePath: '/usr/bin/casperjs'
+        absolutePath: 'casperjs'
     },
     session: {
         secret: '8Kh862PMMabR'

@@ -19,7 +19,7 @@ var path = require('path'),
     hasher = require('password-hash'),
     MongoStore = require('connect-mongo')(session),
     bodyParser = require('body-parser');
-    
+
     // var Sites = require('./odm/models/site');
     // Sites.findAsync()
     // .then(function (sites) {
@@ -68,7 +68,7 @@ var path = require('path'),
     //         site.markModified('stats');
     //         return site.saveAsync();
     //       } else {
-            
+
     //       }
     //     });
     // })
@@ -107,7 +107,7 @@ app.set('view engine', 'hbs');
 app.all('/', function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "X-Requested-With");
-    
+
     if( req.session.userId ){
         User.findByIdAsync(req.session.userId, {password: 0})
         .then(function(user){
@@ -116,7 +116,7 @@ app.all('/', function(req, res, next) {
         });
         return;
     }
-    
+
     next();
 });
 
@@ -144,12 +144,12 @@ app.post('/login', function(req, res) {
                 res.send(404, {});
                 return;
             }
-            
+
             if( !hasher.verify(password, user.password)){
                 res.send(400, {});
                 return;
             }
-            
+
             req.session.userId = user._id;
             res.send(_.omit(user.toJSON(), 'password'));
         });

@@ -73,7 +73,9 @@ module.exports = function(agenda) {
             ])
             .spread(function(s) {
                 site = s;
-                modules = site.modules || [];
+                modules = _.filter(site.modules || [], function (module) {
+                    return module.isEnabled;
+                });
                 L.infoAsync(__filename + ' ::run-site about to run health check for %s:%s. Number of modules is %d.', site._id, site.name, modules.length);
                 site.status = ExecutionStatus.ID_RUNNING;
                 var failure = false;
@@ -82,7 +84,7 @@ module.exports = function(agenda) {
                         return B.reduce(modules, function(memo, module) {
                             module.status = ExecutionStatus.ID_RUNNING;
                             module.logs = '';
-                            var screenshotAbsPath = [config.rootPath, 'data', 'screenshots', module._id + '.png'].join('/');
+                            var screenshotAbsPath = ['data', 'screenshots', module._id + '.png'].join('/');
                             var absPath = [config.rootPath, 'data', 'modules', module._id + '.js'].join('/');
                             L.infoAsync(__filename + ' ::run-site MODULE %s:%s is started.', module._id.toHexString(), module.name);
                             return updateSiteStatus([{
@@ -157,7 +159,7 @@ module.exports = function(agenda) {
                                     }];
                                 }
                                 var found = false;
-                                
+
                                 for (var i = 0; i < dateArr.length; i++) {
                                     if (dateArr[i].date === moment().dayOfYear()) {
                                         dateArr[i].total++;
@@ -166,7 +168,7 @@ module.exports = function(agenda) {
                                     }
                                 }
                                 if (found) {
-                                    
+
                                     return dateArr;
                                 }
                                 if (dateArr.length < 7) {
@@ -174,10 +176,10 @@ module.exports = function(agenda) {
                                         date: moment().dayOfYear(),
                                         total: 1
                                     });
-                                    
+
                                     return dateArr;
                                 }
-                                
+
                                 dateArr.shift();
                                 dateArr.push({
                                     date: moment().dayOfYear(),
@@ -269,154 +271,7 @@ module.exports = function(agenda) {
                         var updateDocWithSetForUser;
 
                         return new B(function(resolve, reject) {
-                            Site.findById(site._id, function(err, data) {
-                                if (err) {
-                                    return;
-                                }
-                                User.findById(job.attrs.data.userId, function(err, user) {
-                                    if (err) {
-                                        return;
-                                    }
-
-                                    //if (data && !data.stats) {
-                                        data.stats = {
-                                            error: {
-                                                days: {
-                                                    dates: [],
-                                                    total: 0
-                                                },
-                                                weeks: {
-                                                    dates: [],
-                                                    total: 0
-                                                },
-                                                months: {
-                                                    dates: [],
-                                                    total: 0
-                                                },
-                                                total: 0
-                                            },
-                                            success: {
-                                                days: {
-                                                    dates: [],
-                                                    total: 0
-                                                },
-                                                weeks: {
-                                                    dates: [],
-                                                    total: 0
-                                                },
-                                                months: {
-                                                    dates: [],
-                                                    total: 0
-                                                },
-                                                total: 0
-                                            },
-                                            total: 0
-                                        }
-                                    //}
-                                    //if (user && !user.stats) {
-                                        user.stats = {
-                                            error: {
-                                                days: {
-                                                    dates: [],
-                                                    total: 0
-                                                },
-                                                weeks: {
-                                                    dates: [],
-                                                    total: 0
-                                                },
-                                                months: {
-                                                    dates: [],
-                                                    total: 0
-                                                },
-                                                total: 0
-                                            },
-                                            success: {
-                                                days: {
-                                                    dates: [],
-                                                    total: 0
-                                                },
-                                                weeks: {
-                                                    dates: [],
-                                                    total: 0
-                                                },
-                                                months: {
-                                                    dates: [],
-                                                    total: 0
-                                                },
-                                                total: 0
-                                            },
-                                            total: 0
-                                        }
-                                    //}
-                                    if (failure) {
-                                        updateDocWIthInc = {
-                                            'stats.total': 1,
-                                            'stats.error.total': 1,
-                                            'stats.error.days.total': 1,
-                                            'stats.error.weeks.total': 1,
-                                            'stats.error.months.total': 1
-                                        };
-                                        updateDocWithSetForData = {
-                                            'stats.error.days.dates': handleDate(data.stats.error.days.dates, 'days'),
-                                            'stats.error.weeks.dates': handleDate(data.stats.error.weeks.dates, 'weeks'),
-                                            'stats.error.months.dates': handleDate(data.stats.error.months.dates, 'months'),
-                                        };
-                                        updateDocWithSetForUser = {
-                                            'stats.error.days.dates': handleDate(user.stats.error.days.dates, 'days'),
-                                            'stats.error.weeks.dates': handleDate(user.stats.error.weeks.dates, 'weeks'),
-                                            'stats.error.months.dates': handleDate(user.stats.error.months.dates, 'months'),
-                                        };
-                                    }
-                                    else {
-                                        updateDocWIthInc = {
-                                            'stats.total': 1,
-                                            'stats.success.total': 1,
-                                            'stats.success.days.total': 1,
-                                            'stats.success.weeks.total': 1,
-                                            'stats.success.months.total': 1
-                                        };
-                                        updateDocWithSetForData = {
-                                            'stats.success.days.dates': handleDate(data.stats.success.days.dates, 'days'),
-                                            'stats.success.weeks.dates': handleDate(data.stats.success.weeks.dates, 'weeks'),
-                                            'stats.success.months.dates': handleDate(data.stats.success.months.dates, 'months'),
-                                        };
-                                        updateDocWithSetForUser = {
-                                            'stats.success.days.dates': handleDate(user.stats.success.days.dates, 'days'),
-                                            'stats.success.weeks.dates': handleDate(user.stats.success.weeks.dates, 'weeks'),
-                                            'stats.success.months.dates': handleDate(user.stats.success.months.dates, 'months'),
-                                        };
-                                    }
-                                    Site.findOneAndUpdate({
-                                        _id: site._id
-                                    }, {
-                                        $inc: updateDocWIthInc,
-                                        $set: updateDocWithSetForData
-                                    }, {
-                                        'new': true
-                                    }, function(err, doc) {
-                                        if (err) {
-                                            reject(err);
-                                            return;
-                                        }
-
-                                        User.findOneAndUpdate({
-                                            _id: job.attrs.data.userId
-                                        }, {
-                                            $inc: updateDocWIthInc,
-                                            $set: updateDocWithSetForUser
-                                        }, {
-                                            'new': true
-                                        }, function(err, user) {
-                                            if (err) {
-                                                reject(err);
-                                                return;
-                                            }
-                                            resolve();
-                                        });
-                                    });
-                                });
-
-                            });
+                            resolve();
                         });
 
 

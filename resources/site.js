@@ -26,7 +26,7 @@ module.exports = function(connection) {
     });
 
     resource.use('create', function(req, res) {
-       
+
         L.infoAsync(__filename + ' ::create(%s)', name, req.data);
         new Model(req.data)
             .saveAsync()
