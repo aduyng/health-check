@@ -29,6 +29,7 @@ function loop(promise, fn) {
 
 module.exports = function(agenda) {
     agenda.define('run-site', function(job, done) {
+        console.log(__filename + ' ::run-site STARTED ============================================');
         L.infoAsync(__filename + ' ::run-site STARTED ============================================');
         var Site = require('../odm/models/site'),
             Module = require('../odm/models/module'),
@@ -39,7 +40,6 @@ module.exports = function(agenda) {
 
         var updateSiteStatus = function(modules) {
             var socket = Socket.connect('http://127.0.0.1:' + process.env.PORT);
-            console.log(socket);
             var conn = require('data.io').client(socket);
             var resource = conn.resource('site');
 
@@ -50,8 +50,6 @@ module.exports = function(agenda) {
                     modules: modules,
                     requestType: 'status-report'
                 };
-
-
                 // L.infoAsync(__filename + ' ::run-site reports status=%d of %s:%s via client web-socket: %s', site.status, siteId, site.name, JSON.stringify(dataToSend));
                 resource.sync('patch', dataToSend,
                     function(err, result) {
@@ -74,7 +72,9 @@ module.exports = function(agenda) {
             ])
             .spread(function(s) {
                 site = s;
-                modules = site.modules || [];
+                modules = _.filter(site.modules || [], function (module) {
+                    return module.isEnabled; 
+                });
                 L.infoAsync(__filename + ' ::run-site about to run health check for %s:%s. Number of modules is %d.', site._id, site.name, modules.length);
                 site.status = ExecutionStatus.ID_RUNNING;
                 var failure = false;
@@ -84,7 +84,7 @@ module.exports = function(agenda) {
                             console.log('Module: ', module);
                             module.status = ExecutionStatus.ID_RUNNING;
                             module.logs = '';
-                            var screenshotAbsPath = [config.rootPath, 'data', 'screenshots', module._id + '.png'].join('/');
+                            var screenshotAbsPath = ['data', 'screenshots', module._id + '.png'].join('/');
                             var absPath = [config.rootPath, 'data', 'modules', module._id + '.js'].join('/');
                             L.infoAsync(__filename + ' ::run-site MODULE %s:%s is started.', module._id.toHexString(), module.name);
                             return updateSiteStatus([{
@@ -147,8 +147,6 @@ module.exports = function(agenda) {
                         return updateSiteStatus();
                     })
                     .then(function() {
-
-
                         function handleDate(dateArr, type) {
 
                             if (type === 'days') {
@@ -271,158 +269,7 @@ module.exports = function(agenda) {
                         var updateDocWithSetForUser;
 
                         return new B(function(resolve, reject) {
-                            Site.findById(site._id, function(err, data) {
-                                if (err) {
-                                    console.log(err);
-                                    return;
-                                }
-                                User.findById(job.attrs.data.userId, function(err, user) {
-                                    if (err) {
-                                        console.log(err);
-                                        return;
-                                    }
-
-                                    if (data && !data.stats) {
-                                        data.stats = {
-                                            error: {
-                                                days: {
-                                                    dates: [],
-                                                    total: 0
-                                                },
-                                                weeks: {
-                                                    dates: [],
-                                                    total: 0
-                                                },
-                                                months: {
-                                                    dates: [],
-                                                    total: 0
-                                                },
-                                                total: 0
-                                            },
-                                            success: {
-                                                days: {
-                                                    dates: [],
-                                                    total: 0
-                                                },
-                                                weeks: {
-                                                    dates: [],
-                                                    total: 0
-                                                },
-                                                months: {
-                                                    dates: [],
-                                                    total: 0
-                                                },
-                                                total: 0
-                                            },
-                                            total: 0
-                                        }
-                                    }
-                                    if (user && !user.stats) {
-                                        user.stats = {
-                                            error: {
-                                                days: {
-                                                    dates: [],
-                                                    total: 0
-                                                },
-                                                weeks: {
-                                                    dates: [],
-                                                    total: 0
-                                                },
-                                                months: {
-                                                    dates: [],
-                                                    total: 0
-                                                },
-                                                total: 0
-                                            },
-                                            success: {
-                                                days: {
-                                                    dates: [],
-                                                    total: 0
-                                                },
-                                                weeks: {
-                                                    dates: [],
-                                                    total: 0
-                                                },
-                                                months: {
-                                                    dates: [],
-                                                    total: 0
-                                                },
-                                                total: 0
-                                            },
-                                            total: 0
-                                        }
-                                    }
-                                    if (failure) {
-                                        updateDocWIthInc = {
-                                            'stats.total': 1,
-                                            'stats.error.total': 1,
-                                            'stats.error.days.total': 1,
-                                            'stats.error.weeks.total': 1,
-                                            'stats.error.months.total': 1
-                                        };
-                                        updateDocWithSetForData = {
-                                            'stats.error.days.dates': handleDate(data.stats.error.days.dates, 'days'),
-                                            'stats.error.weeks.dates': handleDate(data.stats.error.weeks.dates, 'weeks'),
-                                            'stats.error.months.dates': handleDate(data.stats.error.months.dates, 'months'),
-                                        };
-                                        updateDocWithSetForUser = {
-                                            'stats.error.days.dates': handleDate(user.stats.error.days.dates, 'days'),
-                                            'stats.error.weeks.dates': handleDate(user.stats.error.weeks.dates, 'weeks'),
-                                            'stats.error.months.dates': handleDate(user.stats.error.months.dates, 'months'),
-                                        };
-                                    }
-                                    else {
-                                        updateDocWIthInc = {
-                                            'stats.total': 1,
-                                            'stats.success.total': 1,
-                                            'stats.success.days.total': 1,
-                                            'stats.success.weeks.total': 1,
-                                            'stats.success.months.total': 1
-                                        };
-                                        updateDocWithSetForData = {
-                                            'stats.success.days.dates': handleDate(data.stats.success.days.dates, 'days'),
-                                            'stats.success.weeks.dates': handleDate(data.stats.success.weeks.dates, 'weeks'),
-                                            'stats.success.months.dates': handleDate(data.stats.success.months.dates, 'months'),
-                                        };
-                                        updateDocWithSetForUser = {
-                                            'stats.success.days.dates': handleDate(user.stats.success.days.dates, 'days'),
-                                            'stats.success.weeks.dates': handleDate(user.stats.success.weeks.dates, 'weeks'),
-                                            'stats.success.months.dates': handleDate(user.stats.success.months.dates, 'months'),
-                                        };
-                                    }
-                                    Site.findOneAndUpdate({
-                                        _id: site._id
-                                    }, {
-                                        $inc: updateDocWIthInc,
-                                        $set: updateDocWithSetForData
-                                    }, {
-                                        'new': true
-                                    }, function(err, doc) {
-                                        if (err) {
-                                            console.log(err);
-                                            reject(err);
-                                            return;
-                                        }
-
-                                        User.findOneAndUpdate({
-                                            _id: job.attrs.data.userId
-                                        }, {
-                                            $inc: updateDocWIthInc,
-                                            $set: updateDocWithSetForUser
-                                        }, {
-                                            'new': true
-                                        }, function(err, user) {
-                                            if (err) {
-                                                console.log(err);
-                                                reject(err);
-                                                return;
-                                            }
-                                            resolve();
-                                        });
-                                    });
-                                });
-
-                            });
+                            resolve();
                         });
 
 
@@ -433,7 +280,7 @@ module.exports = function(agenda) {
                         return updateSiteStatus();
                     })
                     .finally(function() {
-                        if (!_.isEmpty(site.notificationReceiverEmails) && job.attrs.data.type === 'ON_SCHEDULE') {
+                        if (!_.isEmpty(site.notificationReceiverEmails)) {
                             if (site.sendEmailWhenModuleFails) {
                                 if (site.status === ExecutionStatus.ID_ERROR) {
                                     sendEmail();

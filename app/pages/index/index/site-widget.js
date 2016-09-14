@@ -26,11 +26,10 @@ define(function(require) {
         var newDate = moment(date);
         var fromNow = newDate.fromNow().toString();
         var moments =['hours', 'day', 'days', 'week', 'weeks', 'month', 'months', 'year', 'years'];
-
+        
         if (fromNow.indexOf(moments[0]) > -1) {
             return newDate.format('MM/DD/YYYY h:mm');
         }
-
         return moment(date).fromNow().toString();
     };
 
@@ -70,7 +69,6 @@ define(function(require) {
         var that = this;
 
         that.controls.name.text(that.model.get('name'));
-
         if (!_.isEmpty(that.model.get('modules')) && _.contains([
                 ExecutionStatus.ID_OK,
                 ExecutionStatus.ID_NOT_STARTED,
@@ -101,6 +99,7 @@ define(function(require) {
 
             case ExecutionStatus.ID_ERROR:
                 panelClass = 'error';
+                that.trigger('completed');
                 break;
 
             case ExecutionStatus.ID_RUNNING:
@@ -108,15 +107,18 @@ define(function(require) {
                 break;
 
             case ExecutionStatus.ID_TERMINATED:
+                that.trigger('completed');
                 panelClass = 'terminated';
                 break;
 
             case ExecutionStatus.ID_OK:
+                that.trigger('completed');
                 panelClass = 'success';
                 break;
         }
-
-        that.$el.find('.data-row').removeClass('scheduled success error running terminated').addClass(panelClass);
+        
+        that.$el.find('.last-run').text(that.getLastRunTime(that.model.get('lastExecutedAt')));
+        that.$el.find('.data-row').removeClass('scheduled success error running terminated no-modules').addClass(panelClass);
 
         that.controls.modules.html(MODULE_LIST({
             id: that.id,

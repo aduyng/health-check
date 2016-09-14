@@ -13,18 +13,19 @@ var agenda = new Agenda({
         address: config.mongo.url,
         collection: 'jobs'
     }
-});
-var jobs = ['health-check'];
-_.forEach(jobs, function(module) {
-    require('./jobs/' + module)(agenda);
+}, function () {
+    var jobs = ['health-check'];
+    _.forEach(jobs, function(module) {
+        require('./jobs/' + module)(agenda);
+    });
+
+    if (jobs.length) {
+        B.all([odm.initialize()])
+            .then(function() {
+                agenda.start();
+            });
+    }
 });
 
-if (jobs.length) {
-    B.all([odm.initialize()])
-        .then(function() {
-            L.infoAsync('agenda started.');
-            agenda.start();
-        });
-}
 
 module.exports = agenda;

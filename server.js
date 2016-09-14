@@ -155,8 +155,6 @@ app.post('/login', function(req, res) {
         });
 });
 
-
-
 B.all([odm.initialize()])
     .then(function() {
         var port = process.env.PORT || 5000;
