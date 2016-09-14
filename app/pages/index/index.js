@@ -37,71 +37,6 @@ define(function(require) {
         this.moduleNamesMap = {};
     };
 
-    Page.prototype.renderStats = function(d, type) {
-        var that = this;
-        if (!d) {
-            var currentMonth = window.app.user.get('stats').error.months.dates[window.app.user.get('stats').error.months.dates.length - 1].total;
-            var lastMonth = window.app.user.get('stats').error.months.dates[window.app.user.get('stats').error.months.dates.length - 2].total;
-            var percentage = ((currentMonth - lastMonth) / currentMonth) * 100;
-           var statusWidget = new StatusWidget({
-                errors: window.app.user.get('stats').error.total || 0,
-                el: that.$el.find('.statuses'),
-                yesterday: window.app.user.get('stats').error.days.dates.length < 2 ? 0 : window.app.user.get('stats').error.days.dates[window.app.user.get('stats').error.days.dates.length - 2].total || 0,
-                weeks: window.app.user.get('stats').error.weeks.dates[window.app.user.get('stats').error.weeks.dates.length - 1] || 0,
-                percentage: percentage
-            });
-
-            statusWidget.render();
-
-            var graphWidget = new GraphWidget({
-                el: that.$el.find('.status-graph'),
-                type: type || 'days'
-            });
-
-            graphWidget.render();
-
-
-        } else {
-            var s = {
-                el: that.$el.find('.statuses'),
-                errors: 0,
-                yesterday: 0,
-                weeks: 0,
-                months: 0
-            };
-            var month = 0, lastMonth = 0;
-            var curMonth = moment().month();
-            
-            _.each(d, function(item) {
-                s.errors += item.get('stats').error.total;
-                s.yesterday += item.get('stats').error.days.dates.length < 2 ? 0 : item.get('stats').error.days.dates[item.get('stats').error.days.dates.length - 2].total || 0;
-                s.weeks += (item.get('stats').error.weeks.dates[item.get('stats').error.weeks.dates.length - 1] || {}).total || 0;
-                month += (item.get('stats').error.months.dates[item.get('stats').error.months.dates.length - 1] || {}).total;
-                lastMonth += (item.get('stats').error.months.dates[item.get('stats').error.months.dates.length - 2] || {}).total;
-                //s.percentage = item.get('stats').error.months.dates.length < 2 ? 100 : item.get('stats').error.months.dates[item.get('stats').error.months.dates.length - 1].total - item.get('stats').error.months.dates[item.get('stats').error.months.dates.length - 2].total / item.get('stats').error.months.dates[item.get('stats').error.months.dates.length - 1].total * 100
-            });
-
-            if(month - lastMonth === 0) {
-                s.percentage = 0;
-            } else {
-                s.percentage = (month - lastMonth) / month * 100;    
-            }            
-            
-            var statusWidget = new StatusWidget(s);
-
-            statusWidget.render();
-            
-            var graphWidget = new GraphWidget({
-                el: that.$el.find('.status-graph'),
-                sites: d,
-                type: type || 'days'
-            });
-    
-            graphWidget.render();
-        }
-
-    };
-
     Page.prototype.render = function() {
         var that = this;
 
@@ -109,7 +44,7 @@ define(function(require) {
             id: that.id
         }));
 
-        that.renderStats(null, 'days');
+//        that.renderStats(null, 'days');
 
         that.mapControls();
 
@@ -137,11 +72,11 @@ define(function(require) {
 
 
         B.resolve(that.sites.fetch()).
-            then(function() {
-                //that.setInitialAbbreviations();
-                that.mapModuleNames();
-                //that.stopAllSites();
-            });
+        then(function() {
+            //that.setInitialAbbreviations();
+            that.mapModuleNames();
+            //that.stopAllSites();
+        });
 
         //keep updating airlines
         return B.resolve(that.types.fetch())
@@ -253,6 +188,21 @@ define(function(require) {
                 });
         }));
 
+        var runningOrScheduledSites = _.find(that.sites.filter(function (site) {
+            return !site.view.$el.hasClass('hidden')
+        }), function (s) {
+            return (s.get('status') === ExecutionStatus.ID_RUNNING || s.get('status') === ExecutionStatus.ID_SCHEDULED)
+        });
+
+        if (!runningOrScheduledSites) {
+            if (that.layout.nav && that.layout.nav.controls) {
+                if (that.layout.nav.controls.runAll.hasClass('hidden')) {
+                    that.layout.nav.controls.stop.addClass('hidden');
+                    that.layout.nav.controls.runAll.removeClass('hidden');
+                }
+            }
+        }
+
         that.updateUI();
     };
 
@@ -320,13 +270,13 @@ define(function(require) {
                 site.view.$el.toggleClass('hidden', !visible);
             }
         });
-        
+
         if(_.isEmpty(options.query) && _.isEmpty(selectedTypes)) {
-            that.renderStats(null, 'days');    
+            that.renderStats(null, 'days');
         } else {
-            that.renderStats(visibleSites, 'days');    
+            that.renderStats(visibleSites, 'days');
         }
-        
+
     };
 
     Page.prototype.onSiteScheduled = function() {
