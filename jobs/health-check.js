@@ -114,7 +114,7 @@ module.exports = function(agenda) {
                                     }));
                                 })
                                 .then(function() {
-                                    var cmd = [config.casper.absolutePath, 'test', '--fail-fast', '--web-security=false', absPath, '--screenshotPath=' + screenshotAbsPath].join(' ');
+                                    var cmd = [config.casper.absolutePath, 'test', '--web-security=false', absPath, '--screenshotPath=' + screenshotAbsPath].join(' ');
                                     L.infoAsync(__filename + ' ::run-site command to execute: ' + cmd);
                                     return new B(function(resolve, reject) {
                                         nexpect.spawn(cmd, {
